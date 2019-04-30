@@ -48,6 +48,7 @@ set(MICROPYTHON_SRC ${MICROPYTHON_SRC}
         ${MP}/lib/embed/abort_.c
         ${MP}/lib/utils/stdout_helpers.c 
         ${MP}/lib/utils/pyexec.c 
+        ${MP}/lib/utils/printf.c
         ${MP}/lib/mp-readline/readline.c 
         ${CMAKE_CURRENT_LIST_DIR}/mphalport.c
         )

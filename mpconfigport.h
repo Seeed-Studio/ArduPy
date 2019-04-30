@@ -3,7 +3,10 @@
 // options to control how MicroPython is built
 #define MICROPY_HW_BOARD_NAME                       "Grovepy"
 #define MICROPY_HW_MCU_NAME                         "seeed"
+#define MICROPY_PY_BUILTINS_HELP                    (1)
+#define MICROPY_PY_BUILTINS_HELP_TEXT               grove_help_text
 
+#define MICROPY_ENABLE_COMPILER     (1)
 #define MICROPY_QSTR_BYTES_IN_HASH  (1)
 #define MICROPY_ALLOC_PATH_MAX      (512)
 #define MICROPY_EMIT_X64            (0)
@@ -17,7 +20,8 @@
 #define MICROPY_DEBUG_PRINTERS      (0)
 #define MICROPY_ENABLE_GC           (1)
 #define MICROPY_HELPER_REPL         (1)
-#define MICROPY_HELPER_LEXER_UNIX   (0)
+#define MICROPY_REPL_EMACS_KEYS     (1)
+#define MICROPY_REPL_AUTO_INDENT    (1)
 #define MICROPY_ENABLE_SOURCE_LINE  (0)
 #define MICROPY_ENABLE_DOC_STRING   (0)
 #define MICROPY_ERROR_REPORTING     (MICROPY_ERROR_REPORTING_TERSE)
@@ -34,16 +38,16 @@
 #define MICROPY_PY_BUILTINS_PROPERTY (0)
 #define MICROPY_PY_BUILTINS_STR_COUNT (0)
 #define MICROPY_PY_BUILTINS_STR_OP_MODULO (0)
-#define MICROPY_PY___FILE__         (0)
-#define MICROPY_PY_GC               (0)
-#define MICROPY_PY_ARRAY            (0)
-#define MICROPY_PY_ATTRTUPLE        (0)
-#define MICROPY_PY_COLLECTIONS      (0)
-#define MICROPY_PY_MATH             (0)
-#define MICROPY_PY_CMATH            (0)
-#define MICROPY_PY_IO               (0)
-#define MICROPY_PY_STRUCT           (0)
-#define MICROPY_PY_SYS              (0)
+#define MICROPY_PY___FILE__         (1)
+#define MICROPY_PY_GC               (1)
+#define MICROPY_PY_ARRAY            (1)
+#define MICROPY_PY_ATTRTUPLE        (1)
+#define MICROPY_PY_COLLECTIONS      (1)
+#define MICROPY_PY_MATH             (1)
+#define MICROPY_PY_CMATH            (1)
+#define MICROPY_PY_IO               (1)
+#define MICROPY_PY_STRUCT           (1)
+#define MICROPY_PY_SYS              (1)
 #define MICROPY_CPYTHON_COMPAT      (0)
 #define MICROPY_LONGINT_IMPL        (MICROPY_LONGINT_IMPL_NONE)
 #define MICROPY_FLOAT_IMPL          (MICROPY_FLOAT_IMPL_NONE)
@@ -56,12 +60,12 @@
 #define UINT_FMT "%lu"
 #define INT_FMT "%ld"
 
-typedef int64_t mp_int_t; // must be pointer size
-typedef uint64_t mp_uint_t; // must be pointer size
+typedef int32_t mp_int_t; // must be pointer size
+typedef uint32_t mp_uint_t; // must be pointer size
 typedef long mp_off_t;
 
 // dummy print
-#define MP_PLAT_PRINT_STRN(str, len) (void)0
+#define MP_PLAT_PRINT_STRN(str, len) mp_hal_stdout_tx_strn_cooked(str, len)
 
 // extra built in names to add to the global namespace
 #define MICROPY_PORT_BUILTINS \

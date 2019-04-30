@@ -27,9 +27,6 @@ endif()
 # config self use headers
 include(./cmake/macros.internal.cmake)
 
-
-
-
 header_directories(${ARDUINO_CORE_PATH}/cores/arduino)
 header_directories(${ARDUINO_CORE_PATH}/libraries/HID)
 header_directories(${ARDUINO_CORE_PATH}/libraries/I2S/src)
@@ -80,9 +77,6 @@ else()
         "examples/Blink/*.ino"
     )
 endif()
-
-
-
 
 
 SET_PROPERTY(SOURCE ${PROJ_LIB_SRC_INO} PROPERTY LANGUAGE CXX)

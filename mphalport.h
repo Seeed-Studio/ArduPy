@@ -7,3 +7,4 @@
 
 #include "Arduino.h"
 static inline void mp_hal_set_interrupt_char(char c) {}
+void mp_hal_init();
