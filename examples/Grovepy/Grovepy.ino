@@ -60,6 +60,7 @@ void loop() {
 #else
     pyexec_frozen_module("frozentest.py");
 #endif
+    Serial.print("MPY: soft reboot\r\n");
 
     mp_deinit();
 }
