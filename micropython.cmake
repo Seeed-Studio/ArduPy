@@ -47,9 +47,12 @@ set(MICROPYTHON_SRC ${MICROPYTHON_SRC}
         ${MP}/extmod/uos_dupterm.c
         ${MP}/lib/embed/abort_.c
         ${MP}/lib/utils/stdout_helpers.c 
+        ${MP}/lib/utils/sys_stdio_mphal.c
         ${MP}/lib/utils/pyexec.c 
         ${MP}/lib/utils/printf.c
         ${MP}/lib/mp-readline/readline.c 
+        ${MP}/lib/oofatfs/ff.c 
+        ${MP}/lib/oofatfs/ffunicode.c 
         ${CMAKE_CURRENT_LIST_DIR}/mphalport.c
         )
 
@@ -69,6 +72,7 @@ set(micropython_CFLAGS
         -Wuninitialized
         -Wno-unused-label
         -std=gnu99
+        -U_FORTIFY_SOURCE
         -Os
         )
 
@@ -77,20 +81,25 @@ set_source_files_properties(${MP}/py/gc.c PROPERTIES COMPILE_FLAGS -O3)
 set_source_files_properties(${MP}/py/vm.c PROPERTIES COMPILE_FLAGS -O3)
 
 #
-SET_SOURCE_FILES_PROPERTIES(${micropython_SOURCE} PROPERTIES COMPILE_FLAGS "-Wall -Werror -Wpointer-arith -Wuninitialized -Wno-unused-label -std=gnu99 -U_FORTIFY_SOURCE -Os")
+set_source_files_properties(${MICROPYTHON_SRC} PROPERTIES COMPILE_FLAGS "'-DFFCONF_H=\"${MP}/lib/oofatfs/ffconf.h\"' -Wall -Werror -Wpointer-arith -Wuninitialized -Wno-unused-label -std=gnu99 -U_FORTIFY_SOURCE -Os")
 #add_library(micropython ${micropython_regular_SOURCE} ${GENHDR}/qstrdefs.generated.h)
 #target_compile_options(micropython PRIVATE ${micropython_CFLAGS})
 #target_compile_definitions(micropython PRIVATE FFCONF_H=\"${MP}/lib/oofatfs/ffconf.h\")
+
 add_custom_command(OUTPUT ${GENHDR}/qstrdefs.generated.h
         COMMAND echo "=======================start========================="
         COMMAND mkdir -p ${GENHDR}
         COMMAND python3 ${MP}/py/makeversionhdr.py ${GENHDR}/mpversion.h
-        COMMAND python3 ${MP}/py/makemoduledefs.py --vpath="., .., " ${micropython_SOURCE} ${GENHDR}/moduledefs.h > ${GENHDR}/moduledefs.h
+        COMMAND python3 ${MP}/py/makemoduledefs.py --vpath="., .., " ${MICROPYTHON_SRC} ${GENHDR}/moduledefs.h > ${GENHDR}/moduledefs.h
         COMMAND ${CMAKE_C_COMPILER} -E -DNO_QSTR ${micropython_CFLAGS} -DFFCONF_H='\"${MP}/lib/oofatfs/ffconf.h\"' ${MICROPYTHON_SRC} ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h > ${GENHDR}/qstr.i.last
         COMMAND python3 ${MP}/py/makeqstrdefs.py split ${GENHDR}/qstr.i.last ${GENHDR}/qstr ${GENHDR}/qstrdefs.collected.h
         COMMAND python3 ${MP}/py/makeqstrdefs.py cat ${GENHDR}/qstr.i.last ${GENHDR}/qstr ${GENHDR}/qstrdefs.collected.h
         COMMAND cat ${MP}/py/qstrdefs.h ${CMAKE_CURRENT_LIST_DIR}/qstrdefsport.h ${GENHDR}/qstrdefs.collected.h | sed [=['s/^Q(.*)/"&"/']=] | ${CMAKE_C_COMPILER} -E ${micropython_CFLAGS} -DFFCONF_H='\"${MP}/lib/oofatfs/ffconf.h\"' - | sed [=['s/^"\(Q(.*)\)"/\1/']=] > ${GENHDR}/qstrdefs.preprocessed.h
         COMMAND python3 ${MP}/py/makeqstrdata.py ${GENHDR}/qstrdefs.preprocessed.h > ${GENHDR}/qstrdefs.generated.h
+        COMMAND make -C ${MP}/mpy-cross
+        COMMAND ${MP}/mpy-cross/mpy-cross -march=armv7m ${CMAKE_CURRENT_LIST_DIR}/modules/frozentest.py
+        COMMAND ${MP}/tools/mpy-tool.py -f -q  ${GENHDR}/qstrdefs.preprocessed.h -mlongint-impl=none ${CMAKE_CURRENT_LIST_DIR}/modules/frozentest.mpy > ${CMAKE_CURRENT_LIST_DIR}/modules/_frozen_mpy.c
         COMMAND echo "=======================end========================="
-        DEPENDS ${micropython_SOURCE}  ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h
+        DEPENDS ${MICROPYTHON_SRC}  ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h
         )
+set(MICROPYTHON_SRC ${MICROPYTHON_SRC}   ${CMAKE_CURRENT_LIST_DIR}/modules/_frozen_mpy.c)
