@@ -19,17 +19,6 @@ IF (CMAKE_BUILD_TYPE STREQUAL Debug)
     add_definitions(-DDEBUG=1)
 ENDIF ()
 
-# definitions in macros
-add_definitions(-DF_CPU=48000000L 
-                -DARDUINO=10809 
-                -DARDUINO_SAMD_ZERO 
-                -DARDUINO_ARCH_SAMD 
-                -D__SAMD21G18A__ 
-                -DUSB_VID=0x2341 
-                -DUSB_PID=0x804d 
-                -DUSBCON 
-                -DUSB_MANUFACTURER="Arduino LLC" 
-                -DUSB_PRODUCT="Arduino Zero")
 
 if (NOT SDK_ROOT)
     get_filename_component(_SDK_ROOT ${CMAKE_CURRENT_LIST_DIR} DIRECTORY)

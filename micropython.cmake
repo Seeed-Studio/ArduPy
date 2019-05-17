@@ -3,6 +3,7 @@ set(MP ${CMAKE_CURRENT_LIST_DIR}/../micropython)
 
 set(GENHDR ${CMAKE_BINARY_DIR}/genhdr)
 include_directories(${MP} 
+                    ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}
                     ${GENHDR}/..
                     ${MP}/lib/lwip/src/include
                     ${MP}/extmod/lwip-include
@@ -53,19 +54,21 @@ set(MICROPYTHON_SRC ${MICROPYTHON_SRC}
         ${MP}/lib/mp-readline/readline.c 
         ${MP}/lib/oofatfs/ff.c 
         ${MP}/lib/oofatfs/ffunicode.c 
-        ${CMAKE_CURRENT_LIST_DIR}/mphalport.c
+        ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}/mphalport.c
+        ${CMAKE_CURRENT_LIST_DIR}/mod_uos.c
+        ${CMAKE_CURRENT_LIST_DIR}/mod_ardupy.c
         )
 
 set(micropython_CFLAGS
+        ${micropython_CFLAGS}
         -I.
+        -I${ARDUINO_CORE_PATH}/cores/arduino
+        -I${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}
+        -I${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}
         -I${GENHDR}/..
         -I${MP}/
         -I${MP}/py
         -I${CMAKE_CURRENT_LIST_DIR}
-        -I${ARDUINO_CORE_PATH}/cores/arduino
-        -I${ARDUINO_CORE_PATH}/variants/${BOARD}
-        -I${ARDUINO_CMSIS_PATH}/CMSIS/Include
-        -I${ARDUINO_CMSIS_ATMEL_PATH}
         -Wall
         -Werror
         -Wpointer-arith
@@ -75,6 +78,8 @@ set(micropython_CFLAGS
         -U_FORTIFY_SOURCE
         -Os
         )
+
+
 
 #TODO: verify that this works
 set_source_files_properties(${MP}/py/gc.c PROPERTIES COMPILE_FLAGS -O3)
@@ -90,7 +95,7 @@ add_custom_command(OUTPUT ${GENHDR}/qstrdefs.generated.h
         COMMAND echo "=======================start========================="
         COMMAND mkdir -p ${GENHDR}
         COMMAND python3 ${MP}/py/makeversionhdr.py ${GENHDR}/mpversion.h
-        COMMAND python3 ${MP}/py/makemoduledefs.py --vpath="., .., " ${MICROPYTHON_SRC} ${GENHDR}/moduledefs.h > ${GENHDR}/moduledefs.h
+        COMMAND python3 ${MP}/py/makemoduledefs.py --vpath="., .., ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}," ${MICROPYTHON_SRC} ${GENHDR}/moduledefs.h > ${GENHDR}/moduledefs.h
         COMMAND ${CMAKE_C_COMPILER} -E -DNO_QSTR ${micropython_CFLAGS} -DFFCONF_H='\"${MP}/lib/oofatfs/ffconf.h\"' ${MICROPYTHON_SRC} ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h > ${GENHDR}/qstr.i.last
         COMMAND python3 ${MP}/py/makeqstrdefs.py split ${GENHDR}/qstr.i.last ${GENHDR}/qstr ${GENHDR}/qstrdefs.collected.h
         COMMAND python3 ${MP}/py/makeqstrdefs.py cat ${GENHDR}/qstr.i.last ${GENHDR}/qstr ${GENHDR}/qstrdefs.collected.h
