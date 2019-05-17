@@ -1,8 +1,8 @@
 #include "Arduino.h"
-
 extern "C" {
 
 #include "lib/utils/pyexec.h"
+#include "py/obj.h"
 #include "py/compile.h"
 #include "py/gc.h"
 #include "py/mperrno.h"
@@ -13,7 +13,7 @@ extern "C" {
 
 static char *stack_top;
 #if MICROPY_ENABLE_GC
-static char heap[24* 1024];
+static char heap[23* 1024];
 #endif
 void setup() {
 #ifdef ARDUINO_ARCH_SAMD
@@ -25,11 +25,32 @@ void setup() {
 }
 void loop() {
     int stack_dummy;
+    unsigned char data[1024];
+    unsigned int inc = 0;
+    unsigned int get_free = 0;
     stack_top = (char *)&stack_dummy;
 #if MICROPY_ENABLE_GC
     gc_init(heap, heap + sizeof(heap));
 #endif
+#if 0
     mp_hal_init();
+        for(int i = 8; i < 256; i++){
+            FlashClass flash((void*)0x2000 + inc,1024);
+            flash.read((void*)0x2000 + inc,data,1024);
+            inc += 0x400;
+            for(int m = 0; m < 32; m++){
+                get_free = 0;
+                for(int n = 0; n < 32; n++)
+                    get_free +=data[m*32+n];
+                if(get_free == 8160){
+                    get_free = i;
+                    goto end;
+                }
+                    
+            }
+        }
+end:
+#endif
 #if MICROPY_ENABLE_COMPILER
 #if MICROPY_REPL_EVENT_DRIVEN
     pyexec_event_repl_init();
