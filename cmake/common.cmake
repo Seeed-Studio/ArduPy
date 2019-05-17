@@ -25,8 +25,12 @@ if (NOT SDK_ROOT)
     global_set(SDK_ROOT ${_SDK_ROOT})
 endif ()
 
-include(${CMAKE_CURRENT_LIST_DIR}/toolchain.cmake)
+if(${ARM})
+    include(${CMAKE_CURRENT_LIST_DIR}/arm-none-toolchain.cmake)
+endif()
 
-include(${CMAKE_CURRENT_LIST_DIR}/compile-flags.cmake)
+if ("${BOARD}" STREQUAL "seeeduino_m0")     
+    include(${CMAKE_CURRENT_LIST_DIR}/samd21-compile-flags.cmake)
+endif()
 
 include(${CMAKE_CURRENT_LIST_DIR}/fix-9985.cmake)

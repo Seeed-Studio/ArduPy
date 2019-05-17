@@ -1,9 +1,9 @@
-add_compile_flags(LD
+add_compile_flags(LD 
         -L${ARDUINO_CMSIS_PATH}/CMSIS/Lib/GCC
         -Os 
         -Wl,--gc-sections 
         -save-temps 
-        -T ${ARDUINO_CORE_PATH}/variants/${BOARD}/linker_scripts/gcc/flash_with_bootloader.ld
+        -T ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}/linker_scripts/gcc/flash_with_bootloader.ld
         -Wl,-Map,${CMAKE_BINARY_DIR}/firmware.map
         )
 

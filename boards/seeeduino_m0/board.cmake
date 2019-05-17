@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-include(${CMAKE_SOURCE_DIR}/cmake/macros.cmake)
-
-
 set(micropython_CFLAGS 
         ${micropython_CFLAGS}
         -I${ARDUINO_CMSIS_PATH}/CMSIS/Include

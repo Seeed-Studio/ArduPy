@@ -57,6 +57,7 @@ set(MICROPYTHON_SRC ${MICROPYTHON_SRC}
         ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}/mphalport.c
         ${CMAKE_CURRENT_LIST_DIR}/mod_uos.c
         ${CMAKE_CURRENT_LIST_DIR}/mod_ardupy.c
+        ${CMAKE_CURRENT_LIST_DIR}/ardupy_storage.c
         )
 
 set(micropython_CFLAGS

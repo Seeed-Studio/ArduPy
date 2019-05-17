@@ -2,21 +2,24 @@
 set(MICROPYTHON_REGEX "#define MICROPYTHON[ \t]+(.+)")
 set(BOARD_REGEX "#define BOARD[ \t]+(.+)")
 set(ARDUINO_VERIANT_REGEX "#define ARDUINO_VERIANT[ \t]+(.+)")
+set(ARM_REGEX "#define ARM[ \t]+(.+)")
 
 # Read in the line containing the version
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/buildconfig.h" MICROPYTHON REGEX ${MICROPYTHON_REGEX})
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/buildconfig.h" BOARD REGEX ${BOARD_REGEX})
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/buildconfig.h" ARDUINO_VERIANT REGEX ${ARDUINO_VERIANT_REGEX})
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/buildconfig.h" ARM REGEX ${ARM_REGEX})
 
 # Pick out just the version
 string(REGEX REPLACE ${MICROPYTHON_REGEX} "\\1" MICROPYTHON "${MICROPYTHON}")
 string(REGEX REPLACE ${BOARD_REGEX} "\\1" BOARD "${BOARD}")
 string(REGEX REPLACE ${ARDUINO_VERIANT_REGEX} "\\1" ARDUINO_VERIANT "${ARDUINO_VERIANT}")
+string(REGEX REPLACE ${ARM_REGEX} "\\1" ARM "${ARM}")
 
 message("MICROPYTHON = ${MICROPYTHON}")
 message("BOARD = ${BOARD}")
 message("ARDUINO_VERIANT = ${ARDUINO_VERIANT}")
-
+message("ARM = ${ARM}")
 
 # basic config
 if (NOT ARDUINO_CORE_PATH)
@@ -70,7 +73,8 @@ SET_SOURCE_FILES_PROPERTIES(${ASSEMBLY_FILES} PROPERTIES COMPILE_FLAGS "-x assem
 include(${CMAKE_CURRENT_LIST_DIR}/micropython.cmake)
 header_directories(${CMAKE_CURRENT_LIST_DIR})
 
-      
-include(./cmake/executable.cmake)
+if ("${BOARD}" STREQUAL "seeeduino_m0")      
+    include(./cmake/samd21-executable.cmake)
+endif()
 
 target_sources(${PROJECT_NAME} PUBLIC ${MICROPYTHON_SRC}  ${GENHDR}/qstrdefs.generated.h) 
