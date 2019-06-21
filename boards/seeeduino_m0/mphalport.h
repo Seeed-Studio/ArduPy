@@ -27,18 +27,37 @@
 #ifndef MICROPY_ARDUPY_HAL_PORT_H
 #define MICROPY_ARDUPY_HAL_PORT_H
 
-#include "py/compile.h"
-#include "py/runtime.h"
-#include "py/repl.h"
-#include "py/gc.h"
-#include "py/mperrno.h"
-#include "lib/utils/pyexec.h"
 
 #include "Arduino.h"
+#include "mpconfigport.h"
+
+#define TOTAL_INTERNAL_FLASH_SIZE 0x010000  //64k
+//#define TOTAL_INTERNAL_FLASH_SIZE 0x8000  //32K
+
+#define INTERNAL_NVM_SIZE 256
+
+#define INTERNAL_FLASH_MEM_SEG1_START_ADDR (FLASH_SIZE - TOTAL_INTERNAL_FLASH_SIZE - INTERNAL_NVM_SIZE)
+#define INTERNAL_FLASH_PART1_NUM_BLOCKS (TOTAL_INTERNAL_FLASH_SIZE / FILESYSTEM_BLOCK_SIZE)
+
+// #define INTERNAL_FLASH_SYSTICK_MASK    (0x1ff) // 512ms
+// #define INTERNAL_FLASH_IDLE_TICK(tick) (((tick) & INTERNAL_FLASH_SYSTICK_MASK) == 2)
+
 static inline void mp_hal_set_interrupt_char(char c) {}
 void mp_hal_init();
 
-void flash_write(const volatile void *flash_ptr, const void *data, uint32_t size);
-void flash_erase(const volatile void *flash_ptr, uint32_t size);
-void flash_read(const volatile void *flash_ptr, void *data, uint32_t size);
+int32_t board_flash_write(const volatile void *flash_ptr, const void *data, uint32_t size);
+int32_t board_flash_read(const volatile void *flash_ptr, void *data, uint32_t size);
+void board_flash_init();
+//void NORETURN __fatal_error(const char *msg) ;
+
+
+extern uint32_t mp_hal_ticks_ms(void) ;
+extern uint32_t mp_hal_ticks_us(void) ;
+extern uint32_t mp_hal_ticks_cpu(void) ;
+
+
+extern void mp_hal_delay_ms(mp_uint_t ms) ;
+
+extern void mp_hal_delay_us(mp_uint_t ms) ;
+
 #endif //
