@@ -7,6 +7,7 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE C)
 
+
 target_link_libraries(${PROJECT_NAME}
         --specs=nano.specs 
         --specs=nosys.specs 

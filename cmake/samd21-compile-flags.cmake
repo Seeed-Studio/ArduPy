@@ -3,7 +3,7 @@ add_compile_flags(LD
         -Os 
         -Wl,--gc-sections 
         -save-temps 
-        -T ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}/linker_scripts/gcc/flash_with_bootloader.ld
+        -T ${ARDUPY_BOARD_PATH}/flash_with_bootloader.ld
         -Wl,-Map,${CMAKE_BINARY_DIR}/firmware.map
         )
 
@@ -20,6 +20,7 @@ add_compile_flags(BOTH
             -nostdlib  
             --param max-inline-insns-single=500
             -MMD
+            -DNDEBUG
         )
 
 add_compile_flags(C -std=gnu11)

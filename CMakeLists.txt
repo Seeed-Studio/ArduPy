@@ -32,6 +32,8 @@ else()
     endif()
 endif ()
 
+set(ARDUPY_BOARD_PATH  ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD})
+
 cmake_minimum_required(VERSION 3.0)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/common.cmake)
 project(Ardupy C CXX ASM)
@@ -41,10 +43,10 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros.internal.cmake)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/boards/${BOARD}/board.cmake)
 
-header_directories(${ARDUINO_CORE_PATH}/cores/arduino)
-header_directories(${ARDUINO_CORE_PATH}/libraries/Wire)
-header_directories(${ARDUINO_CORE_PATH}/libraries/SPI)
-header_directories(${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT})
+include_directories(${ARDUINO_CORE_PATH}/cores/arduino)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Wire)
+include_directories(${ARDUINO_CORE_PATH}/libraries/SPI)
+include_directories(${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT})
 
 
 # compile project
@@ -71,10 +73,11 @@ SET_SOURCE_FILES_PROPERTIES(${ASSEMBLY_FILES} PROPERTIES COMPILE_FLAGS "-x assem
 
 
 include(${CMAKE_CURRENT_LIST_DIR}/micropython.cmake)
-header_directories(${CMAKE_CURRENT_LIST_DIR})
+include_directories(${CMAKE_CURRENT_LIST_DIR})
 
 if ("${BOARD}" STREQUAL "seeeduino_m0")      
     include(./cmake/samd21-executable.cmake)
 endif()
 
+target_sources(${PROJECT_NAME} PUBLIC ${BOARD_SRC}  ${GENHDR}/qstrdefs.generated.h) 
 target_sources(${PROJECT_NAME} PUBLIC ${MICROPYTHON_SRC}  ${GENHDR}/qstrdefs.generated.h) 

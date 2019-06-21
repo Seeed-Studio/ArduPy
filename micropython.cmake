@@ -7,12 +7,17 @@ include_directories(${MP}
                     ${GENHDR}/..
                     ${MP}/lib/lwip/src/include
                     ${MP}/extmod/lwip-include
+                    ${CMAKE_CURRENT_LIST_DIR}
                     )
+
 
 FILE(GLOB_RECURSE MICROPYTHON_SRC
     "${MP}/py/*.c"
+    "${CMAKE_CURRENT_LIST_DIR}/shared-bindings/*.c"
+    "${CMAKE_CURRENT_LIST_DIR}/common-hal/*.c"
+    "${CMAKE_CURRENT_LIST_DIR}/common-hal/*.cpp"
 )
-
+ 
 set(MICROPYTHON_SRC ${MICROPYTHON_SRC}             
         ${MP}/extmod/moductypes.c
         ${MP}/extmod/modujson.c
@@ -47,6 +52,7 @@ set(MICROPYTHON_SRC ${MICROPYTHON_SRC}
         ${MP}/extmod/utime_mphal.c
         ${MP}/extmod/uos_dupterm.c
         ${MP}/lib/embed/abort_.c
+        ${MP}/lib/timeutils/timeutils.c 
         ${MP}/lib/utils/stdout_helpers.c 
         ${MP}/lib/utils/sys_stdio_mphal.c
         ${MP}/lib/utils/pyexec.c 
@@ -54,9 +60,10 @@ set(MICROPYTHON_SRC ${MICROPYTHON_SRC}
         ${MP}/lib/mp-readline/readline.c 
         ${MP}/lib/oofatfs/ff.c 
         ${MP}/lib/oofatfs/ffunicode.c 
-        ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}/mphalport.c
-        ${CMAKE_CURRENT_LIST_DIR}/mod_uos.c
-        ${CMAKE_CURRENT_LIST_DIR}/mod_ardupy.c
+        ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}/irq_it.c
+        # ${CMAKE_CURRENT_LIST_DIR}/shared-bindings/mod_uos.c
+        # ${CMAKE_CURRENT_LIST_DIR}/shared-bindings/mod_utime.c
+        # ${CMAKE_CURRENT_LIST_DIR}/shared-bindings/mod_ardupy.c
         ${CMAKE_CURRENT_LIST_DIR}/ardupy_storage.c
         )
 
@@ -64,11 +71,11 @@ set(micropython_CFLAGS
         ${micropython_CFLAGS}
         -I.
         -I${ARDUINO_CORE_PATH}/cores/arduino
+        -I${ARDUINO_CORE_PATH}/libraries/Wire
+        -I${ARDUINO_CORE_PATH}/libraries/SPI
         -I${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}
         -I${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}
-        -I${GENHDR}/..
         -I${MP}/
-        -I${MP}/py
         -I${CMAKE_CURRENT_LIST_DIR}
         -Wall
         -Werror
@@ -78,13 +85,13 @@ set(micropython_CFLAGS
         -std=gnu99
         -U_FORTIFY_SOURCE
         -Os
-        )
+        ) 
 
 
 
 #TODO: verify that this works
 set_source_files_properties(${MP}/py/gc.c PROPERTIES COMPILE_FLAGS -O3)
-set_source_files_properties(${MP}/py/vm.c PROPERTIES COMPILE_FLAGS -O3)
+set_source_files_properties(${MP}/py/vm.c PROPERTIES COMPILE_FLAGS -O3) 
 
 #
 set_source_files_properties(${MICROPYTHON_SRC} PROPERTIES COMPILE_FLAGS "'-DFFCONF_H=\"${MP}/lib/oofatfs/ffconf.h\"' -Wall -Werror -Wpointer-arith -Wuninitialized -Wno-unused-label -std=gnu99 -U_FORTIFY_SOURCE -Os")
@@ -97,14 +104,14 @@ add_custom_command(OUTPUT ${GENHDR}/qstrdefs.generated.h
         COMMAND mkdir -p ${GENHDR}
         COMMAND python3 ${MP}/py/makeversionhdr.py ${GENHDR}/mpversion.h
         COMMAND python3 ${MP}/py/makemoduledefs.py --vpath="., .., ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}," ${MICROPYTHON_SRC} ${GENHDR}/moduledefs.h > ${GENHDR}/moduledefs.h
-        COMMAND ${CMAKE_C_COMPILER} -E -DNO_QSTR ${micropython_CFLAGS} -DFFCONF_H='\"${MP}/lib/oofatfs/ffconf.h\"' ${MICROPYTHON_SRC} ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h > ${GENHDR}/qstr.i.last
+        COMMAND ${CMAKE_C_COMPILER} -E -DNO_QSTR ${BOARD_DEF} ${micropython_CFLAGS} -DFFCONF_H='\"${MP}/lib/oofatfs/ffconf.h\"' ${MICROPYTHON_SRC} ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h > ${GENHDR}/qstr.i.last
         COMMAND python3 ${MP}/py/makeqstrdefs.py split ${GENHDR}/qstr.i.last ${GENHDR}/qstr ${GENHDR}/qstrdefs.collected.h
         COMMAND python3 ${MP}/py/makeqstrdefs.py cat ${GENHDR}/qstr.i.last ${GENHDR}/qstr ${GENHDR}/qstrdefs.collected.h
         COMMAND cat ${MP}/py/qstrdefs.h ${CMAKE_CURRENT_LIST_DIR}/qstrdefsport.h ${GENHDR}/qstrdefs.collected.h | sed [=['s/^Q(.*)/"&"/']=] | ${CMAKE_C_COMPILER} -E ${micropython_CFLAGS} -DFFCONF_H='\"${MP}/lib/oofatfs/ffconf.h\"' - | sed [=['s/^"\(Q(.*)\)"/\1/']=] > ${GENHDR}/qstrdefs.preprocessed.h
         COMMAND python3 ${MP}/py/makeqstrdata.py ${GENHDR}/qstrdefs.preprocessed.h > ${GENHDR}/qstrdefs.generated.h
         COMMAND make -C ${MP}/mpy-cross
         COMMAND ${MP}/mpy-cross/mpy-cross -march=armv7m ${CMAKE_CURRENT_LIST_DIR}/modules/frozentest.py
-        COMMAND ${MP}/tools/mpy-tool.py -f -q  ${GENHDR}/qstrdefs.preprocessed.h -mlongint-impl=none ${CMAKE_CURRENT_LIST_DIR}/modules/frozentest.mpy > ${CMAKE_CURRENT_LIST_DIR}/modules/_frozen_mpy.c
+        COMMAND python3 ${MP}/tools/mpy-tool.py -f -q  ${GENHDR}/qstrdefs.preprocessed.h -mlongint-impl=none ${CMAKE_CURRENT_LIST_DIR}/modules/frozentest.mpy > ${CMAKE_CURRENT_LIST_DIR}/modules/_frozen_mpy.c
         COMMAND echo "=======================end========================="
         DEPENDS ${MICROPYTHON_SRC}  ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h
         )
