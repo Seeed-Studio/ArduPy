@@ -2,61 +2,45 @@
 extern "C" {
 
 #include "lib/utils/pyexec.h"
-#include "py/obj.h"
 #include "py/compile.h"
 #include "py/gc.h"
 #include "py/mperrno.h"
+#include "py/obj.h"
 #include "py/repl.h"
 #include "py/runtime.h"
 
 #include "mphalport.h"
+#include "ardupy_storage.h"
+
+#define SerialShow SerialUSB
+void NORETURN __fatal_error(const char *msg);
 
 static char *stack_top;
 #if MICROPY_ENABLE_GC
-static char heap[23* 1024];
+static char heap[8 * 1024];
 #endif
 void setup() {
-#ifdef ARDUINO_ARCH_SAMD
-    SerialUSB.begin(115200);
-    Serial.begin(115200);
-#else
-    Serial.begin(115200);
-#endif
+    SerialShow.begin(115200);
 }
 void loop() {
     int stack_dummy;
-    unsigned char data[1024];
-    unsigned int inc = 0;
-    unsigned int get_free = 0;
+    int exit_code = PYEXEC_FORCED_EXIT;
+    bool first_run = true;
     stack_top = (char *)&stack_dummy;
 #if MICROPY_ENABLE_GC
     gc_init(heap, heap + sizeof(heap));
 #endif
-#if 0
     mp_hal_init();
-        for(int i = 8; i < 256; i++){
-            FlashClass flash((void*)0x2000 + inc,1024);
-            flash.read((void*)0x2000 + inc,data,1024);
-            inc += 0x400;
-            for(int m = 0; m < 32; m++){
-                get_free = 0;
-                for(int n = 0; n < 32; n++)
-                    get_free +=data[m*32+n];
-                if(get_free == 8160){
-                    get_free = i;
-                    goto end;
-                }
-                    
-            }
-        }
-end:
+#if MICROPY_HW_ENABLE_STORAGE
+    init_flash_fs();
 #endif
+
 #if MICROPY_ENABLE_COMPILER
 #if MICROPY_REPL_EVENT_DRIVEN
     pyexec_event_repl_init();
     for (;;) {
-        if (Serial.available()) {
-            int c = Serial.read();
+        if (SerialShow.available()) {
+            int c = SerialShow.read();
             if (pyexec_event_repl_process_char(c)) {
                 break;
             }
@@ -65,14 +49,17 @@ end:
 #else
     for (;;) {
         if (pyexec_mode_kind == PYEXEC_MODE_RAW_REPL) {
-            if (pyexec_raw_repl() != 0) {
-                break;
-            }
+            exit_code = pyexec_raw_repl();
         } else {
-            if (pyexec_friendly_repl() != 0) {
-                break;
-            }
+            exit_code = pyexec_friendly_repl();
         }
+        if (exit_code == PYEXEC_FORCED_EXIT) {
+            SerialShow.println("soft reboot");
+        }else
+        {
+            SerialShow.println("exit_code:  " + String(exit_code,HEX));
+        }
+        
     }
 
 #endif
@@ -81,7 +68,7 @@ end:
 #else
     pyexec_frozen_module("frozentest.py");
 #endif
-    Serial.print("MPY: soft reboot\r\n");
+    SerialShow.print("soft reboot\r\n");
 
     mp_deinit();
 }
@@ -97,6 +84,10 @@ void gc_collect(void) {
 }
 
 void nlr_jump_fail(void *val) {
+    printf("FATAL: uncaught exception %p\n", val);
+    mp_obj_print_exception(&mp_plat_print, MP_OBJ_FROM_PTR(val));
+    __fatal_error("");
+#if 0
     while (1) {
 #ifdef ARDUINO_ARCH_SAMD
         SerialUSB.print("nlr_jump_fail\r\n");
@@ -105,21 +96,16 @@ void nlr_jump_fail(void *val) {
 #endif
         delay(1000);
     }
+#endif
 }
 // Receive single character
 int mp_hal_stdin_rx_chr(void) {
     for (;;) {
-#ifdef ARDUINO_ARCH_SAMD
-        if (SerialUSB.available()) {
-            int c = SerialUSB.read();
+        if (SerialShow.available()) {
+            int c = SerialShow.read();
             return c;
         }
-#else
-        if (Serial.available()) {
-            int c = Serial.read();
-            return c;
-        }
-#endif
+
     }
     return 0;
 }
@@ -127,11 +113,7 @@ int mp_hal_stdin_rx_chr(void) {
 // Send string of given length
 void mp_hal_stdout_tx_strn(const char *str, mp_uint_t len) {
     if (len) {
-#ifdef ARDUINO_ARCH_SAMD
-        SerialUSB.write(str,len);
-#else
-        Serial.write(str);
-#endif
+        SerialShow.write(str, len);
     }
 }
 
