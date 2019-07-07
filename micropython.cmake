@@ -98,7 +98,11 @@ set_source_files_properties(${MICROPYTHON_SRC} PROPERTIES COMPILE_FLAGS "'-DFFCO
 #add_library(micropython ${micropython_regular_SOURCE} ${GENHDR}/qstrdefs.generated.h)
 #target_compile_options(micropython PRIVATE ${micropython_CFLAGS})
 #target_compile_definitions(micropython PRIVATE FFCONF_H=\"${MP}/lib/oofatfs/ffconf.h\")
-
+set(MPY_LIST
+    "${CMAKE_CURRENT_LIST_DIR}/frozen/adafruit_bus_device/i2c_device.mpy"
+    "${CMAKE_CURRENT_LIST_DIR}/frozen/adafruit_bus_device/__init__.mpy"
+    "${CMAKE_CURRENT_LIST_DIR}/frozen/adafruit_bus_device/spi_device.mpy"
+)
 add_custom_command(OUTPUT ${GENHDR}/qstrdefs.generated.h
         COMMAND echo "=======================start========================="
         COMMAND mkdir -p ${GENHDR}
@@ -110,9 +114,13 @@ add_custom_command(OUTPUT ${GENHDR}/qstrdefs.generated.h
         COMMAND cat ${MP}/py/qstrdefs.h ${CMAKE_CURRENT_LIST_DIR}/qstrdefsport.h ${GENHDR}/qstrdefs.collected.h | sed [=['s/^Q(.*)/"&"/']=] | ${CMAKE_C_COMPILER} -E ${micropython_CFLAGS} -DFFCONF_H='\"${MP}/lib/oofatfs/ffconf.h\"' - | sed [=['s/^"\(Q(.*)\)"/\1/']=] > ${GENHDR}/qstrdefs.preprocessed.h
         COMMAND python3 ${MP}/py/makeqstrdata.py ${GENHDR}/qstrdefs.preprocessed.h > ${GENHDR}/qstrdefs.generated.h
         COMMAND make -C ${MP}/mpy-cross
-        COMMAND ${MP}/mpy-cross/mpy-cross -march=armv7m ${CMAKE_CURRENT_LIST_DIR}/modules/frozentest.py
-        COMMAND python3 ${MP}/tools/mpy-tool.py -f -q  ${GENHDR}/qstrdefs.preprocessed.h -mlongint-impl=none ${CMAKE_CURRENT_LIST_DIR}/modules/frozentest.mpy > ${CMAKE_CURRENT_LIST_DIR}/modules/_frozen_mpy.c
+        # COMMAND cd ${CMAKE_CURRENT_LIST_DIR}/frozen
+        # COMMAND ${MP}/mpy-cross/mpy-cross -march=armv7m adafruit_bus_device/i2c_device.py
+        # COMMAND ${MP}/mpy-cross/mpy-cross -march=armv7m adafruit_bus_device/__init__.py
+        # COMMAND ${MP}/mpy-cross/mpy-cross -march=armv7m adafruit_bus_device/spi_device.py
+        # COMMAND cd -
+        COMMAND python3  ${MP}/tools/mpy-tool.py -f -q  ${GENHDR}/qstrdefs.preprocessed.h  ${MPY_LIST}  > ${CMAKE_CURRENT_LIST_DIR}/frozen/_frozen_mpy.c
         COMMAND echo "=======================end========================="
         DEPENDS ${MICROPYTHON_SRC}  ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h
         )
-set(MICROPYTHON_SRC ${MICROPYTHON_SRC}   ${CMAKE_CURRENT_LIST_DIR}/modules/_frozen_mpy.c)
+set(MICROPYTHON_SRC ${MICROPYTHON_SRC}   ${CMAKE_CURRENT_LIST_DIR}/frozen/_frozen_mpy.c)
