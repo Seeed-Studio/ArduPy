@@ -17,7 +17,7 @@ void NORETURN __fatal_error(const char *msg);
 
 static char *stack_top;
 #if MICROPY_ENABLE_GC
-static char heap[8 * 1024];
+static char heap[10 * 1024];
 #endif
 void setup() {
     SerialShow.begin(115200);
