@@ -26,7 +26,7 @@
 MEMORY
 {
     /* Leave 8KiB for the bootloader, 64k for the flash file system, and 256b for user config. */
-  FLASH (rx) : ORIGIN = 0x00000000+0x2000, LENGTH = 0x00040000-0x2000 - 64K - 256
+  FLASH (rx) : ORIGIN = 0x00000000+0x2000, LENGTH = 0x00040000-0x2000 - 32K - 256
   RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00008000
 }
 
