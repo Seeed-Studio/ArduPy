@@ -64,23 +64,6 @@ void common_hal_mcu_enable_interrupts(void) {
 
 }
 
-void common_hal_mcu_on_next_reset(mcu_runmode_t runmode) {
-    // if (runmode == RUNMODE_BOOTLOADER) {
-    //     if (!bootloader_available()) {
-    //         mp_raise_ValueError(translate("Cannot reset into bootloader because no bootloader is present."));
-    //     }
-    //     // Pretend to be the first of the two reset presses needed to enter the
-    //     // bootloader. That way one reset will end in the bootloader.
-    //     _bootloader_dbl_tap = DBL_TAP_MAGIC;
-    // } else {
-    //     // Set up the default.
-    //     _bootloader_dbl_tap = DBL_TAP_MAGIC_QUICK_BOOT;
-    // }
-    // if (runmode == RUNMODE_SAFE_MODE) {
-    //     safe_mode_on_next_reset(PROGRAMMATIC_SAFE_MODE);
-    // }
-}
-
 void common_hal_mcu_reset(void) {
     // reset();
 }
