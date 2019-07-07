@@ -33,6 +33,7 @@
 typedef struct {
     mp_obj_base_t base;
     const mcu_pin_obj_t * pin;
+    uint8_t pin_mode;
     bool output;
     bool open_drain;
 } digitalio_digitalinout_obj_t;
