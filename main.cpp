@@ -17,8 +17,19 @@ void NORETURN __fatal_error(const char *msg);
 
 static char *stack_top;
 #if MICROPY_ENABLE_GC
-static char heap[10 * 1024];
+static char heap[12 * 1024];
 #endif
+
+void reset(){
+#if MICROPY_ENABLE_GC
+    gc_init(heap, heap + sizeof(heap));
+#endif
+    mp_hal_init();
+#if MICROPY_HW_ENABLE_STORAGE
+    init_flash_fs();
+#endif
+}
+
 void setup() {
     SerialShow.begin(115200);
 }
@@ -27,13 +38,8 @@ void loop() {
     int exit_code = PYEXEC_FORCED_EXIT;
     bool first_run = true;
     stack_top = (char *)&stack_dummy;
-#if MICROPY_ENABLE_GC
-    gc_init(heap, heap + sizeof(heap));
-#endif
-    mp_hal_init();
-#if MICROPY_HW_ENABLE_STORAGE
-    init_flash_fs();
-#endif
+
+    reset();
 
 #if MICROPY_ENABLE_COMPILER
 #if MICROPY_REPL_EVENT_DRIVEN
@@ -52,6 +58,7 @@ void loop() {
             exit_code = pyexec_raw_repl();
         } else {
             exit_code = pyexec_friendly_repl();
+            reset();
         }
         if (exit_code == PYEXEC_FORCED_EXIT) {
             SerialShow.println("soft reboot");

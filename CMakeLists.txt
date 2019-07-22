@@ -28,7 +28,7 @@ else()
     message("ARDUINO = ${ARDUINO_CORE_PATH}")
     if ("${BOARD}" STREQUAL "seeeduino_m0")     
         set(ARDUINO_CMSIS_PATH  ${ARDUINO_CORE_PATH}/../../../tools/CMSIS/4.5.0)
-        set(ARDUINO_CMSIS_ATMEL_PATH  ${ARDUINO_CORE_PATH}/../../../tools/CMSIS-Atmel/1.1.0/CMSIS/Device/ATMEL)
+        set(ARDUINO_CMSIS_ATMEL_PATH  ${ARDUINO_CORE_PATH}/../../../tools/CMSIS-Atmel/1.2.0/CMSIS/Device/ATMEL)
     endif()
 endif ()
 
