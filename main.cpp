@@ -14,15 +14,12 @@ extern "C" {
 
 #define SerialShow SerialUSB
 void NORETURN __fatal_error(const char *msg);
-
 static char *stack_top;
-#if MICROPY_ENABLE_GC
-static char heap[12 * 1024];
-#endif
 
 void reset(){
 #if MICROPY_ENABLE_GC
-    gc_init(heap, heap + sizeof(heap));
+    extern int __ardupy_heap_start__, __ardupy_heap_end__;
+    gc_init(&__ardupy_heap_start__, &__ardupy_heap_end__);
 #endif
     mp_hal_init();
 #if MICROPY_HW_ENABLE_STORAGE
