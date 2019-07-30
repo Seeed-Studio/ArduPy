@@ -25,7 +25,6 @@
  */
 
 #include "mphalport.h"
-
 #include "hal_init.h"
 #include "hal_flash.h"
 #include "hpl_pm_base.h"
@@ -46,6 +45,64 @@ mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
     mp_raise_OSError(MP_ENOENT);
 }
 #endif
+
+#include "py/obj.h"
+#include "py/mpstate.h"
+
+int mp_interrupt_char = -1;
+void * pendsv_object;
+
+extern int mp_hal_stdin_rx_available(void);
+extern int mp_hal_stdin_rx_peek(void);
+extern int mp_hal_stdin_rx_read(void);
+int mp_hal_get_interrupt_char(){
+    return mp_interrupt_char;
+}
+void usb_invoke(){
+    UDD_Handler();
+
+    int token = mp_hal_get_interrupt_char();
+
+    if (token == -1 || !mp_hal_stdin_rx_available()){
+        return;
+    }
+    
+    int peek = mp_hal_stdin_rx_peek();
+
+    if (peek == token){
+        mp_hal_stdin_rx_read();
+        pendsv_kbd_intr();
+    }
+}
+void mp_hal_usb_init(){
+    USB_SetHandler(&usb_invoke);
+}
+
+void mp_hal_set_interrupt_char(char c) {
+    if ((signed char)c == -1) {
+        mp_obj_exception_clear_traceback(MP_OBJ_FROM_PTR(&MP_STATE_VM(mp_kbd_exception)));
+    }
+    mp_interrupt_char = (signed char)c;
+}
+
+void mp_keyboard_interrupt(void) {
+    MP_STATE_VM(mp_pending_exception) = MP_OBJ_FROM_PTR(&MP_STATE_VM(mp_kbd_exception));
+    #if MICROPY_ENABLE_SCHEDULER
+    if (MP_STATE_VM(sched_state) == MP_SCHED_IDLE) {
+        MP_STATE_VM(sched_state) = MP_SCHED_PENDING;
+    }
+    #endif
+}
+
+void pendsv_kbd_intr(){
+    if (MP_STATE_VM(mp_pending_exception) == MP_OBJ_NULL) {
+        mp_keyboard_interrupt();
+    } else {
+        MP_STATE_VM(mp_pending_exception) = MP_OBJ_NULL;
+        pendsv_object = &MP_STATE_VM(mp_kbd_exception);
+        SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
+    }
+}
 
 // mp_import_stat_t mp_import_stat(const char *path) { return MP_IMPORT_STAT_NO_EXIST; }
 
@@ -95,4 +152,3 @@ void mp_hal_delay_ms(mp_uint_t ms) {
 void mp_hal_delay_us(mp_uint_t us) {
     delayMicroseconds(us);
 }
-

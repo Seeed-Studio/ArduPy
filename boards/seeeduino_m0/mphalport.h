@@ -42,7 +42,8 @@
 // #define INTERNAL_FLASH_SYSTICK_MASK    (0x1ff) // 512ms
 // #define INTERNAL_FLASH_IDLE_TICK(tick) (((tick) & INTERNAL_FLASH_SYSTICK_MASK) == 2)
 
-static inline void mp_hal_set_interrupt_char(char c) {}
+int  mp_hal_get_interrupt_char();
+void mp_hal_set_interrupt_char(char c);
 void mp_hal_init();
 
 int32_t board_flash_write(const volatile void *flash_ptr, const void *data, uint32_t size);

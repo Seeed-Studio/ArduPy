@@ -70,7 +70,7 @@ const mp_obj_module_t ardupy_module = {
     .globals = (mp_obj_dict_t*)&ardupy_module_globals,
 };
 
-
+void mp_hal_usb_init();
 void mp_hal_init() {
     mp_init();
     // mp_obj_list_init(MP_OBJ_TO_PTR(mp_sys_path), 0);
@@ -88,6 +88,7 @@ void mp_hal_init() {
     mp_obj_list_init(mp_sys_argv, 0);
     
     readline_init0();
+    mp_hal_usb_init();
 }
 
 
