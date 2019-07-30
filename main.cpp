@@ -13,11 +13,11 @@ extern "C" {
 #include "ardupy_storage.h"
 
 #define SerialShow SerialUSB
-void NORETURN __fatal_error(const char *msg);
-static char *stack_top;
 
+void NORETURN __fatal_error(const char *msg);
 void reset(){
 #if MICROPY_ENABLE_GC
+    //the linker varibale
     extern int __ardupy_heap_start__, __ardupy_heap_end__;
     gc_init(&__ardupy_heap_start__, &__ardupy_heap_end__);
 #endif
@@ -26,17 +26,13 @@ void reset(){
     init_flash_fs();
 #endif
 }
-
 void setup() {
     SerialShow.begin(115200);
 }
 void loop() {
-    int stack_dummy;
     int exit_code = PYEXEC_FORCED_EXIT;
-    bool first_run = true;
-    stack_top = (char *)&stack_dummy;
-
     reset();
+    pyexec_file_if_exists("boot.py");
 
 #if MICROPY_ENABLE_COMPILER
 #if MICROPY_REPL_EVENT_DRIVEN
@@ -53,14 +49,15 @@ void loop() {
     for (;;) {
         if (pyexec_mode_kind == PYEXEC_MODE_RAW_REPL) {
             exit_code = pyexec_raw_repl();
-        } else {
+        } 
+        else {
             exit_code = pyexec_friendly_repl();
             reset();
         }
         if (exit_code == PYEXEC_FORCED_EXIT) {
             SerialShow.println("soft reboot");
-        }else
-        {
+        }
+        else{
             SerialShow.println("exit_code:  " + String(exit_code,HEX));
         }
         
@@ -78,11 +75,14 @@ void loop() {
 }
 
 void gc_collect(void) {
+    //the linker variable
+    extern int __StackTop;
+
     // WARNING: This gc_collect implementation doesn't try to get root
     // pointers from CPU registers, and thus may function incorrectly.
     void *dummy;
     gc_collect_start();
-    gc_collect_root(&dummy, ((mp_uint_t)stack_top - (mp_uint_t)&dummy) / sizeof(mp_uint_t));
+    gc_collect_root(&dummy, ((mp_uint_t)&__StackTop - (mp_uint_t)&dummy) / sizeof(mp_uint_t));
     gc_collect_end();
     gc_dump_info();
 }
@@ -114,11 +114,22 @@ int mp_hal_stdin_rx_chr(void) {
     return 0;
 }
 
+int mp_hal_stdin_rx_available(void){
+    return SerialShow.available();
+}
+
+int mp_hal_stdin_rx_peek(void){
+    return SerialShow.peek();
+}
+
+int mp_hal_stdin_rx_read(void){
+    return SerialShow.read();
+}
+
 // Send string of given length
 void mp_hal_stdout_tx_strn(const char *str, mp_uint_t len) {
     if (len) {
         SerialShow.write(str, len);
     }
 }
-
 } // extern "C"
