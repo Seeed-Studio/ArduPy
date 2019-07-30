@@ -177,7 +177,8 @@ SECTIONS
 		__data_end__ = .;
 
 	} > RAM
-
+	
+	__ardupy_stack_size__ = 4K;
 	.bss :
 	{
 		. = ALIGN(4);
@@ -185,6 +186,9 @@ SECTIONS
 		*(.bss*)
 		*(COMMON)
 		. = ALIGN(4);
+		__ardupy_heap_start__ = .;
+		. = ORIGIN(RAM) + LENGTH(RAM) - __ardupy_stack_size__;
+		__ardupy_heap_end__ = .;
 		__bss_end__ = .;
 	} > RAM
 
@@ -207,7 +211,7 @@ SECTIONS
 	/* Set stack top to end of RAM, and stack limit move down by
 	 * size of stack_dummy section */
 	__StackTop = ORIGIN(RAM) + LENGTH(RAM);
-	__StackLimit = __StackTop - SIZEOF(.stack_dummy);
+	__StackLimit = __StackTop - __ardupy_stack_size__;
 	PROVIDE(__stack = __StackTop);
 
 	__ram_end__ = ORIGIN(RAM) + LENGTH(RAM) -1 ;
