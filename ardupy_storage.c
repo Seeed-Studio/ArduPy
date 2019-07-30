@@ -254,7 +254,7 @@ void ardupy_flash_init_vfs(fs_user_mount_t *vfs) {
     vfs->u.ioctl[1] = MP_OBJ_FROM_PTR(&ardupy_flash_obj);
 }
 
-STATIC fs_user_mount_t fs_user_mount_flash;
+//STATIC fs_user_mount_t fs_user_mount_flash;
 // static const char fresh_boot_py[] = "# boot.py -- run on boot-up\r\n"
 //                                     "# can run arbitrary Python, but best to keep it minimal\r\n"
 //                                     "\r\n"
@@ -285,11 +285,12 @@ static void make_empty_file(FATFS *fatfs, const char *path) {
     f_close(&fp);
 }
 
+#include "py/gc.h"
 
 // avoid inlining to avoid stack usage within main()
 MP_NOINLINE  bool init_flash_fs() {
     // init the vfs object
-    fs_user_mount_t *vfs_fat = &fs_user_mount_flash;
+    fs_user_mount_t *vfs_fat = (fs_user_mount_t *)gc_alloc(sizeof(fs_user_mount_t), 0);
     vfs_fat->flags = 0;
     storage_init();
     ardupy_flash_init_vfs(vfs_fat);
