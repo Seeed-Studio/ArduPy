@@ -34,6 +34,7 @@
 
 #include "common-hal/digitalio/DigitalInOut.h"
 #include "shared-bindings/util.h"
+#include "shared-bindings/digitalio/DriveMode.h"
 
 //| .. currentmodule:: digitalio
 //|
@@ -47,13 +48,17 @@
 //|   Create a new GroveLed object associated with the pin. Defaults to output
 //|
 
+extern void common_hal_digitalio_digitalinout_switch_to_output(
+    digitalio_digitalinout_obj_t *self, 
+    bool value, 
+    digitalio_drive_mode_t drive_mode
+);
+
 mp_obj_t digitalio_digitalinout_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args);
 mp_obj_t grove_led_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     digitalio_digitalinout_obj_t* self = (digitalio_digitalinout_obj_t *)
         digitalio_digitalinout_make_new(type, n_args, n_kw, args);
-    self->output = true;
-    self->open_drain = false;
-    pinMode(self->pin->number, OUTPUT);
+    common_hal_digitalio_digitalinout_switch_to_output(self, false, DRIVE_MODE_PUSH_PULL);
     return (mp_obj_t)self;
 }
 
