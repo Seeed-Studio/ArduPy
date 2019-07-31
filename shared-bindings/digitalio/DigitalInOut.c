@@ -58,7 +58,7 @@
 //|   :param ~microcontroller.Pin pin: The pin to control
 //|
 
-STATIC mp_obj_t digitalio_digitalinout_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args) {
+mp_obj_t digitalio_digitalinout_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     mp_arg_check_num(n_args, n_kw, 1, 1, false);
 
     digitalio_digitalinout_obj_t *self = m_new_obj(digitalio_digitalinout_obj_t);
@@ -76,7 +76,7 @@ STATIC mp_obj_t digitalio_digitalinout_make_new(const mp_obj_type_t *type, size_
 //|
 //|      Turn off the DigitalInOut and release the pin for other use.
 //|
-STATIC mp_obj_t digitalio_digitalinout_obj_deinit(mp_obj_t self_in) {
+mp_obj_t digitalio_digitalinout_obj_deinit(mp_obj_t self_in) {
     digitalio_digitalinout_obj_t *self = MP_OBJ_TO_PTR(self_in);
     common_hal_digitalio_digitalinout_deinit(self);
     return mp_const_none;
@@ -94,12 +94,12 @@ MP_DEFINE_CONST_FUN_OBJ_1(digitalio_digitalinout_deinit_obj, digitalio_digitalin
 //|      Automatically deinitializes the hardware when exiting a context. See
 //|      :ref:`lifetime-and-contextmanagers` for more info.
 //|
-STATIC mp_obj_t digitalio_digitalinout_obj___exit__(size_t n_args, const mp_obj_t *args) {
+mp_obj_t digitalio_digitalinout_obj___exit__(size_t n_args, const mp_obj_t *args) {
     (void)n_args;
     common_hal_digitalio_digitalinout_deinit(args[0]);
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(digitalio_digitalinout_obj___exit___obj, 4, 4, digitalio_digitalinout_obj___exit__);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(digitalio_digitalinout_obj___exit___obj, 4, 4, digitalio_digitalinout_obj___exit__);
 
 //|
 //|   .. method:: switch_to_output(value=False, drive_mode=digitalio.DriveMode.PUSH_PULL)
@@ -110,7 +110,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(digitalio_digitalinout_obj___exit___o
 //|       :param bool value: default value to set upon switching
 //|       :param ~digitalio.DriveMode drive_mode: drive mode for the output
 //|
-STATIC mp_obj_t digitalio_digitalinout_switch_to_output(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+mp_obj_t digitalio_digitalinout_switch_to_output(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     enum { ARG_value, ARG_drive_mode };
     static const mp_arg_t allowed_args[] = {
         {MP_QSTR_value, MP_ARG_BOOL, {.u_bool = false}},
@@ -148,7 +148,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(digitalio_digitalinout_switch_to_output_obj, 1, digit
 //|       switch.pull = digitalio.Pull.UP
 //|       print(switch.value)
 //|
-STATIC mp_obj_t digitalio_digitalinout_switch_to_input(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+mp_obj_t digitalio_digitalinout_switch_to_input(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     enum { ARG_pull };
     static const mp_arg_t allowed_args[] = {
         {MP_QSTR_pull, MP_ARG_OBJ, {.u_rom_obj = mp_const_none}},
@@ -185,7 +185,7 @@ typedef struct {
 extern const digitalio_digitalio_direction_obj_t digitalio_digitalio_direction_in_obj;
 extern const digitalio_digitalio_direction_obj_t digitalio_digitalio_direction_out_obj;
 
-STATIC mp_obj_t digitalio_digitalinout_obj_get_direction(mp_obj_t self_in) {
+mp_obj_t digitalio_digitalinout_obj_get_direction(mp_obj_t self_in) {
     digitalio_digitalinout_obj_t *self = MP_OBJ_TO_PTR(self_in);
     raise_error_if_deinited(common_hal_digitalio_digitalinout_deinited(self));
     digitalio_direction_t direction = common_hal_digitalio_digitalinout_get_direction(self);
@@ -195,7 +195,7 @@ STATIC mp_obj_t digitalio_digitalinout_obj_get_direction(mp_obj_t self_in) {
     return (mp_obj_t)&digitalio_direction_output_obj;
 }
 
-STATIC mp_obj_t digitalio_digitalinout_obj_set_direction(mp_obj_t self_in, mp_obj_t value) {
+mp_obj_t digitalio_digitalinout_obj_set_direction(mp_obj_t self_in, mp_obj_t value) {
     digitalio_digitalinout_obj_t *self = MP_OBJ_TO_PTR(self_in);
     raise_error_if_deinited(common_hal_digitalio_digitalinout_deinited(self));
     if (value == &digitalio_direction_input_obj) {
@@ -213,14 +213,14 @@ STATIC mp_obj_t digitalio_digitalinout_obj_set_direction(mp_obj_t self_in, mp_ob
 //|
 //|     The digital logic level of the pin.
 //|
-STATIC mp_obj_t digitalio_digitalinout_obj_get_value(mp_obj_t self_in) {
+mp_obj_t digitalio_digitalinout_obj_get_value(mp_obj_t self_in) {
     digitalio_digitalinout_obj_t *self = MP_OBJ_TO_PTR(self_in);
     raise_error_if_deinited(common_hal_digitalio_digitalinout_deinited(self));
     bool value = common_hal_digitalio_digitalinout_get_value(self);
     return mp_obj_new_bool(value);
 }
 
-STATIC mp_obj_t digitalio_digitalinout_obj_set_value(mp_obj_t self_in, mp_obj_t value) {
+mp_obj_t digitalio_digitalinout_obj_set_value(mp_obj_t self_in, mp_obj_t value) {
     digitalio_digitalinout_obj_t *self = MP_OBJ_TO_PTR(self_in);
     raise_error_if_deinited(common_hal_digitalio_digitalinout_deinited(self));
     if (common_hal_digitalio_digitalinout_get_direction(self) == DIRECTION_INPUT) {
@@ -238,7 +238,7 @@ STATIC mp_obj_t digitalio_digitalinout_obj_set_value(mp_obj_t self_in, mp_obj_t 
 //|     - `digitalio.DriveMode.PUSH_PULL`
 //|     - `digitalio.DriveMode.OPEN_DRAIN`
 //|
-STATIC mp_obj_t digitalio_digitalinout_obj_get_drive_mode(mp_obj_t self_in) {
+mp_obj_t digitalio_digitalinout_obj_get_drive_mode(mp_obj_t self_in) {
     digitalio_digitalinout_obj_t *self = MP_OBJ_TO_PTR(self_in);
     raise_error_if_deinited(common_hal_digitalio_digitalinout_deinited(self));
     if (common_hal_digitalio_digitalinout_get_direction(self) == DIRECTION_INPUT) {
@@ -252,7 +252,7 @@ STATIC mp_obj_t digitalio_digitalinout_obj_get_drive_mode(mp_obj_t self_in) {
     return (mp_obj_t)&digitalio_drive_mode_open_drain_obj;
 }
 
-STATIC mp_obj_t digitalio_digitalinout_obj_set_drive_mode(mp_obj_t self_in, mp_obj_t drive_mode) {
+mp_obj_t digitalio_digitalinout_obj_set_drive_mode(mp_obj_t self_in, mp_obj_t drive_mode) {
     digitalio_digitalinout_obj_t *self = MP_OBJ_TO_PTR(self_in);
     raise_error_if_deinited(common_hal_digitalio_digitalinout_deinited(self));
     if (common_hal_digitalio_digitalinout_get_direction(self) == DIRECTION_INPUT) {
@@ -278,7 +278,7 @@ STATIC mp_obj_t digitalio_digitalinout_obj_set_drive_mode(mp_obj_t self_in, mp_o
 //|
 //|     :raises AttributeError: if `direction` is :py:data:`~digitalio.Direction.OUTPUT`.
 //|
-STATIC mp_obj_t digitalio_digitalinout_obj_get_pull(mp_obj_t self_in) {
+mp_obj_t digitalio_digitalinout_obj_get_pull(mp_obj_t self_in) {
     digitalio_digitalinout_obj_t *self = MP_OBJ_TO_PTR(self_in);
     raise_error_if_deinited(common_hal_digitalio_digitalinout_deinited(self));
     if (common_hal_digitalio_digitalinout_get_direction(self) == DIRECTION_OUTPUT) {
@@ -294,7 +294,7 @@ STATIC mp_obj_t digitalio_digitalinout_obj_get_pull(mp_obj_t self_in) {
     return (mp_obj_t)&mp_const_none_obj;
 }
 
-STATIC mp_obj_t digitalio_digitalinout_obj_set_pull(mp_obj_t self_in, mp_obj_t pull_obj) {
+mp_obj_t digitalio_digitalinout_obj_set_pull(mp_obj_t self_in, mp_obj_t pull_obj) {
     digitalio_digitalinout_obj_t *self = MP_OBJ_TO_PTR(self_in);
     raise_error_if_deinited(common_hal_digitalio_digitalinout_deinited(self));
     if (common_hal_digitalio_digitalinout_get_direction(self) == DIRECTION_OUTPUT) {
@@ -313,7 +313,7 @@ STATIC mp_obj_t digitalio_digitalinout_obj_set_pull(mp_obj_t self_in, mp_obj_t p
     return mp_const_none;
 }
 
-STATIC void digitalio_digitalinout_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
+void digitalio_digitalinout_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
     if (dest[0] != MP_OBJ_NULL) {
         switch (attr) {
         case MP_QSTR_direction:
@@ -356,7 +356,7 @@ STATIC void digitalio_digitalinout_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_
 
 
 
-STATIC const mp_rom_map_elem_t digitalio_digitalinout_locals_dict_table[] = {
+const mp_rom_map_elem_t digitalio_digitalinout_locals_dict_table[] = {
     // instance methods
     {MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&digitalio_digitalinout_deinit_obj)},
     {MP_ROM_QSTR(MP_QSTR___enter__), MP_ROM_PTR(&default___enter___obj)},
@@ -365,7 +365,7 @@ STATIC const mp_rom_map_elem_t digitalio_digitalinout_locals_dict_table[] = {
     {MP_ROM_QSTR(MP_QSTR_switch_to_input), MP_ROM_PTR(&digitalio_digitalinout_switch_to_input_obj)},
 };
 
-STATIC MP_DEFINE_CONST_DICT(digitalio_digitalinout_locals_dict, digitalio_digitalinout_locals_dict_table);
+MP_DEFINE_CONST_DICT(digitalio_digitalinout_locals_dict, digitalio_digitalinout_locals_dict_table);
 
 const mp_obj_type_t digitalio_digitalinout_type = {
     {&mp_type_type},
