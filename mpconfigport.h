@@ -74,6 +74,7 @@ extern const struct _mp_obj_module_t microcontroller_module;
 extern const struct _mp_obj_module_t bitbangio_module;
 extern const struct _mp_obj_module_t analogio_module;
 extern const struct _mp_obj_module_t digitalio_module;
+extern const struct _mp_obj_module_t grove_module;
 extern const struct _mp_obj_module_t pulseio_module;
 extern const struct _mp_obj_module_t busio_module;
 extern const struct _mp_obj_module_t board_module;
@@ -105,47 +106,48 @@ extern const struct _mp_obj_module_t supervisor_module;
 
 #if MICROPY_PY_UJSON
 #define JSON_MODULE            { MP_ROM_QSTR(MP_QSTR_json), MP_ROM_PTR(&mp_module_ujson) },
-#else
+#else 
 #define JSON_MODULE
 #endif
 
 
 
 // extra built in names to add to the global namespace
-#define MICROPY_PORT_BUILTINS \
+#define MICROPY_PORT_BUILTINS                                            \
     { MP_OBJ_NEW_QSTR(MP_QSTR_open), MP_ROM_PTR(&mp_builtin_open_obj) }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_help), (mp_obj_t)&mp_builtin_help_obj }, \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_help), (mp_obj_t)&mp_builtin_help_obj },   \
     { MP_OBJ_NEW_QSTR(MP_QSTR_input), (mp_obj_t)&mp_builtin_input_obj }, \
 
     // { MP_OBJ_NEW_QSTR(MP_QSTR_uhashlib), (mp_obj_t)&mp_module_uhashlib }, 
 
 
-#define EXTRA_BUILTIN_MODULES \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_analogio), (mp_obj_t)&analogio_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_board), (mp_obj_t)&board_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_busio), (mp_obj_t)&busio_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_digitalio), (mp_obj_t)&digitalio_module }, \
+#define EXTRA_BUILTIN_MODULES                                                        \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_analogio), (mp_obj_t)&analogio_module },               \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_board), (mp_obj_t)&board_module },                     \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_busio), (mp_obj_t)&busio_module },                     \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_digitalio), (mp_obj_t)&digitalio_module },             \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_grove), (mp_obj_t)&grove_module },                     \
     { MP_OBJ_NEW_QSTR(MP_QSTR_microcontroller), (mp_obj_t)&microcontroller_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_pulseio), (mp_obj_t)&pulseio_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_supervisor), (mp_obj_t)&supervisor_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_binascii), (mp_obj_t)&mp_module_ubinascii }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_collections), (mp_obj_t)&mp_module_collections }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_hashlib), (mp_obj_t)&mp_module_uhashlib }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_heapq), (mp_obj_t)&mp_module_uheapq }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_io), (mp_obj_t)&mp_module_io }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_select), (mp_obj_t)&mp_module_uselect }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_zlib), (mp_obj_t)&mp_module_uzlib }, \
-    JSON_MODULE \
-    ERRNO_MODULE \
-    RE_MODULE \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_pulseio), (mp_obj_t)&pulseio_module },                 \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_supervisor), (mp_obj_t)&supervisor_module },           \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_binascii), (mp_obj_t)&mp_module_ubinascii },           \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_collections), (mp_obj_t)&mp_module_collections },      \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_hashlib), (mp_obj_t)&mp_module_uhashlib },             \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_heapq), (mp_obj_t)&mp_module_uheapq },                 \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_io), (mp_obj_t)&mp_module_io },                        \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_select), (mp_obj_t)&mp_module_uselect },               \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_zlib), (mp_obj_t)&mp_module_uzlib },                   \
+    JSON_MODULE                                                                      \
+    ERRNO_MODULE                                                                     \
+    RE_MODULE                                                                        \
 
 
-#define MICROPY_PORT_BUILTIN_MODULES \
-    { MP_ROM_QSTR(MP_QSTR_ardupy), MP_ROM_PTR(&ardupy_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_os), MP_ROM_PTR(&mp_module_uos) }, \
-    { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&mp_module_utime) }, \
+#define MICROPY_PORT_BUILTIN_MODULES                              \
+    { MP_ROM_QSTR(MP_QSTR_ardupy), MP_ROM_PTR(&ardupy_module) },  \
+    { MP_ROM_QSTR(MP_QSTR_os), MP_ROM_PTR(&mp_module_uos) },      \
+    { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&mp_module_utime) },  \
     { MP_ROM_QSTR(MP_QSTR_array), MP_ROM_PTR(&mp_module_array) }, \
-    EXTRA_BUILTIN_MODULES \
+    EXTRA_BUILTIN_MODULES                                         \
     
 
 #define MICROPY_PORT_BUILTIN_MODULE_WEAK_LINKS \
