@@ -55,10 +55,15 @@
 //|
 //|   :param ~microcontroller.Pin pin: the pin to read from
 //|
-STATIC mp_obj_t analogio_analogin_make_new(const mp_obj_type_t *type,
-        mp_uint_t n_args, const mp_obj_t *args, mp_map_t *kw_args) {
+
+STATIC mp_obj_t analogio_analogin_make_new(
+    const mp_obj_type_t *type, 
+    size_t n_args, 
+    size_t n_kw, 
+    const mp_obj_t *args
+    ) {
     // check number of arguments
-    mp_arg_check_num(n_args, kw_args, 1, 1, false);
+    mp_arg_check_num(n_args, n_kw, 1, 1, false);
 
     // 1st argument is the pin
     mp_obj_t pin_obj = args[0];
@@ -114,14 +119,22 @@ STATIC mp_obj_t analogio_analogin_obj_get_value(mp_obj_t self_in) {
     raise_error_if_deinited(common_hal_analogio_analogin_deinited(self));
     return MP_OBJ_NEW_SMALL_INT(common_hal_analogio_analogin_get_value(self));
 }
-MP_DEFINE_CONST_FUN_OBJ_1(analogio_analogin_get_value_obj, analogio_analogin_obj_get_value);
 
-const mp_obj_property_t analogio_analogin_value_obj = {
-    .base.type = &mp_type_property,
-    .proxy = {(mp_obj_t)&analogio_analogin_get_value_obj,
-              (mp_obj_t)&mp_const_none_obj,
-              (mp_obj_t)&mp_const_none_obj},
-};
+STATIC void analogio_digitalinout_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest){
+    if (dest[0] != MP_OBJ_NULL) {
+        generic_method_lookup(self_in, attr, dest);
+        dest[0] = MP_OBJ_NULL; // indicate success
+    } else {
+        switch (attr) {
+        case MP_QSTR_value:
+            dest[0] = analogio_analogin_obj_get_value(self_in);
+            break;
+        default:
+            generic_method_lookup(self_in, attr, dest);
+            break;
+        }
+    }
+}
 
 //|   .. attribute:: reference_voltage
 //|
@@ -133,22 +146,11 @@ STATIC mp_obj_t analogio_analogin_obj_get_reference_voltage(mp_obj_t self_in) {
     raise_error_if_deinited(common_hal_analogio_analogin_deinited(self));
     return mp_obj_new_float(common_hal_analogio_analogin_get_reference_voltage(self));
 }
-MP_DEFINE_CONST_FUN_OBJ_1(analogio_analogin_get_reference_voltage_obj,
-                          analogio_analogin_obj_get_reference_voltage);
-
-const mp_obj_property_t analogio_analogin_reference_voltage_obj = {
-    .base.type = &mp_type_property,
-    .proxy = {(mp_obj_t)&analogio_analogin_get_reference_voltage_obj,
-              (mp_obj_t)&mp_const_none_obj,
-              (mp_obj_t)&mp_const_none_obj},
-};
 
 STATIC const mp_rom_map_elem_t analogio_analogin_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_deinit),             MP_ROM_PTR(&analogio_analogin_deinit_obj) },
     { MP_ROM_QSTR(MP_QSTR___enter__),          MP_ROM_PTR(&default___enter___obj) },
     { MP_ROM_QSTR(MP_QSTR___exit__),           MP_ROM_PTR(&analogio_analogin___exit___obj) },
-    { MP_ROM_QSTR(MP_QSTR_value),              MP_ROM_PTR(&analogio_analogin_value_obj)},
-    { MP_ROM_QSTR(MP_QSTR_reference_voltage),  MP_ROM_PTR(&analogio_analogin_reference_voltage_obj)},
 };
 
 STATIC MP_DEFINE_CONST_DICT(analogio_analogin_locals_dict, analogio_analogin_locals_dict_table);
@@ -158,4 +160,5 @@ const mp_obj_type_t analogio_analogin_type = {
     .name = MP_QSTR_AnalogIn,
     .make_new = analogio_analogin_make_new,
     .locals_dict = (mp_obj_t)&analogio_analogin_locals_dict,
+    .attr = analogio_digitalinout_obj_attr,
 };
