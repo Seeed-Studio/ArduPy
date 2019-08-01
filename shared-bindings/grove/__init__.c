@@ -34,12 +34,15 @@
 
 extern const mp_obj_type_t grove_led_module;
 extern const mp_obj_type_t grove_button_module;
+extern const mp_obj_type_t analogio_analogin_type;
 
 STATIC const mp_rom_map_elem_t grove_module_globals_table[] = {
-    { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_grove) },
-    { MP_ROM_QSTR(MP_QSTR_grove_led),  MP_ROM_PTR(&grove_led_module) },
-    { MP_ROM_QSTR(MP_QSTR_grove_button),  MP_ROM_PTR(&grove_button_module) },
-    { MP_ROM_QSTR(MP_QSTR_grove_flame),  MP_ROM_PTR(&grove_button_module) },
+    { MP_ROM_QSTR(MP_QSTR___name__),                 MP_ROM_QSTR(MP_QSTR_grove) },
+    { MP_ROM_QSTR(MP_QSTR_grove_led),                MP_ROM_PTR(&grove_led_module) },
+    { MP_ROM_QSTR(MP_QSTR_grove_button),             MP_ROM_PTR(&grove_button_module) },
+    { MP_ROM_QSTR(MP_QSTR_grove_flame),              MP_ROM_PTR(&grove_button_module) },
+    { MP_ROM_QSTR(MP_QSTR_grove_temperature_sensor), MP_ROM_PTR(&analogio_analogin_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_water_sensor),       MP_ROM_PTR(&analogio_analogin_type) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(grove_module_globals, grove_module_globals_table);
