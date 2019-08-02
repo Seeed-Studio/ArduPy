@@ -55,9 +55,14 @@
 //|
 //|   :param ~microcontroller.Pin pin: the pin to output to
 //|
-STATIC mp_obj_t analogio_analogout_make_new(const mp_obj_type_t *type, mp_uint_t n_args, const mp_obj_t *args, mp_map_t *kw_args) {
+STATIC mp_obj_t analogio_analogout_make_new(
+    const mp_obj_type_t *type, 
+    size_t n_args, 
+    size_t n_kw, 
+    const mp_obj_t *args
+    ) {
     // check arguments
-    mp_arg_check_num(n_args, kw_args, 1, 1, false);
+    mp_arg_check_num(n_args, n_kw, 1, 1, false);
 
     assert_pin(args[0], false);
     const mcu_pin_obj_t *pin = MP_OBJ_TO_PTR(args[0]);
@@ -111,29 +116,35 @@ STATIC mp_obj_t analogio_analogout_obj_set_value(mp_obj_t self_in, mp_obj_t valu
    analogio_analogout_obj_t *self = MP_OBJ_TO_PTR(self_in);
    raise_error_if_deinited(common_hal_analogio_analogout_deinited(self));
    uint32_t v = mp_obj_get_int(value);
+
    if (v >= (1 << 16)) {
-       mp_raise_ValueError("AnalogOut is only 16 bits. Value must be less than 65536.");
+      mp_raise_ValueError("AnalogOut is only 16 bits. Value must be less than 65536.");
    }
    common_hal_analogio_analogout_set_value(self, v);
    return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_2(analogio_analogout_set_value_obj, analogio_analogout_obj_set_value);
 
-const mp_obj_property_t analogio_analogout_value_obj = {
-    .base.type = &mp_type_property,
-    .proxy = {(mp_obj_t)&mp_const_none_obj,
-              (mp_obj_t)&analogio_analogout_set_value_obj,
-              (mp_obj_t)&mp_const_none_obj},
-};
+STATIC void analogio_analogout_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest){
+    if (dest[0] != MP_OBJ_NULL) {
+        switch (attr) {
+        case MP_QSTR_value:
+            analogio_analogout_obj_set_value(self_in, dest[1]);
+            break;
+        default:
+            generic_method_lookup(self_in, attr, dest);
+            break;
+        }
+        dest[0] = MP_OBJ_NULL; // indicate success
+    } else {
+        generic_method_lookup(self_in, attr, dest);
+    }
+}
 
 STATIC const mp_rom_map_elem_t analogio_analogout_locals_dict_table[] = {
     // instance methods
     { MP_OBJ_NEW_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&analogio_analogout_deinit_obj) },
     { MP_ROM_QSTR(MP_QSTR___enter__),  MP_ROM_PTR(&default___enter___obj) },
     { MP_ROM_QSTR(MP_QSTR___exit__),   MP_ROM_PTR(&analogio_analogout___exit___obj) },
-
-    // Properties
-    { MP_OBJ_NEW_QSTR(MP_QSTR_value), (mp_obj_t)&analogio_analogout_value_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(analogio_analogout_locals_dict, analogio_analogout_locals_dict_table);
@@ -143,4 +154,5 @@ const mp_obj_type_t analogio_analogout_type = {
     .name = MP_QSTR_AnalogOut,
     .make_new = analogio_analogout_make_new,
     .locals_dict = (mp_obj_t)&analogio_analogout_locals_dict,
+    .attr = analogio_analogout_obj_attr,
 };

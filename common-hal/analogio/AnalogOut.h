@@ -34,6 +34,7 @@
 
 typedef struct {
     mp_obj_base_t base;
+    mcu_pin_obj_t * pin;
     uint8_t channel;
     bool deinited;
 } analogio_analogout_obj_t;
