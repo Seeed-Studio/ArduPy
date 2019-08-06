@@ -34,33 +34,31 @@
 
 #include "common-hal/digitalio/DigitalInOut.h"
 #include "shared-bindings/util.h"
-#include "shared-bindings/digitalio/Pull.h"
+#include "shared-bindings/digitalio/DriveMode.h"
 
 //| .. currentmodule:: digitalio
 //|
-//| :class:`GroveButton` -- digital input
+//| :class:`GroveLed` -- digital input and output
 //| =========================================================
 //|
-//| A GroveButton is used to digitally control Input pins.
+//| A GroveLed is used to digitally control Output pins.
+
+//| .. class:: GroveLed(pin)
+//|
+//|   Create a new GroveLed object associated with the pin. Defaults to output
 //|
 
-//| .. class:: GroveButton(pin)
-//|
-//|   Create a new GroveButton object associated with the pin. Defaults to input
-//|
-//|   :param ~microcontroller.Pin pin: The pin to control
-//|
-
-extern void common_hal_digitalio_digitalinout_switch_to_input(
+extern void common_hal_digitalio_digitalinout_switch_to_output(
     digitalio_digitalinout_obj_t *self, 
-    digitalio_pull_t pull
+    bool value, 
+    digitalio_drive_mode_t drive_mode
 );
 
 mp_obj_t digitalio_digitalinout_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args);
-mp_obj_t grove_button_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args) {
+mp_obj_t grove_led_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     digitalio_digitalinout_obj_t* self = (digitalio_digitalinout_obj_t *)
         digitalio_digitalinout_make_new(type, n_args, n_kw, args);
-    common_hal_digitalio_digitalinout_switch_to_input(self, PULL_NONE);
+    common_hal_digitalio_digitalinout_switch_to_output(self, false, DRIVE_MODE_PUSH_PULL);
     return (mp_obj_t)self;
 }
 
@@ -69,10 +67,18 @@ mp_obj_t grove_button_make_new(const mp_obj_type_t *type, size_t n_args, size_t 
 //|     The digital logic level of the pin.
 //|
 mp_obj_t digitalio_digitalinout_obj_get_value(mp_obj_t self_in);
+mp_obj_t digitalio_digitalinout_obj_set_value(mp_obj_t self_in, mp_obj_t value);
 
-void grove_button_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
+STATIC void grove_led_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
     if (dest[0] != MP_OBJ_NULL) {
-        generic_method_lookup(self_in, attr, dest);
+        switch (attr) {
+        case MP_QSTR_value:
+            digitalio_digitalinout_obj_set_value(self_in,dest[1]);
+            break;
+        default:
+            generic_method_lookup(self_in, attr, dest);
+            break;
+        }
         dest[0] = MP_OBJ_NULL; // indicate success
     } else {
         switch (attr) {
@@ -87,10 +93,10 @@ void grove_button_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
 }
 
 extern const mp_obj_dict_t digitalio_digitalinout_locals_dict;
-const mp_obj_type_t grove_button_module = {
+const mp_obj_type_t grove_led_type = {
     {&mp_type_type},
-    .name = MP_QSTR_GroveButton,
-    .make_new = grove_button_make_new,
+    .name = MP_QSTR_grove_led,
+    .make_new = grove_led_make_new,
     .locals_dict = (mp_obj_t)&digitalio_digitalinout_locals_dict,
-    .attr = grove_button_obj_attr,
+    .attr = grove_led_obj_attr,
 };
