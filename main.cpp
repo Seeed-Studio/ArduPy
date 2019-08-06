@@ -132,4 +132,22 @@ void mp_hal_stdout_tx_strn(const char *str, mp_uint_t len) {
         SerialShow.write(str, len);
     }
 }
+void print_hex(uint32_t value){
+    const char * map = "0123456789abcdef";
+    char buf[9];
+    buf[0] = map[(value >> 28) & 0xf];
+    buf[1] = map[(value >> 24) & 0xf];
+    buf[2] = map[(value >> 20) & 0xf];
+    buf[3] = map[(value >> 16) & 0xf];
+    buf[4] = map[(value >> 12) & 0xf];
+    buf[5] = map[(value >>  8) & 0xf];
+    buf[6] = map[(value >>  4) & 0xf];
+    buf[7] = map[(value >>  0) & 0xf];
+    buf[8] = '\n';
+    mp_hal_stdout_tx_strn(buf, 9);
+}
 } // extern "C"
+
+void * operator new(size_t bytes, void * memory){
+    return memory;
+}
