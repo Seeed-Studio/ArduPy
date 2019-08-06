@@ -53,12 +53,16 @@ NORETURN void mp_raise_AttributeError(const char *msg) {
     mp_raise_msg(&mp_type_AttributeError, msg);
 }
 
-
-
 // Check if pin is None. If so, deinit() has already been called on the object, so complain.
 void raise_error_if_deinited(bool deinited) {
     if (deinited) {
         mp_raise_ValueError("Object has been deinitialized and can no longer be used. Create a new object.");
+    }
+}
+
+void raise_error_if(bool reason, const char * msg) {
+    if (reason) {
+        mp_raise_ValueError(msg);
     }
 }
 
