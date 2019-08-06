@@ -32,7 +32,6 @@
 #include "shared-bindings/util.h"
 #include "common-hal/microcontroller/Pin.h"
 #include "py/obj.h"
-//}
 
 typedef struct{
     mp_obj_base_t base;
@@ -50,10 +49,8 @@ void common_hal_led_bar_get_bits(void *self, uint32_t * value);
 void common_hal_led_bar_set_level(void *self, float value);
 void common_hal_led_bar_set_brightness(void *self, uint32_t led_no, float value);
 void common_hal_led_bar_set_is_reverse_show(void *self, uint32_t value);
-void common_hal_led_bar_get_is_reverse_show(void *self, uint32_t * value);
 void common_hal_led_bar_toggle(void *self, uint32_t led_no);
 
-void print_hex(uint32_t);
 extern const mp_obj_type_t grove_led_bar_type;
 
 mp_obj_t led_bar_make_new(
@@ -123,12 +120,6 @@ mp_obj_t led_bar_set_is_reverse_show(mp_obj_t self_in, mp_obj_t value_obj){
     common_hal_led_bar_set_is_reverse_show(self->module, value);
     return mp_const_none;
 }
-mp_obj_t led_bar_get_is_reverse_show(mp_obj_t self_in){
-    led_bar_obj_t *self = (led_bar_obj_t *)(self_in);
-    uint32_t value;
-    common_hal_led_bar_get_is_reverse_show(self->module, &value);
-    return mp_obj_new_int(value);
-}
 mp_obj_t led_bar_toggle(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args){
     led_bar_obj_t *self = (led_bar_obj_t *)(pos_args[0]);
     uint32_t index = mp_obj_get_int(pos_args[1]);
@@ -148,9 +139,6 @@ void led_bar_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest){
         dest[0] = MP_OBJ_NULL; // indicate success
     } else {
         switch (attr) {
-        case MP_QSTR_is_reverse_show:
-            dest[0] = led_bar_get_is_reverse_show(self_in);
-            break;
         default:
             generic_method_lookup(self_in, attr, dest);
             break;
