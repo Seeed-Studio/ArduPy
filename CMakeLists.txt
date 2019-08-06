@@ -47,6 +47,7 @@ include_directories(${ARDUINO_CORE_PATH}/cores/arduino)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Wire)
 include_directories(${ARDUINO_CORE_PATH}/libraries/SPI)
 include_directories(${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT})
+include_directories(${CMAKE_CURRENT_LIST_DIR}/submodule)
 
 
 # compile project
@@ -61,6 +62,7 @@ add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c
                     ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}/*.c
                     ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}/*.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/main.cpp
+                    ${CMAKE_CURRENT_LIST_DIR}/submodule/*.cpp
                     )
 
 FILE(GLOB_RECURSE ASSEMBLY_FILES
