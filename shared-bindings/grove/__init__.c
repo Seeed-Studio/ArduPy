@@ -45,7 +45,7 @@ STATIC const mp_rom_map_elem_t grove_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_grove_buzzer),             MP_ROM_PTR(&grove_led_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_relay),              MP_ROM_PTR(&grove_led_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_chainable_led),      MP_ROM_PTR(&chainable_led_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_switch),             MP_ROM_PTR(&grove_button_type) },,
+    { MP_ROM_QSTR(MP_QSTR_grove_switch),             MP_ROM_PTR(&grove_button_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_tilt_switch),        MP_ROM_PTR(&grove_button_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_button),             MP_ROM_PTR(&grove_button_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_flame),              MP_ROM_PTR(&grove_button_type) },
