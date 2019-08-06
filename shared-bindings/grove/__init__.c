@@ -39,6 +39,7 @@ extern const mp_obj_type_t analogio_analogout_type;
 extern const mp_obj_type_t chainable_led_type;
 extern const mp_obj_type_t grove_led_bar_type;
 extern const mp_obj_type_t grove_3_axis_digital_accelerometer_type;
+extern const mp_obj_type_t grove_nixie_tube_type;
 
 STATIC const mp_rom_map_elem_t grove_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__),                    MP_ROM_QSTR(MP_QSTR_grove) },
@@ -64,7 +65,8 @@ STATIC const mp_rom_map_elem_t grove_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_grove_rotary_angle_sensor),   MP_ROM_PTR(&analogio_analogin_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_analog_led),            MP_ROM_PTR(&analogio_analogout_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_led_bar),               MP_ROM_PTR(&grove_led_bar_type) }, 
-    { MP_ROM_QSTR(MP_QSTR_grove_3ada),                  MP_ROM_PTR(&grove_3_axis_digital_accelerometer_type) }
+    { MP_ROM_QSTR(MP_QSTR_grove_3ada),                  MP_ROM_PTR(&grove_3_axis_digital_accelerometer_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_4_digital_display),     MP_ROM_PTR(&grove_nixie_tube_type) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(grove_module_globals, grove_module_globals_table);
