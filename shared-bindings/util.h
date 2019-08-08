@@ -51,6 +51,7 @@ typedef struct _mp_obj_property_t {
 MP_DECLARE_CONST_FUN_OBJ_1(default___enter___obj);
 
 void raise_error_if_deinited(bool deinited);
+void raise_error_if(bool reason, const char * msg);
 NORETURN void mp_raise_RuntimeError(const char *msg);
 NORETURN void mp_raise_AttributeError(const char *msg) ;
 void normalize_buffer_bounds(int32_t* start, int32_t end, uint32_t* length);
