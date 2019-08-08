@@ -65,39 +65,34 @@ bool pin_number_is_free(uint8_t pin_number);
 #define BOARD_I2C 1
 #define BOARD_SPI 1
 #define BOARD_UART 1
-
-
 #endif
 
-extern const mcu_pin_obj_t pin_PA02;
-extern const mcu_pin_obj_t pin_PB08;
-extern const mcu_pin_obj_t pin_PB09;
-extern const mcu_pin_obj_t pin_PA04;
-extern const mcu_pin_obj_t pin_PA05;
-extern const mcu_pin_obj_t pin_PB02;
-extern const mcu_pin_obj_t pin_PA11;
-extern const mcu_pin_obj_t pin_PA11;
-extern const mcu_pin_obj_t pin_PA10;
-extern const mcu_pin_obj_t pin_PA10;
-extern const mcu_pin_obj_t pin_PA14;
-extern const mcu_pin_obj_t pin_PA09;
-extern const mcu_pin_obj_t pin_PA08;
-extern const mcu_pin_obj_t pin_PA15;
-extern const mcu_pin_obj_t pin_PA20;
-extern const mcu_pin_obj_t pin_PA21;
-extern const mcu_pin_obj_t pin_PA06;
-extern const mcu_pin_obj_t pin_PA07;
-extern const mcu_pin_obj_t pin_PA18;
-extern const mcu_pin_obj_t pin_PA16;
-extern const mcu_pin_obj_t pin_PA19;
-extern const mcu_pin_obj_t pin_PA17;
-extern const mcu_pin_obj_t pin_XXX;
-extern const mcu_pin_obj_t pin_PA22;
-extern const mcu_pin_obj_t pin_PA23;
-extern const mcu_pin_obj_t pin_PB11;
-extern const mcu_pin_obj_t pin_PB10;
-extern const mcu_pin_obj_t pin_PA12;
-
-
+#define pin_RX  pin_D0
+#define pin_TX  pin_D1
+extern const mcu_pin_obj_t pin_D0;
+extern const mcu_pin_obj_t pin_D1;
+extern const mcu_pin_obj_t pin_D2;
+extern const mcu_pin_obj_t pin_D3;
+extern const mcu_pin_obj_t pin_D4;
+extern const mcu_pin_obj_t pin_D5;
+extern const mcu_pin_obj_t pin_D6;
+extern const mcu_pin_obj_t pin_D7;
+extern const mcu_pin_obj_t pin_D8;
+extern const mcu_pin_obj_t pin_D9;
+extern const mcu_pin_obj_t pin_D10;
+extern const mcu_pin_obj_t pin_D11;
+extern const mcu_pin_obj_t pin_D12;
+extern const mcu_pin_obj_t pin_D13;
+extern const mcu_pin_obj_t pin_A0;
+extern const mcu_pin_obj_t pin_A1;
+extern const mcu_pin_obj_t pin_A2;
+extern const mcu_pin_obj_t pin_A3;
+extern const mcu_pin_obj_t pin_A4;
+extern const mcu_pin_obj_t pin_A5;
+extern const mcu_pin_obj_t pin_SDA;
+extern const mcu_pin_obj_t pin_SCL;
+extern const mcu_pin_obj_t pin_SCK;
+extern const mcu_pin_obj_t pin_MOSI;
+extern const mcu_pin_obj_t pin_MISO;
 
 #endif // MICROPY_INCLUDED_ATMEL_SAMD_COMMON_HAL_MICROCONTROLLER_PIN_H
