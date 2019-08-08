@@ -46,6 +46,7 @@ extern const mp_obj_type_t grove_ic_device_type;
 extern const mp_obj_type_t grove_datetime_type;
 extern const mp_obj_type_t grove_lcd_type;
 extern const mp_obj_type_t grove_rgb_led_strip_type;
+extern const mp_obj_type_t grove_ultra_ranger_type;
 
 STATIC const mp_rom_map_elem_t grove_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__),                          MP_ROM_QSTR(MP_QSTR_grove) },
@@ -63,6 +64,7 @@ STATIC const mp_rom_map_elem_t grove_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_grove_line_finder),                 MP_ROM_PTR(&grove_button_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_hall_sensor),                 MP_ROM_PTR(&grove_button_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_pir_motion_sensor),           MP_ROM_PTR(&grove_button_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_vibration_sensor),            MP_ROM_PTR(&grove_button_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_temperature_sensor),          MP_ROM_PTR(&analogio_analogin_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_water_sensor),                MP_ROM_PTR(&analogio_analogin_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_light_sensor),                MP_ROM_PTR(&analogio_analogin_type) },
@@ -71,6 +73,7 @@ STATIC const mp_rom_map_elem_t grove_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_grove_loudness_sensor),             MP_ROM_PTR(&analogio_analogin_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_rotary_angle_sensor),         MP_ROM_PTR(&analogio_analogin_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_analog_led),                  MP_ROM_PTR(&analogio_analogout_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_thumb_joystick),              MP_ROM_PTR(&analogio_analogout_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_led_bar),                     MP_ROM_PTR(&grove_led_bar_type) }, 
     { MP_ROM_QSTR(MP_QSTR_grove_3ada),                        MP_ROM_PTR(&grove_3_axis_digital_accelerometer_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_4_digital_display),           MP_ROM_PTR(&grove_nixie_tube_type) },
@@ -79,6 +82,7 @@ STATIC const mp_rom_map_elem_t grove_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_datetime),                          MP_ROM_PTR(&grove_datetime_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_16x2_lcd),                    MP_ROM_PTR(&grove_lcd_type) },
     { MP_ROM_QSTR(MP_QSTR_grove_rgb_led_strip),               MP_ROM_PTR(&grove_rgb_led_strip_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_ultra_ranger),                MP_ROM_PTR(&grove_ultra_ranger_type) },
 
     // Enum-like Classes.
     { MP_ROM_QSTR(MP_QSTR_ic),                                MP_ROM_PTR(&grove_ic_device_type) },

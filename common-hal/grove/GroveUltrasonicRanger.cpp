@@ -24,8 +24,7 @@
  * THE SOFTWARE.
  */
 
-#include "common-hal/grove/GroveRtc.h"
-#include "submodule/DS1307.h"
+#include "submodule/Ultrasonic.h"
 extern "C"{
 #include "py/mphal.h"
 #include "py/nlr.h"
@@ -35,38 +34,20 @@ extern "C"{
 #include "shared-bindings/util.h"
 }
 
-#define rtc     (*(DS1307 *)self)
+#define ultra     (*(Ultrasonic *)self)
 void * operator new(size_t, void *);
 
 extern "C"{
-    void common_hal_rtc_construct(void ** get){
-        DS1307 * self;
-        *get = self = new(m_new_obj(DS1307)) DS1307;
-        rtc.begin();
+    void common_hal_ultra_ranger_construct(void ** get, const mcu_pin_obj_t * pin_ctrl){
+        *get = new(m_new_obj(Ultrasonic)) Ultrasonic(pin_ctrl->number);
     }
-    void common_hal_rtc_deinit(void *self){
+    void common_hal_ultra_ranger_deinit(void *self){
 
     }
-    void common_hal_rtc_start(void * self){
-        rtc.startClock();
+    void common_hal_ultra_ranger_centimeters(void * self, uint32_t * value){
+        *value = ultra.MeasureInCentimeters();
     }
-    void common_hal_rtc_stop(void * self){
-        rtc.stopClock();
-    }
-    void common_hal_rtc_get_datetime(void * self, rtc_datetime_t * value){
-        rtc.getTime();
-        value->second = rtc.second;
-        value->minute = rtc.minute;
-        value->hour = rtc.hour;
-        value->day_of_week = rtc.dayOfWeek;
-        value->day_of_month = rtc.dayOfMonth;
-        value->month = rtc.month;
-        value->year = rtc.year;
-    }
-    void common_hal_rtc_set_datetime(void * self, rtc_datetime_t * value){
-        rtc.fillByYMD(value->year, value->month, value->day_of_month);
-        rtc.fillByHMS(value->hour, value->minute, value->second);
-        rtc.fillDayOfWeek(value->day_of_week);
-        rtc.setTime();
+    void common_hal_ultra_ranger_inches(void * self, uint32_t * value){
+        *value = ultra.MeasureInInches();
     }
 }
