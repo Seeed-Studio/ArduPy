@@ -40,33 +40,48 @@ extern const mp_obj_type_t chainable_led_type;
 extern const mp_obj_type_t grove_led_bar_type;
 extern const mp_obj_type_t grove_3_axis_digital_accelerometer_type;
 extern const mp_obj_type_t grove_nixie_tube_type;
+extern const mp_obj_type_t grove_dht_type;
+extern const mp_obj_type_t grove_rtc_type;
+extern const mp_obj_type_t grove_ic_device_type;
+extern const mp_obj_type_t grove_datetime_type;
+extern const mp_obj_type_t grove_lcd_type;
+extern const mp_obj_type_t grove_rgb_led_strip_type;
 
 STATIC const mp_rom_map_elem_t grove_module_globals_table[] = {
-    { MP_ROM_QSTR(MP_QSTR___name__),                    MP_ROM_QSTR(MP_QSTR_grove) },
-    { MP_ROM_QSTR(MP_QSTR_grove_led),                   MP_ROM_PTR(&grove_led_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_buzzer),                MP_ROM_PTR(&grove_led_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_relay),                 MP_ROM_PTR(&grove_led_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_vibration_motor),       MP_ROM_PTR(&grove_led_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_chainable_led),         MP_ROM_PTR(&chainable_led_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_switch),                MP_ROM_PTR(&grove_button_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_tilt_switch),           MP_ROM_PTR(&grove_button_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_button),                MP_ROM_PTR(&grove_button_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_flame),                 MP_ROM_PTR(&grove_button_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_touch_sensor),          MP_ROM_PTR(&grove_button_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_line_finder),           MP_ROM_PTR(&grove_button_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_hall_sensor),           MP_ROM_PTR(&grove_button_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_pir_motion_sensor),     MP_ROM_PTR(&grove_button_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_temperature_sensor),    MP_ROM_PTR(&analogio_analogin_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_water_sensor),          MP_ROM_PTR(&analogio_analogin_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_light_sensor),          MP_ROM_PTR(&analogio_analogin_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_sound_sensor),          MP_ROM_PTR(&analogio_analogin_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_moisture_sensor),       MP_ROM_PTR(&analogio_analogin_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_loudness_sensor),       MP_ROM_PTR(&analogio_analogin_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_rotary_angle_sensor),   MP_ROM_PTR(&analogio_analogin_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_analog_led),            MP_ROM_PTR(&analogio_analogout_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_led_bar),               MP_ROM_PTR(&grove_led_bar_type) }, 
-    { MP_ROM_QSTR(MP_QSTR_grove_3ada),                  MP_ROM_PTR(&grove_3_axis_digital_accelerometer_type) },
-    { MP_ROM_QSTR(MP_QSTR_grove_4_digital_display),     MP_ROM_PTR(&grove_nixie_tube_type) },
+    { MP_ROM_QSTR(MP_QSTR___name__),                          MP_ROM_QSTR(MP_QSTR_grove) },
+    { MP_ROM_QSTR(MP_QSTR_grove_led),                         MP_ROM_PTR(&grove_led_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_buzzer),                      MP_ROM_PTR(&grove_led_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_relay),                       MP_ROM_PTR(&grove_led_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_vibration_motor),             MP_ROM_PTR(&grove_led_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_speaker),                     MP_ROM_PTR(&grove_led_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_chainable_led),               MP_ROM_PTR(&chainable_led_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_switch),                      MP_ROM_PTR(&grove_button_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_tilt_switch),                 MP_ROM_PTR(&grove_button_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_button),                      MP_ROM_PTR(&grove_button_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_flame),                       MP_ROM_PTR(&grove_button_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_touch_sensor),                MP_ROM_PTR(&grove_button_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_line_finder),                 MP_ROM_PTR(&grove_button_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_hall_sensor),                 MP_ROM_PTR(&grove_button_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_pir_motion_sensor),           MP_ROM_PTR(&grove_button_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_temperature_sensor),          MP_ROM_PTR(&analogio_analogin_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_water_sensor),                MP_ROM_PTR(&analogio_analogin_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_light_sensor),                MP_ROM_PTR(&analogio_analogin_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_sound_sensor),                MP_ROM_PTR(&analogio_analogin_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_moisture_sensor),             MP_ROM_PTR(&analogio_analogin_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_loudness_sensor),             MP_ROM_PTR(&analogio_analogin_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_rotary_angle_sensor),         MP_ROM_PTR(&analogio_analogin_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_analog_led),                  MP_ROM_PTR(&analogio_analogout_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_led_bar),                     MP_ROM_PTR(&grove_led_bar_type) }, 
+    { MP_ROM_QSTR(MP_QSTR_grove_3ada),                        MP_ROM_PTR(&grove_3_axis_digital_accelerometer_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_4_digital_display),           MP_ROM_PTR(&grove_nixie_tube_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_temperature_humidity_sensor), MP_ROM_PTR(&grove_dht_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_rtc),                         MP_ROM_PTR(&grove_rtc_type) },
+    { MP_ROM_QSTR(MP_QSTR_datetime),                          MP_ROM_PTR(&grove_datetime_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_16x2_lcd),                    MP_ROM_PTR(&grove_lcd_type) },
+    { MP_ROM_QSTR(MP_QSTR_grove_rgb_led_strip),               MP_ROM_PTR(&grove_rgb_led_strip_type) },
+
+    // Enum-like Classes.
+    { MP_ROM_QSTR(MP_QSTR_ic),                                MP_ROM_PTR(&grove_ic_device_type) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(grove_module_globals, grove_module_globals_table);
