@@ -28,10 +28,10 @@
 #include "py/nlr.h"
 #include "py/objtype.h"
 #include "py/runtime.h"
+#include "py/obj.h"
 #include "shared-bindings/microcontroller/Pin.h"
 #include "shared-bindings/util.h"
 #include "common-hal/microcontroller/Pin.h"
-#include "py/obj.h"
 
 typedef struct{
     mp_obj_base_t base;
