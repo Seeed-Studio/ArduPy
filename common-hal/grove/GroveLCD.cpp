@@ -63,6 +63,6 @@ extern "C"{
         value ? lcd.blink() : lcd.noBlink();
     }
     bool common_hal_lcd_get_is_blink_cursor(abstract_module_t * self){
-        return lcd._displaycontrol & LCD_BLINKON != 0;
+        return (lcd._displaycontrol & LCD_BLINKON) != 0;
     }
 }
