@@ -29,100 +29,53 @@
 #include "py/objtype.h"
 #include "py/runtime.h"
 #include "shared-bindings/util.h"
+#include "shared-bindings/microcontroller/Pin.h"
 #include "py/obj.h"
 
-typedef struct{
-    mp_obj_base_t base;
-    void *        module;
-}ada_obj_t;
-
-void common_hal_ada_construct(void ** get);
-void common_hal_ada_deinit(void * self);
-void common_hal_ada_get_xyz(void * self, int8_t * values);
-void common_hal_ada_get_xyz_acceleration(void * self, float * values);
+void common_hal_ada_construct(abstract_module_t * self);
+void common_hal_ada_deinit(abstract_module_t * self);
+void common_hal_ada_get_xyz(abstract_module_t * self, int8_t * values);
+void common_hal_ada_get_xyz_acceleration(abstract_module_t * self, float * values);
 
 extern const mp_obj_type_t grove_3_axis_digital_accelerometer_type;
 
-mp_obj_t ada_make_new(
-    const mp_obj_type_t *type, 
-    size_t n_args, 
-    size_t n_kw, 
-    const mp_obj_t * args) {
-    ada_obj_t * self = m_new_obj(ada_obj_t);
-    self->base.type = &grove_3_axis_digital_accelerometer_type;
-    common_hal_ada_construct(&self->module);
+m_generic_make(ada) {
+    abstract_module_t * self = new_abstruct_module(type);
+    assert_scl_sda(n_args);
+    common_hal_ada_construct(self);
     return (mp_obj_t)self;
 }
 
-mp_obj_t ada_obj_deinit(mp_obj_t self_in) {
-    ada_obj_t *self = (ada_obj_t *)(self_in);
-    common_hal_ada_deinit(self);
-    return mp_const_none;
-}
+void ada_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t * dest){
+    abstract_module_t * self = (abstract_module_t *)(self_in);
+    uint32_t            index = (uint32_t)-1;
+    int8_t              row_values[3];
+    float               acc_values[3];
+    bool                is_acceleration = false;
 
-mp_obj_t ada_obj___exit__(size_t n_args, const mp_obj_t *args) {
-    ada_obj_t *self = (ada_obj_t *)(args[0]);
-    common_hal_ada_deinit(self);
-    return mp_const_none;
-}
-
-mp_obj_t ada_get_x(mp_obj_t self_in){
-    ada_obj_t *self = (ada_obj_t *)(self_in);
-    int8_t value[3];
-    common_hal_ada_get_xyz(self, value);
-    return mp_obj_new_int(value[0]);
-}
-mp_obj_t ada_get_y(mp_obj_t self_in){
-    ada_obj_t *self = (ada_obj_t *)(self_in);
-    int8_t value[3];
-    common_hal_ada_get_xyz(self, value);
-    return mp_obj_new_int(value[1]);
-}
-mp_obj_t ada_get_z(mp_obj_t self_in){
-    ada_obj_t *self = (ada_obj_t *)(self_in);
-    int8_t value[3];
-    common_hal_ada_get_xyz(self, value);
-    return mp_obj_new_int(value[2]);
-}
-mp_obj_t ada_get_x_acceleration(mp_obj_t self_in){
-    ada_obj_t *self = (ada_obj_t *)(self_in);
-    float value[3];
-    common_hal_ada_get_xyz_acceleration(self, value);
-    return mp_obj_new_float(value[0]);
-}
-mp_obj_t ada_get_y_acceleration(mp_obj_t self_in){
-    ada_obj_t *self = (ada_obj_t *)(self_in);
-    float value[3];
-    common_hal_ada_get_xyz_acceleration(self, value);
-    return mp_obj_new_float(value[1]);
-}
-mp_obj_t ada_get_z_acceleration(mp_obj_t self_in){
-    ada_obj_t *self = (ada_obj_t *)(self_in);
-    float value[3];
-    common_hal_ada_get_xyz_acceleration(self, value);
-    return mp_obj_new_float(value[2]);
-}
-
-void ada_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest){
-    if (dest[0] != MP_OBJ_NULL) {
-        generic_method_lookup(self_in, attr, dest);
-    } else {
+    if (dest[0] == MP_OBJ_NULL) {
         switch (attr) {
-        case MP_QSTR_x: dest[0] = ada_get_x(self_in); break;
-        case MP_QSTR_y: dest[0] = ada_get_y(self_in); break;
-        case MP_QSTR_z: dest[0] = ada_get_z(self_in); break;
-        case MP_QSTR_x_acceleration: dest[0] = ada_get_x_acceleration(self_in); break;
-        case MP_QSTR_y_acceleration: dest[0] = ada_get_y_acceleration(self_in); break;
-        case MP_QSTR_z_acceleration: dest[0] = ada_get_z_acceleration(self_in); break;
-        default:
-            generic_method_lookup(self_in, attr, dest);
-            break;
+        case MP_QSTR_x: index = 0; break;
+        case MP_QSTR_y: index = 1; break;
+        case MP_QSTR_z: index = 2; break;
+        case MP_QSTR_x_acceleration: index = 0; is_acceleration = true; break;
+        case MP_QSTR_y_acceleration: index = 1; is_acceleration = true; break;
+        case MP_QSTR_z_acceleration: index = 2; is_acceleration = true; break;
         }
     }
+    if (index == -1){
+        generic_method_lookup(self_in, attr, dest);
+        return;
+    } 
+    if (is_acceleration){
+        common_hal_ada_get_xyz_acceleration(self->module, acc_values);
+        dest[0] = mp_obj_new_float(acc_values[index]);
+    } 
+    else {
+        common_hal_ada_get_xyz(self->module, row_values);
+        dest[0] = mp_obj_new_int(row_values[index]);
+    }
 }
-
-MP_DEFINE_CONST_FUN_OBJ_1(ada_deinit_obj, ada_obj_deinit);
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(ada_obj___exit___obj, 4, 4, ada_obj___exit__);
 
 const mp_rom_map_elem_t ada_locals_dict_table[] = {
     // instance methods

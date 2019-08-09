@@ -24,39 +24,41 @@
  * THE SOFTWARE.
  */
 
-#ifndef MICROPY_INCLUDED_ATMEL_SAMD_COMMON_HAL_GROVE_CHAINABLE_LED_H
-#define MICROPY_INCLUDED_ATMEL_SAMD_COMMON_HAL_GROVE_CHAINABLE_LED_H
+#include "Arduino.h"
+#define private public
+#include "submodule/ChainableLED.h"
 
-#include "common-hal/microcontroller/Pin.h"
-#include "py/obj.h"
+extern "C" {
+    #include "shared-bindings/util.h"
+    #include "py/obj.h"
+}
 
-extern const mp_obj_type_t chainable_led_type;
+#define led     (*(ChainableLED *)self->module)
+void * operator new (size_t, void *);
 
-typedef struct{
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-} chainable_led_rgb_t;
+extern "C" {
+    void common_hal_chainable_led_construct(
+        abstract_module_t * self, 
+        uint32_t pin_clk, 
+        uint32_t pin_dat,
+        uint32_t count_of_led) {
+        self->module = new (m_new_obj(ChainableLED)) 
+            ChainableLED(pin_clk, pin_dat, count_of_led);
+    }
 
-typedef struct{
-    float h;
-    float s;
-    float b;
-} chainable_led_hsb_t;
+    void common_hal_chainable_led_deinit(abstract_module_t * self) {
+        led.~ChainableLED();
+    }
 
-typedef struct{
-    mp_obj_base_t base;
-    const mcu_pin_obj_t * pin_clk;
-    const mcu_pin_obj_t * pin_data;
-    uint32_t number_of_leds;
-    chainable_led_rgb_t * led;
-} chainable_led_obj_t;
+    uint32_t common_hal_chainable_led_get_led_numbers(abstract_module_t * self) {
+        return led._num_leds;
+    }
 
-void common_hal_chainable_led_construct(
-    chainable_led_obj_t *self, 
-    const mcu_pin_obj_t *pin_clk, 
-    const mcu_pin_obj_t *pin_data);
-void common_hal_chainable_led_deinit(chainable_led_obj_t *self);
-void common_hal_chainable_led_set_rgb(chainable_led_obj_t *self, uint32_t index, chainable_led_rgb_t value);
-void common_hal_chainable_led_set_hsb(chainable_led_obj_t *self, uint32_t index, chainable_led_hsb_t value);
-#endif
+    void common_hal_chainable_led_set_rgb(abstract_module_t * self, uint32_t led_no, uint8_t r, uint8_t g, uint8_t b){
+        led.setColorRGB(led_no - 1, r, g, b);
+    }
+
+    void common_hal_chainable_led_set_hsb(abstract_module_t * self, uint32_t led_no, uint8_t h, uint8_t s, uint8_t b){
+        led.setColorHSB(led_no - 1, h, s, b);
+    }
+}

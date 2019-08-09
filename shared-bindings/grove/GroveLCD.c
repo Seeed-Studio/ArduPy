@@ -32,109 +32,76 @@
 #include "shared-bindings/microcontroller/Pin.h"
 #include "shared-bindings/util.h"
 
-void common_hal_lcd_construct(void ** get);
-void common_hal_lcd_deinit(void * self);
-void common_hal_lcd_clear(void * self);
-void common_hal_lcd_set_cursor(void * self, uint32_t column, uint32_t row);
-void common_hal_lcd_print_int(void * self, int32_t value);
-void common_hal_lcd_print_float(void * self, float value);
-void common_hal_lcd_print_string(void * self, const char * value);
-void common_hal_lcd_show_cursor(void * self, uint32_t value);
-
-typedef struct{
-    mp_obj_base_t base;
-    void *        module;
-    bool          is_show_cursor;
-}lcd_obj_t;
+void common_hal_lcd_construct(abstract_module_t * self);
+void common_hal_lcd_deinit(abstract_module_t * self);
+void common_hal_lcd_clear(abstract_module_t * self);
+void common_hal_lcd_set_cursor(abstract_module_t * self, uint32_t column, uint32_t row);
+void common_hal_lcd_print_int(abstract_module_t * self, int32_t value);
+void common_hal_lcd_print_float(abstract_module_t * self, float value);
+void common_hal_lcd_print_string(abstract_module_t * self, const char * value);
+void common_hal_lcd_set_is_blink_cursor(abstract_module_t * self, bool value);
+bool common_hal_lcd_get_is_blink_cursor(abstract_module_t * self);
 
 extern const mp_obj_type_t grove_lcd_type;
 
-mp_obj_t lcd_make_new(
-    const mp_obj_type_t *type, 
-    size_t n_args, 
-    size_t n_kw, 
-    const mp_obj_t * args) {
-    lcd_obj_t     * self = m_new_obj(lcd_obj_t);
-    mp_obj_t      * device_type;
-    self->base.type = &grove_lcd_type;
-    self->is_show_cursor = false;
+m_generic_make(lcd){
+    abstract_module_t * self = new_abstruct_module(type);
+    mp_arg_check_num(n_args, n_kw, 0, 0, false);
     assert_pin_free(&pin_SCL);
     assert_pin_free(&pin_SDA);
-    common_hal_lcd_construct(&self->module);
-    return (mp_obj_t)self;
-}
-
-mp_obj_t lcd_obj_deinit(mp_obj_t self_in) {
-    lcd_obj_t * self = (lcd_obj_t *)(self_in);
-    common_hal_lcd_deinit(self);
-    return mp_const_none;
-}
-
-mp_obj_t lcd_obj___exit__(size_t n_args, const mp_obj_t *args) {
-    lcd_obj_t * self = (lcd_obj_t *)(args[0]);
-    common_hal_lcd_deinit(self);
-    return mp_const_none;
+    common_hal_lcd_construct(self);
+    return self;
 }
 
 mp_obj_t lcd_clear(mp_obj_t self_in){
-    lcd_obj_t * self = (lcd_obj_t *)(self_in);
-    common_hal_lcd_clear(self->module);
+    common_hal_lcd_clear((abstract_module_t *)self_in);
     return mp_const_none;
 }
 
-mp_obj_t lcd_set_cursor(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args){
-    lcd_obj_t * self = (lcd_obj_t *)(pos_args[0]);
+mp_obj_t lcd_set_cursor(size_t n_args, const mp_obj_t * pos_args, mp_map_t * kw_args){
+    abstract_module_t * self = (abstract_module_t *)pos_args[0];
     uint32_t column = mp_obj_get_int(pos_args[1]);
-    uint32_t row = mp_obj_get_int(pos_args[2]);
-    common_hal_lcd_set_cursor(self->module, column, row);
+    uint32_t row    = mp_obj_get_int(pos_args[2]);
+    raise_error_if(column > 16 || column < 1, "1st parameter 'column' need greater equal than 1 and less equal than 16.");
+    raise_error_if(row    > 2  || row    < 1, "2st parameter 'row' need greater equal than 1 and less equal than 2.");
+    common_hal_lcd_set_cursor(self, column - 1, row - 1);
     return mp_const_none;
 }
 
-mp_obj_t lcd_print(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args){
-    lcd_obj_t * self = (lcd_obj_t *)(pos_args[0]);
+mp_obj_t lcd_print(size_t n_args, const mp_obj_t * pos_args, mp_map_t * kw_args){
+    abstract_module_t * self = (abstract_module_t *)pos_args[0];
+
     if (mp_obj_is_int(pos_args[1])){
-        common_hal_lcd_print_int(self->module, mp_obj_get_int(pos_args[1]));
+        common_hal_lcd_print_int(self, mp_obj_get_int(pos_args[1]));
     }
     else if (mp_obj_is_float(pos_args[1])){
-        common_hal_lcd_print_float(self->module, mp_obj_get_float(pos_args[1]));
+        common_hal_lcd_print_float(self, mp_obj_get_float(pos_args[1]));
     }
     else if (mp_obj_is_str(pos_args[1])){
-        common_hal_lcd_print_string(self->module, mp_obj_str_get_str(pos_args[1]));
+        common_hal_lcd_print_string(self, mp_obj_str_get_str(pos_args[1]));
     }
     else{
-        raise_error_if(true, "Unkown argument type.");
+        mp_raise_TypeError("The allow parameter type are int, float and string.");
     }
     return mp_const_none;
 }
 
 void lcd_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest){
-    extern const mp_obj_type_t grove_datetime_type;
-    lcd_obj_t * self = (lcd_obj_t *)self_in;
+    abstract_module_t * self = (abstract_module_t *)self_in;
 
-    if (dest[0] != MP_OBJ_NULL) {
-        switch (attr) {
-        case MP_QSTR_is_blink_cursor:
-            common_hal_lcd_show_cursor(self->module, self->is_show_cursor = mp_obj_is_true(dest[1]));
-            break;
-        default:
-            generic_method_lookup(self_in, attr, dest);
-            break;
-        }
+    if (attr != MP_QSTR_is_blink_cursor){
+        generic_method_lookup(self_in, attr, dest);
+    }
+    else if (dest[0] != MP_OBJ_NULL) {
         dest[0] = MP_OBJ_NULL;
-    } else {
-        switch (attr) {
-        case MP_QSTR_is_blink_cursor:
-            dest[0] = self->is_show_cursor ? mp_const_true : mp_const_false;
-            break;
-        default:
-            generic_method_lookup(self_in, attr, dest);
-            break;
-        }
+        common_hal_lcd_set_is_blink_cursor(self, mp_obj_is_true(dest[1]));
+    } 
+    else {
+        dest[0] = common_hal_lcd_get_is_blink_cursor(self) ? 
+            mp_const_true : mp_const_false;
     }
 }    
 
-MP_DEFINE_CONST_FUN_OBJ_1(lcd_deinit_obj, lcd_obj_deinit);
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_obj___exit___obj, 4, 4, lcd_obj___exit__);
 MP_DEFINE_CONST_FUN_OBJ_1(lcd_clear_obj, lcd_clear);
 MP_DEFINE_CONST_FUN_OBJ_KW(lcd_set_cursor_obj, 2, lcd_set_cursor);
 MP_DEFINE_CONST_FUN_OBJ_KW(lcd_print_obj, 1, lcd_print);

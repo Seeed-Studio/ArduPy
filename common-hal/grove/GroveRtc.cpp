@@ -35,25 +35,24 @@ extern "C"{
 #include "shared-bindings/util.h"
 }
 
-#define rtc     (*(DS1307 *)self)
+#define rtc     (*(DS1307 *)self->module)
 void * operator new(size_t, void *);
 
 extern "C"{
-    void common_hal_rtc_construct(void ** get){
-        DS1307 * self;
-        *get = self = new(m_new_obj(DS1307)) DS1307;
+    void common_hal_rtc_construct(abstract_module_t * self){
+        self->module = new(m_new_obj(DS1307)) DS1307;
         rtc.begin();
     }
-    void common_hal_rtc_deinit(void *self){
-
+    void common_hal_rtc_deinit(abstract_module_t * self){
+        rtc.~DS1307();
     }
-    void common_hal_rtc_start(void * self){
+    void common_hal_rtc_start(abstract_module_t * self){
         rtc.startClock();
     }
-    void common_hal_rtc_stop(void * self){
+    void common_hal_rtc_stop(abstract_module_t * self){
         rtc.stopClock();
     }
-    void common_hal_rtc_get_datetime(void * self, rtc_datetime_t * value){
+    void common_hal_rtc_get_datetime(abstract_module_t * self, rtc_datetime_t * value){
         rtc.getTime();
         value->second = rtc.second;
         value->minute = rtc.minute;
@@ -63,7 +62,7 @@ extern "C"{
         value->month = rtc.month;
         value->year = rtc.year;
     }
-    void common_hal_rtc_set_datetime(void * self, rtc_datetime_t * value){
+    void common_hal_rtc_set_datetime(abstract_module_t * self, rtc_datetime_t * value){
         rtc.fillByYMD(value->year, value->month, value->day_of_month);
         rtc.fillByHMS(value->hour, value->minute, value->second);
         rtc.fillDayOfWeek(value->day_of_week);

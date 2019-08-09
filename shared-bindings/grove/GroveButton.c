@@ -28,7 +28,6 @@
 #include <string.h>
 
 #include "py/mphal.h"
-#include "py/nlr.h"
 #include "py/objtype.h"
 #include "py/runtime.h"
 
@@ -58,7 +57,7 @@ extern void common_hal_digitalio_digitalinout_switch_to_input(
 
 mp_obj_t digitalio_digitalinout_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args);
 mp_obj_t grove_button_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args) {
-    digitalio_digitalinout_obj_t* self = (digitalio_digitalinout_obj_t *)
+    digitalio_digitalinout_obj_t * self = (digitalio_digitalinout_obj_t *)
         digitalio_digitalinout_make_new(type, n_args, n_kw, args);
     common_hal_digitalio_digitalinout_switch_to_input(self, PULL_NONE);
     return (mp_obj_t)self;
@@ -71,18 +70,11 @@ mp_obj_t grove_button_make_new(const mp_obj_type_t *type, size_t n_args, size_t 
 mp_obj_t digitalio_digitalinout_obj_get_value(mp_obj_t self_in);
 
 void grove_button_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
-    if (dest[0] != MP_OBJ_NULL) {
+    if (dest[0] != MP_OBJ_NULL || attr != MP_QSTR_value) {
+        dest[0]  = MP_OBJ_NULL; // indicate success
         generic_method_lookup(self_in, attr, dest);
-        dest[0] = MP_OBJ_NULL; // indicate success
     } else {
-        switch (attr) {
-        case MP_QSTR_value:
-            dest[0] = digitalio_digitalinout_obj_get_value(self_in);
-            break;
-        default:
-            generic_method_lookup(self_in, attr, dest);
-            break;
-        }
+        dest[0] = digitalio_digitalinout_obj_get_value(self_in);
     }
 }
 

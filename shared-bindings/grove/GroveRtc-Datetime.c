@@ -51,7 +51,6 @@ mp_obj_t datetime_make_new(
     size_t n_args, 
     size_t n_kw, 
     const mp_obj_t * all_args) {
-    datetime_obj_t * self = m_new_obj(datetime_obj_t);
     enum{
         ARG_year,
         ARG_month,
@@ -68,7 +67,8 @@ mp_obj_t datetime_make_new(
         { MP_QSTR_minute, MP_ARG_KW_ONLY | MP_ARG_INT, { .u_int = 0 } },
         { MP_QSTR_second, MP_ARG_KW_ONLY | MP_ARG_INT, { .u_int = 0 } },
     };
-    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    datetime_obj_t * self = m_new_obj(datetime_obj_t);
+    mp_arg_val_t     args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all_kw_array(n_args, n_kw, all_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
     self->base.type = &grove_datetime_type;
     self->data.year = args[ARG_year].u_int;
@@ -82,7 +82,7 @@ mp_obj_t datetime_make_new(
         self->data.month, 
         self->data.day_of_month
     );
-    return (mp_obj_t)self;
+    return self;
 }
 
 mp_obj_t datetime_obj_deinit(mp_obj_t self_in) {

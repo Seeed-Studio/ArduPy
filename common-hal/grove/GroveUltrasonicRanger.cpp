@@ -34,20 +34,20 @@ extern "C"{
 #include "shared-bindings/util.h"
 }
 
-#define ultra     (*(Ultrasonic *)self)
+#define ultra     (*(Ultrasonic *)self->module)
 void * operator new(size_t, void *);
 
 extern "C"{
-    void common_hal_ultra_ranger_construct(void ** get, const mcu_pin_obj_t * pin_ctrl){
-        *get = new(m_new_obj(Ultrasonic)) Ultrasonic(pin_ctrl->number);
+    void common_hal_ultra_ranger_construct(abstract_module_t * self, uint32_t pin_ctrl){
+        self->module = new(m_new_obj(Ultrasonic)) Ultrasonic(pin_ctrl);
     }
-    void common_hal_ultra_ranger_deinit(void *self){
-
+    void common_hal_ultra_ranger_deinit(abstract_module_t * self){
+        ultra.~Ultrasonic();
     }
-    void common_hal_ultra_ranger_centimeters(void * self, uint32_t * value){
-        *value = ultra.MeasureInCentimeters();
+    uint32_t common_hal_ultra_ranger_centimeters(abstract_module_t * self){
+        return ultra.MeasureInCentimeters();
     }
-    void common_hal_ultra_ranger_inches(void * self, uint32_t * value){
-        *value = ultra.MeasureInInches();
+    uint32_t common_hal_ultra_ranger_inches(abstract_module_t * self){
+        return ultra.MeasureInInches();
     }
 }

@@ -27,6 +27,7 @@
 #include "shared-bindings/board/__init__.h"
 #include "shared-bindings/microcontroller/__init__.h"
 #include "shared-bindings/microcontroller/Pin.h"
+#include "shared-bindings/util.h"
 
 #include "py/nlr.h"
 #include "py/obj.h"
@@ -100,3 +101,8 @@ void assert_pin_free(const mcu_pin_obj_t* pin) {
     }
 }
 
+void assert_scl_sda(uint32_t n_args){
+    raise_error_if(n_args != 0, "The constructor does not require parameters.");
+    assert_pin_free(&pin_SCL);
+    assert_pin_free(&pin_SDA);
+}

@@ -27,28 +27,24 @@
 #include <Arduino.h>
 #include "submodule/MMA7660.h"
 extern "C"{
-#include "py/mphal.h"
-#include "py/nlr.h"
 #include "py/objtype.h"
-#include "py/runtime.h"
-#include "shared-bindings/microcontroller/Pin.h"
 #include "shared-bindings/util.h"
 }
-#define xyz3   (*(MMA7660 *)self)
+#define xyz3   (*(MMA7660 *)self->module)
+void * operator new(size_t, void *); 
 
 extern "C" {
-    void common_hal_ada_construct(void ** get){
-        MMA7660 * self = m_new_obj(MMA7660);
-        *get = self;
+    void common_hal_ada_construct(abstract_module_t * self){
+        self->module = new(m_new_obj(MMA7660)) MMA7660;
         xyz3.init();
     }
-    void common_hal_ada_deinit(void * self){
-
+    void common_hal_ada_deinit(abstract_module_t * self){
+        xyz3.~MMA7660();
     }
-    void common_hal_ada_get_xyz(void * self, int8_t * value){
+    void common_hal_ada_get_xyz(abstract_module_t * self, int8_t * value){
         xyz3.getXYZ(value + 0, value + 1, value + 2);
     }
-    void common_hal_ada_get_xyz_acceleration(void * self, float * value){
+    void common_hal_ada_get_xyz_acceleration(abstract_module_t * self, float * value){
         xyz3.getAcceleration(value + 0, value + 1, value + 2);
     }
 }

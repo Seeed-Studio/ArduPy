@@ -24,92 +24,49 @@
  * THE SOFTWARE.
  */
 
-#include "py/mphal.h"
-#include "py/nlr.h"
-#include "py/objtype.h"
-#include "py/runtime.h"
-#include "py/obj.h"
-#include "shared-bindings/microcontroller/Pin.h"
 #include "shared-bindings/util.h"
+#include "shared-bindings/microcontroller/Pin.h"
 #include "common-hal/grove/GroveRtc.h"
-
-typedef struct{
-    mp_obj_base_t base;
-    void *        module;
-}rtc_obj_t;
 
 extern const mp_obj_type_t grove_rtc_type;
 
-mp_obj_t rtc_make_new(
-    const mp_obj_type_t *type, 
-    size_t n_args, 
-    size_t n_kw, 
-    const mp_obj_t * args) {
-    rtc_obj_t     * self = m_new_obj(rtc_obj_t);
-    self->base.type = &grove_rtc_type;
-    assert_pin_free(&pin_SCL);
-    assert_pin_free(&pin_SDA);
-    common_hal_rtc_construct(&self->module);
-    return (mp_obj_t)self;
-}
-
-mp_obj_t rtc_obj_deinit(mp_obj_t self_in) {
-    rtc_obj_t * self = (rtc_obj_t *)(self_in);
-    common_hal_rtc_deinit(self);
-    return mp_const_none;
-}
-
-mp_obj_t rtc_obj___exit__(size_t n_args, const mp_obj_t *args) {
-    rtc_obj_t * self = (rtc_obj_t *)(args[0]);
-    common_hal_rtc_deinit(self);
-    return mp_const_none;
+m_generic_make(rtc){
+    abstract_module_t * self = new_abstruct_module(type);
+    assert_scl_sda(n_args);
+    common_hal_rtc_construct(self);
+    return self;
 }
 
 mp_obj_t rtc_start(mp_obj_t self_in){
-    rtc_obj_t * self = (rtc_obj_t *)(self_in);
-    common_hal_rtc_start(self->module);
+    common_hal_rtc_start((abstract_module_t *)self_in);
     return mp_const_none;
 }
 
 mp_obj_t rtc_stop(mp_obj_t self_in){
-    rtc_obj_t * self = (rtc_obj_t *)(self_in);
-    common_hal_rtc_stop(self->module);
+    common_hal_rtc_stop((abstract_module_t *)self_in);
     return mp_const_none;
 }
 
 void rtc_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest){
     extern const mp_obj_type_t grove_datetime_type;
-    rtc_obj_t * self = (rtc_obj_t *)self_in;
-    datetime_obj_t * time;
+    abstract_module_t * self = (abstract_module_t *)self_in;
+    datetime_obj_t    * time;
 
-    if (dest[0] != MP_OBJ_NULL) {
-        switch (attr) {
-        case MP_QSTR_datetime:
-            time = (datetime_obj_t *)dest[1];
-            common_hal_rtc_set_datetime(self->module, & time->data);
-            break;
-        default:
-            generic_method_lookup(self_in, attr, dest);
-            break;
-        }
+    if (attr != MP_QSTR_datetime){
+        generic_method_lookup(self_in, attr, dest);
+    }
+    else if (dest[0] != MP_OBJ_NULL){
         dest[0] = MP_OBJ_NULL;
-    } else {
-        switch (attr) {
-        case MP_QSTR_datetime:
-            time = m_new_obj(datetime_obj_t);
-            time->base.type = & grove_datetime_type;
-            common_hal_rtc_get_datetime(self->module, & time->data);
-            dest[0] = (mp_obj_t)time;
-            break;
-        default:
-            generic_method_lookup(self_in, attr, dest);
-            break;
-        }
+        time = (datetime_obj_t *)dest[1];
+        common_hal_rtc_set_datetime(self, &time->data);
+    }
+    else{
+        dest[0] = time = m_new_obj(datetime_obj_t);
+        time->base.type = &grove_datetime_type;
+        common_hal_rtc_get_datetime(self, &time->data);
     }
 }
 
-MP_DEFINE_CONST_FUN_OBJ_1(rtc_deinit_obj, rtc_obj_deinit);
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(rtc_obj___exit___obj, 4, 4, rtc_obj___exit__);
 MP_DEFINE_CONST_FUN_OBJ_1(rtc_start_obj, rtc_start);
 MP_DEFINE_CONST_FUN_OBJ_1(rtc_stop_obj, rtc_stop);
 

@@ -26,37 +26,29 @@
 
 #include "submodule/TM1637.h"
 extern "C"{
-#include "py/mphal.h"
-#include "py/nlr.h"
 #include "py/objtype.h"
-#include "py/runtime.h"
-#include "shared-bindings/microcontroller/Pin.h"
 #include "shared-bindings/util.h"
 }
 
-#define tube     (*(TM1637 *)self)
+#define tube     (*(TM1637 *)self->module)
 void * operator new(size_t, void *); 
 
 extern "C" {
     void common_hal_nixie_tube_construct(
-        void ** get, 
-        const mcu_pin_obj_t * pin_clk, 
-        const mcu_pin_obj_t * pin_dat){
-        TM1637 * self;
-        *get = self = new(m_new_obj(TM1637)) TM1637(
-            pin_clk->number, 
-            pin_dat->number
-        );
+        abstract_module_t * self,
+        uint32_t pin_clk, 
+        uint32_t pin_dat){
+        self->module = new(m_new_obj(TM1637)) TM1637(pin_clk, pin_dat);
         tube.clearDisplay();
         tube.set();
     }
-    void common_hal_nixie_tube_deinit(void *self){
-
+    void common_hal_nixie_tube_deinit(abstract_module_t * self){
+        tube.~TM1637();
     }
-    void common_hal_nixie_tube_clear(void *self){
+    void common_hal_nixie_tube_clear(abstract_module_t * self){
         tube.clearDisplay();
     }
-    void common_hal_nixie_tube_display(void *self, uint32_t value){
+    void common_hal_nixie_tube_display(abstract_module_t * self, uint32_t value){
         int8_t values [4];
         values[0] = value / 1000;
         value %= 1000;
@@ -67,10 +59,10 @@ extern "C" {
         values[3] = value;
         tube.display(values);
     }
-    void common_hal_nixie_tube_set_show_colon(void *self, uint32_t confirm){
+    void common_hal_nixie_tube_set_show_colon(abstract_module_t * self, bool confirm){
         tube.point(confirm ? POINT_ON : POINT_OFF);
     }
-    void common_hal_nixie_tube_get_show_colon(void *self, uint32_t * confirm){
-        *confirm = (uint32_t)tube._PointFlag;
+    bool common_hal_nixie_tube_get_show_colon(abstract_module_t * self){
+        return tube._PointFlag;
     }
 }

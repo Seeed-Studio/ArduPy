@@ -34,7 +34,7 @@ extern "C"{
 #include "shared-bindings/util.h"
 }
 
-#define dht     (*(DHT *)self)
+#define dht     (*(DHT *)self->module)
 void * operator new(size_t, void *); 
 extern const mp_obj_base_t ic_dht11_obj;
 extern const mp_obj_base_t ic_dht21_obj;
@@ -42,10 +42,9 @@ extern const mp_obj_base_t ic_dht22_obj;
 
 extern "C" {
     void common_hal_dht_construct(
-        void ** get, 
-        const mcu_pin_obj_t * pin_ctrl,
+        abstract_module_t * self, 
+        uint32_t pin_ctrl,
         mp_obj_t type){
-        DHT * self;
         uint8_t device;
 
         if (MP_OBJ_TO_PTR(type) == MP_ROM_PTR(&ic_dht11_obj)) {
@@ -58,19 +57,16 @@ extern "C" {
             device = DHT22;
         }
 
-        *get = self = new(m_new_obj(DHT)) DHT(
-            pin_ctrl->number, device
-        );
-
+        self->module = new(m_new_obj(DHT)) DHT(pin_ctrl, device);
         dht.begin();
     }
-    void common_hal_dht_deinit(void *self){
-
+    void common_hal_dht_deinit(abstract_module_t * self){
+        dht.~DHT();
     }
-    void common_hal_dht_get_humidity(void *self, float * value){
-        *value = dht.readHumidity();
+    float common_hal_dht_get_humidity(abstract_module_t * self){
+        return dht.readHumidity();
     }
-    void common_hal_dht_get_temperature(void *self, float * value){
-        *value = dht.readTemperature();
+    float common_hal_dht_get_temperature(abstract_module_t * self){
+        return dht.readTemperature();
     }
 }

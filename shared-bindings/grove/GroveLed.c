@@ -36,18 +36,6 @@
 #include "shared-bindings/util.h"
 #include "shared-bindings/digitalio/DriveMode.h"
 
-//| .. currentmodule:: digitalio
-//|
-//| :class:`GroveLed` -- digital input and output
-//| =========================================================
-//|
-//| A GroveLed is used to digitally control Output pins.
-
-//| .. class:: GroveLed(pin)
-//|
-//|   Create a new GroveLed object associated with the pin. Defaults to output
-//|
-
 extern void common_hal_digitalio_digitalinout_switch_to_output(
     digitalio_digitalinout_obj_t *self, 
     bool value, 
@@ -62,34 +50,23 @@ mp_obj_t grove_led_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_k
     return (mp_obj_t)self;
 }
 
-//|   .. attribute:: value
-//|
-//|     The digital logic level of the pin.
-//|
 mp_obj_t digitalio_digitalinout_obj_get_value(mp_obj_t self_in);
 mp_obj_t digitalio_digitalinout_obj_set_value(mp_obj_t self_in, mp_obj_t value);
 
 STATIC void grove_led_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
     if (dest[0] != MP_OBJ_NULL) {
-        switch (attr) {
-        case MP_QSTR_value:
+        dest[0] = MP_OBJ_NULL;
+        if (attr == MP_QSTR_value){
             digitalio_digitalinout_obj_set_value(self_in,dest[1]);
-            break;
-        default:
-            generic_method_lookup(self_in, attr, dest);
-            break;
+            return;
         }
-        dest[0] = MP_OBJ_NULL; // indicate success
     } else {
-        switch (attr) {
-        case MP_QSTR_value:
+        if (attr == MP_QSTR_value){
             dest[0] = digitalio_digitalinout_obj_get_value(self_in);
-            break;
-        default:
-            generic_method_lookup(self_in, attr, dest);
-            break;
+            return;
         }
     }
+    generic_method_lookup(self_in, attr, dest);
 }
 
 extern const mp_obj_dict_t digitalio_digitalinout_locals_dict;

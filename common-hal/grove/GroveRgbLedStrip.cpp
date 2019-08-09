@@ -26,48 +26,42 @@
 
 #include "submodule/Adafruit_NeoPixel.h"
 extern "C"{
-#include "py/mphal.h"
-#include "py/nlr.h"
-#include "py/objtype.h"
-#include "py/runtime.h"
-#include "shared-bindings/microcontroller/Pin.h"
 #include "shared-bindings/util.h"
 }
 
-#define rgb_led_strip   (*(Adafruit_NeoPixel *)self)
+#define rgb_led_strip   (*(Adafruit_NeoPixel *)self->module)
 void * operator new(size_t, void *); 
 
 extern "C" {
     void common_hal_rgb_led_strip_construct(
-        void ** get, 
-        const mcu_pin_obj_t * pin_ctrl,
+        abstract_module_t * self, 
+        uint32_t pin_ctrl,
         uint32_t count_of_led){
-        Adafruit_NeoPixel * self;
-        *get = self = new(m_new_obj(Adafruit_NeoPixel)) Adafruit_NeoPixel(
+        self->module = new(m_new_obj(Adafruit_NeoPixel)) Adafruit_NeoPixel(
             count_of_led,
-            pin_ctrl->number,
+            pin_ctrl,
             NEO_GRB + NEO_KHZ800 //notice current environment-------------------------------
         );
         rgb_led_strip.begin();
         rgb_led_strip.clear();
     }
-    void common_hal_rgb_led_strip_deinit(void * self){
+    void common_hal_rgb_led_strip_deinit(abstract_module_t * self){
         rgb_led_strip.~Adafruit_NeoPixel();
     }
-    void common_hal_rgb_led_strip_clear(void * self){
+    void common_hal_rgb_led_strip_clear(abstract_module_t * self){
         rgb_led_strip.clear();
     }
-    void common_hal_rgb_led_strip_update(void * self){
+    void common_hal_rgb_led_strip_update(abstract_module_t * self){
         rgb_led_strip.show();
     }
-    void common_hal_rgb_led_strip_set_pix_color(void * self, uint32_t led_no, uint32_t color){
-        rgb_led_strip.setPixelColor(led_no - 1, 
+    void common_hal_rgb_led_strip_set_pix_color(abstract_module_t * self, uint32_t led_no, uint32_t color){
+        rgb_led_strip.setPixelColor(led_no - 1, //this argument is index
             (color >> 16) & 0xff, 
             (color >>  8) & 0xff,
             (color >>  0) & 0xff
         );
     }
-    void common_hal_rgb_led_strip_set_brightness(void * self, uint32_t value){
+    void common_hal_rgb_led_strip_set_brightness(abstract_module_t * self, uint32_t value){
         rgb_led_strip.setBrightness(value);
     }
 }

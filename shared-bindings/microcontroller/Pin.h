@@ -37,7 +37,7 @@ extern const mp_obj_type_t mcu_pin_type;
 
 void assert_pin(mp_obj_t obj, bool none_ok);
 void assert_pin_free(const mcu_pin_obj_t* pin);
-
+void assert_scl_sda(uint32_t n_args);
 bool common_hal_mcu_pin_is_free(const mcu_pin_obj_t* pin);
 
 #endif  // MICROPY_INCLUDED_SHARED_BINDINGS_MICROCONTROLLER_PIN_H

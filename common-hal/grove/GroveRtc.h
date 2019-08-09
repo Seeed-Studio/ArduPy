@@ -34,7 +34,7 @@ extern "C" {
         uint8_t  second;
         uint8_t  minute;
         uint8_t  hour; 
-        uint8_t  day_of_week;  // day of week, 1 = Monday
+        uint8_t  day_of_week;  // day of week, 1 = Monday ... 7 = Sunday
         uint8_t  day_of_month;
         uint8_t  month;
         uint16_t year;
@@ -44,13 +44,6 @@ extern "C" {
         mp_obj_base_t  base;
         rtc_datetime_t data;
     }datetime_obj_t;
-
-    void common_hal_rtc_construct(void ** get);
-    void common_hal_rtc_deinit(void * self);
-    void common_hal_rtc_start(void * self);
-    void common_hal_rtc_stop(void * self);
-    void common_hal_rtc_get_datetime(void * self, rtc_datetime_t * value);
-    void common_hal_rtc_set_datetime(void * self, rtc_datetime_t * value);
 #ifdef __cplusplus
 }
 #endif

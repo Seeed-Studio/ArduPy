@@ -48,6 +48,47 @@ typedef struct _mp_obj_property_t {
 
 #endif  // MICROPY_PY_BUILTINS_PROPERTY
 
+typedef struct {
+    mp_obj_base_t base;
+    void        * module;
+} abstruct_module_t;
+
+inline abstruct_module_t * new_abstruct_module(mp_obj_type_t * type){
+    abstruct_module_t * self = m_new_obj(abstruct_module_t);
+    self->base.type = type;
+    return self;
+}
+
+#define m_generic_make(name)                                        \
+STATIC mp_obj_t name ## _obj_deinit(mp_obj_t self_in) {             \
+    common_hal_ ## name ## _deinit((abstruct_module_t *)self_in);   \
+    return mp_const_none;                                           \
+}                                                                   \
+MP_DEFINE_CONST_FUN_OBJ_1(                                          \
+    name ## _deinit_obj,                                            \
+    name ## _obj_deinit);                                           \
+STATIC mp_obj_t name ## _obj___exit__(                              \
+    size_t n_args,                                                  \
+    const mp_obj_t * args) {                                        \
+    common_hal_ ## name ## _deinit((abstruct_module_t *)args[0]);   \
+    return mp_const_none;                                           \
+}                                                                   \
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(                         \
+    name ## _obj___exit___obj, 4, 4,                                \
+    name ## _obj___exit__);                                         \
+STATIC mp_obj_t name ## _make_new(                                  \
+    const mp_obj_type_t * type,                                     \
+    size_t n_args,                                                  \
+    size_t n_kw,                                                    \
+    const mp_obj_t * args)
+
+#define m_get_pin(index)  ((mcu_pin_obj_t *)vals[index].u_obj)
+
+typedef enum{
+    ERROR,
+    SUCCESS,
+}result_t;
+
 MP_DECLARE_CONST_FUN_OBJ_1(default___enter___obj);
 
 void raise_error_if_deinited(bool deinited);

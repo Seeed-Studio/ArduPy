@@ -24,136 +24,96 @@
  * THE SOFTWARE.
  */
 
-#include "py/mphal.h"
-#include "py/nlr.h"
-#include "py/objtype.h"
 #include "py/runtime.h"
 #include "py/obj.h"
 #include "shared-bindings/microcontroller/Pin.h"
 #include "shared-bindings/util.h"
-#include "common-hal/microcontroller/Pin.h"
-
-typedef struct{
-    mp_obj_base_t base;
-    void *        module;
-}led_bar_obj_t;
 
 void common_hal_led_bar_construct(
-    void ** self, 
-    const mcu_pin_obj_t * pin_clk, 
-    const mcu_pin_obj_t * pin_dat);
-void common_hal_led_bar_deinit(void *self);
-void common_hal_led_bar_get_led_numbers(void *self, uint32_t * value);
-void common_hal_led_bar_set_bits(void *self, uint32_t value);
-void common_hal_led_bar_get_bits(void *self, uint32_t * value);
-void common_hal_led_bar_set_level(void *self, float value);
-void common_hal_led_bar_set_brightness(void *self, uint32_t led_no, float value);
-void common_hal_led_bar_set_is_reverse_show(void *self, uint32_t value);
-void common_hal_led_bar_toggle(void *self, uint32_t led_no);
+    abstract_module_t * self, 
+    uint32_t pin_clk, 
+    uint32_t pin_dat);
+void common_hal_led_bar_deinit(abstract_module_t * self);
+void common_hal_led_bar_set_bits(abstract_module_t * self, uint32_t value);
+void common_hal_led_bar_set_level(abstract_module_t * self, float value);
+void common_hal_led_bar_set_brightness(abstract_module_t * self, uint32_t led_no, float value);
+void common_hal_led_bar_set_is_reverse_show(abstract_module_t * self, bool value);
+void common_hal_led_bar_toggle(abstract_module_t * self, uint32_t led_no);
+uint32_t common_hal_led_bar_get_led_numbers(abstract_module_t * self);
+uint32_t common_hal_led_bar_get_bits(abstract_module_t * self);
 
 extern const mp_obj_type_t grove_led_bar_type;
 
-mp_obj_t led_bar_make_new(
-    const mp_obj_type_t *type, 
-    size_t n_args, 
-    size_t n_kw, 
-    const mp_obj_t * args) {
-    led_bar_obj_t * self = m_new_obj(led_bar_obj_t);
-    self->base.type = &grove_led_bar_type;
-    assert_pin(args[0], false);
-    assert_pin(args[1], false);
-    mcu_pin_obj_t * pin_clk = (mcu_pin_obj_t *)(args[0]);
-    mcu_pin_obj_t * pin_dat = (mcu_pin_obj_t *)(args[1]);
+m_generic_make(led_bar) {
+    abstract_module_t * self = new_abstruct_module(type);
+    mcu_pin_obj_t     * pin_clk = (mcu_pin_obj_t *)(args[0]);
+    mcu_pin_obj_t     * pin_dat = (mcu_pin_obj_t *)(args[1]);
+    assert_pin(args[0], true);
+    assert_pin(args[1], true);
     assert_pin_free(pin_clk);
     assert_pin_free(pin_dat);
-    common_hal_led_bar_construct(&self->module, pin_clk, pin_dat);
-    return (mp_obj_t)self;
-}
-
-mp_obj_t led_bar_obj_deinit(mp_obj_t self_in) {
-    led_bar_obj_t *self = (led_bar_obj_t *)(self_in);
-    common_hal_led_bar_deinit(self);
-    return mp_const_none;
-}
-
-mp_obj_t led_bar_obj___exit__(size_t n_args, const mp_obj_t *args) {
-    led_bar_obj_t *self = (led_bar_obj_t *)(args[0]);
-    common_hal_led_bar_deinit(self);
-    return mp_const_none;
+    common_hal_led_bar_construct(self, pin_clk->number, pin_dat->number);
+    return self;
 }
 
 mp_obj_t led_bar_get_led_numbers(mp_obj_t self_in){
-    led_bar_obj_t *self = (led_bar_obj_t *)(self_in);
-    uint32_t value;
-    common_hal_led_bar_get_led_numbers(self->module, &value);
-    return mp_obj_new_int((mp_int_t)value);
+    return mp_obj_new_int(
+        common_hal_led_bar_get_led_numbers((abstract_module_t *)(self_in))
+    );
 }
 
-mp_obj_t led_bar_set_bits(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args){
-    led_bar_obj_t *self = (led_bar_obj_t *)(pos_args[0]);
-    uint32_t value = mp_obj_get_int(pos_args[1]);
-    common_hal_led_bar_set_bits(self->module, value);
+mp_obj_t led_bar_set_bits(size_t n_args, const mp_obj_t * pos_args, mp_map_t * kw_args){
+    void print_hex(uint32_t);
+    common_hal_led_bar_set_bits(
+        (abstract_module_t *)(pos_args[0]), 
+        (uint32_t)mp_obj_get_int(pos_args[1])
+    );
     return mp_const_none;
 }
 mp_obj_t led_bar_get_bits(mp_obj_t self_in){
-    led_bar_obj_t *self = (led_bar_obj_t *)(self_in);
-    uint32_t value;
-    common_hal_led_bar_get_bits(self->module,  &value);
-    return mp_obj_new_int(value);
+    return mp_obj_new_int(
+        common_hal_led_bar_get_bits((abstract_module_t *)(self_in))
+    );
 }
-mp_obj_t led_bar_set_level(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args){
-    led_bar_obj_t *self = (led_bar_obj_t *)(pos_args[0]);
+mp_obj_t led_bar_set_level(size_t n_args, const mp_obj_t * pos_args, mp_map_t * kw_args){
+    abstract_module_t * self = (abstract_module_t *)(pos_args[0]);
     float value = mp_obj_get_float(pos_args[1]);
-    common_hal_led_bar_set_level(self->module, value);
+    common_hal_led_bar_set_level(self, value);
     return mp_const_none;
 }
 mp_obj_t led_bar_set_brightness(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args){
-    led_bar_obj_t *self = (led_bar_obj_t *)(pos_args[0]);
-    uint32_t index = mp_obj_get_int(pos_args[1]);
+    abstract_module_t * self = (abstract_module_t *)(pos_args[0]);
+    uint32_t led_no = mp_obj_get_int(pos_args[1]);
     float value = mp_obj_get_float(pos_args[2]);
-    common_hal_led_bar_set_brightness(self->module, index, value);
+    common_hal_led_bar_set_brightness(self, led_no, value);
     return mp_const_none;
 }
 mp_obj_t led_bar_set_is_reverse_show(mp_obj_t self_in, mp_obj_t value_obj){
-    led_bar_obj_t *self = (led_bar_obj_t *)(self_in);
+    abstract_module_t * self = (abstract_module_t *)(self_in);
     uint32_t value = mp_obj_get_int(value_obj);
-    common_hal_led_bar_set_is_reverse_show(self->module, value);
+    common_hal_led_bar_set_is_reverse_show(self, value);
     return mp_const_none;
 }
 mp_obj_t led_bar_toggle(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args){
-    led_bar_obj_t *self = (led_bar_obj_t *)(pos_args[0]);
-    uint32_t index = mp_obj_get_int(pos_args[1]);
-    common_hal_led_bar_toggle(self->module, index);
+    abstract_module_t * self = (abstract_module_t *)(pos_args[0]);
+    uint32_t led_no = mp_obj_get_int(pos_args[1]);
+    common_hal_led_bar_toggle(self, led_no);
     return mp_const_none;
 }
 void led_bar_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest){
-    if (dest[0] != MP_OBJ_NULL) {
-        switch (attr) {
-        case MP_QSTR_is_reverse_show:
-            led_bar_set_is_reverse_show(self_in,dest[1]);
-            break;
-        default:
-            generic_method_lookup(self_in, attr, dest);
-            break;
-        }
-        dest[0] = MP_OBJ_NULL; // indicate success
-    } else {
-        switch (attr) {
-        default:
-            generic_method_lookup(self_in, attr, dest);
-            break;
-        }
+    if (dest[0] == MP_OBJ_NULL || attr != MP_QSTR_is_reverse_show){
+        generic_method_lookup(self_in, attr, dest);
+        return;
     }
+    dest[0] = MP_OBJ_NULL; // indicate success
+    led_bar_set_is_reverse_show(self_in, dest[1]);
 }
 
-MP_DEFINE_CONST_FUN_OBJ_1(led_bar_deinit_obj, led_bar_obj_deinit);
 MP_DEFINE_CONST_FUN_OBJ_KW(led_bar_set_bits_obj, 1, led_bar_set_bits);
 MP_DEFINE_CONST_FUN_OBJ_1(led_bar_get_bits_obj, led_bar_get_bits);
 MP_DEFINE_CONST_FUN_OBJ_KW(led_bar_set_level_obj, 2, led_bar_set_level);
 MP_DEFINE_CONST_FUN_OBJ_KW(led_bar_set_brightness_obj, 2, led_bar_set_brightness);
 MP_DEFINE_CONST_FUN_OBJ_KW(led_bar_toggle_obj, 1, led_bar_toggle);
-
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(led_bar_obj___exit___obj, 4, 4, led_bar_obj___exit__);
 
 const mp_rom_map_elem_t led_bar_locals_dict_table[] = {
     // instance methods
@@ -173,4 +133,5 @@ const mp_obj_type_t grove_led_bar_type = {
     .name = MP_QSTR_grove_led_bar,
     .make_new = led_bar_make_new,
     .locals_dict = (mp_obj_t)&led_bar_locals_dict,
+    .attr = &led_bar_obj_attr,
 };
