@@ -81,7 +81,7 @@ mp_obj_t lcd_print(size_t n_args, const mp_obj_t * pos_args, mp_map_t * kw_args)
         common_hal_lcd_print_string(self, mp_obj_str_get_str(pos_args[1]));
     }
     else{
-        mp_raise_TypeError("The allow parameter type are int, float and string.");
+        mp_raise_TypeError("The allowed parameter type are int, float and string.");
     }
     return mp_const_none;
 }
