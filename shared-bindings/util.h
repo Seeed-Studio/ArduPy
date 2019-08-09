@@ -51,17 +51,17 @@ typedef struct _mp_obj_property_t {
 typedef struct {
     mp_obj_base_t base;
     void        * module;
-} abstruct_module_t;
+} abstract_module_t;
 
-inline abstruct_module_t * new_abstruct_module(mp_obj_type_t * type){
-    abstruct_module_t * self = m_new_obj(abstruct_module_t);
+inline abstract_module_t * new_abstruct_module(mp_obj_type_t * type){
+    abstract_module_t * self = m_new_obj(abstract_module_t);
     self->base.type = type;
     return self;
 }
 
 #define m_generic_make(name)                                        \
 STATIC mp_obj_t name ## _obj_deinit(mp_obj_t self_in) {             \
-    common_hal_ ## name ## _deinit((abstruct_module_t *)self_in);   \
+    common_hal_ ## name ## _deinit((abstract_module_t *)self_in);   \
     return mp_const_none;                                           \
 }                                                                   \
 MP_DEFINE_CONST_FUN_OBJ_1(                                          \
@@ -70,7 +70,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(                                          \
 STATIC mp_obj_t name ## _obj___exit__(                              \
     size_t n_args,                                                  \
     const mp_obj_t * args) {                                        \
-    common_hal_ ## name ## _deinit((abstruct_module_t *)args[0]);   \
+    common_hal_ ## name ## _deinit((abstract_module_t *)args[0]);   \
     return mp_const_none;                                           \
 }                                                                   \
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(                         \

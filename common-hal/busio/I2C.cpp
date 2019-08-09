@@ -24,66 +24,84 @@
  * THE SOFTWARE.
  */
 
-#include "shared-bindings/busio/I2C.h"
-#include "py/mperrno.h"
-#include "py/runtime.h"
-#include "py/mphal.h"
 #include "Arduino.h"
-#include "shared-bindings/microcontroller/__init__.h"
 #include <Wire.h>
-// Number of times to try to send packet if failed.
-#define ATTEMPTS 2
+extern "C"{
+#include "py/mperrno.h"
+#include "py/obj.h"
+#include "shared-bindings/microcontroller/__init__.h"
+#include "shared-bindings/util.h"
+}
+#define has_lock  (*(bool *)self->module)
+
 extern "C" {
-void common_hal_busio_i2c_construct(busio_i2c_obj_t *self, const mcu_pin_obj_t *scl, const mcu_pin_obj_t *sda, uint32_t frequency, uint32_t timeout) {
-    Wire.begin();
-}
-
-bool common_hal_busio_i2c_deinited(busio_i2c_obj_t *self) { return self->sda_pin == 84; }
-
-void common_hal_busio_i2c_deinit(busio_i2c_obj_t *self) {}
-
-bool common_hal_busio_i2c_probe(busio_i2c_obj_t *self, uint8_t addr) {
-    Wire.beginTransmission(addr);
-    return Wire.endTransmission() == 0;
-}
-
-bool common_hal_busio_i2c_try_lock(busio_i2c_obj_t *self) {
-    bool grabbed_lock = false;
-    uint32_t state = MICROPY_BEGIN_ATOMIC_SECTION();
-    if (!self->has_lock) {
-        grabbed_lock = true;
-        self->has_lock = true;
-    }
-    MICROPY_END_ATOMIC_SECTION(state);
-    return grabbed_lock;
-}
-
-bool common_hal_busio_i2c_has_lock(busio_i2c_obj_t *self) { return self->has_lock; }
-
-void common_hal_busio_i2c_unlock(busio_i2c_obj_t *self) { self->has_lock = false; }
-
-uint8_t common_hal_busio_i2c_write(busio_i2c_obj_t *self, uint16_t addr, const uint8_t *data, size_t len, bool transmit_stop_bit) {
-    Wire.beginTransmission(addr);
-    for (int i = 0; i < len; i++)
-        Wire.write(data[i]);
-    transmit_stop_bit ? Wire.endTransmission(true) : Wire.endTransmission(false);
-    return 0;
-}
-
-uint8_t common_hal_busio_i2c_read(busio_i2c_obj_t *self, uint16_t addr, uint8_t *data, size_t len) {
-    int time_out_count;
-    Wire.beginTransmission(addr);
-    Wire.requestFrom(addr, len);
-    while (len != Wire.available()) {
-        time_out_count++;
-        if (time_out_count > 10)
-            return MP_ENODEV;
-        delay(1);
-    }
-    for (int i = 0; i < len; i++) {
-        data[i] = Wire.read();
+    void common_hal_busio_i2c_construct(
+        abstract_module_t * self,
+        uint32_t pin_scl,
+        uint32_t pin_sda,
+        uint32_t frequency,
+        uint32_t timeout) {
+        self->module = m_new_obj(bool);
+        has_lock = false;
+        Wire.begin();
     }
 
-    return 0;
-}
+    bool common_hal_busio_i2c_deinited(abstract_module_t * self) { 
+        return false;
+    }
+
+    void common_hal_busio_i2c_deinit(abstract_module_t * self) {}
+
+    bool common_hal_busio_i2c_probe(abstract_module_t * self, uint8_t addr) {
+        Wire.beginTransmission(addr);
+        return Wire.endTransmission() == 0;
+    }
+
+    bool common_hal_busio_i2c_try_lock(abstract_module_t * self) {
+        bool grabbed_lock = false;
+        uint32_t state = MICROPY_BEGIN_ATOMIC_SECTION();
+        if (!has_lock) {
+            grabbed_lock = true;
+            has_lock = true;
+        }
+        MICROPY_END_ATOMIC_SECTION(state);
+        return grabbed_lock;
+    }
+
+    bool common_hal_busio_i2c_has_lock(abstract_module_t * self) { return has_lock; }
+
+    void common_hal_busio_i2c_unlock(abstract_module_t * self) { has_lock = false; }
+
+    uint8_t common_hal_busio_i2c_write(
+        abstract_module_t * self, 
+        uint16_t addr, 
+        const uint8_t * data, 
+        size_t len, 
+        bool transmit_stop_bit) {
+        Wire.beginTransmission(addr);
+        for (int i = 0; i < len; i++)
+            Wire.write(data[i]);
+        transmit_stop_bit ? Wire.endTransmission(true) : Wire.endTransmission(false);
+        return 0;
+    }
+
+    uint8_t common_hal_busio_i2c_read(
+        abstract_module_t * self, 
+        uint16_t addr, 
+        uint8_t * data, 
+        size_t len) {
+        int time_out_count;
+        Wire.beginTransmission(addr);
+        Wire.requestFrom(addr, len);
+        while (len != Wire.available()) {
+            time_out_count++;
+            if (time_out_count > 10)
+                return MP_ENODEV;
+            delay(1);
+        }
+        for (int i = 0; i < len; i++) {
+            data[i] = Wire.read();
+        }
+        return 0;
+    }
 } // extern "C"
