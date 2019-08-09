@@ -63,7 +63,6 @@ mp_obj_t led_bar_get_led_numbers(mp_obj_t self_in){
 }
 
 mp_obj_t led_bar_set_bits(size_t n_args, const mp_obj_t * pos_args, mp_map_t * kw_args){
-    void print_hex(uint32_t);
     common_hal_led_bar_set_bits(
         (abstract_module_t *)(pos_args[0]), 
         (uint32_t)mp_obj_get_int(pos_args[1])
