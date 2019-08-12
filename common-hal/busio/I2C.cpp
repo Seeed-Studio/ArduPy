@@ -32,7 +32,7 @@ extern "C"{
 #include "shared-bindings/microcontroller/__init__.h"
 #include "shared-bindings/util.h"
 }
-#define has_lock  (*(bool *)self->module)
+#define has_lock  (*(volatile bool *)self->module)
 
 extern "C" {
     void common_hal_busio_i2c_construct(
@@ -42,8 +42,8 @@ extern "C" {
         uint32_t frequency,
         uint32_t timeout) {
         self->module = m_new_obj(bool);
-        has_lock = false;
         Wire.begin();
+        has_lock = false;
     }
 
     bool common_hal_busio_i2c_deinited(abstract_module_t * self) { 
@@ -58,14 +58,7 @@ extern "C" {
     }
 
     bool common_hal_busio_i2c_try_lock(abstract_module_t * self) {
-        bool grabbed_lock = false;
-        uint32_t state = MICROPY_BEGIN_ATOMIC_SECTION();
-        if (!has_lock) {
-            grabbed_lock = true;
-            has_lock = true;
-        }
-        MICROPY_END_ATOMIC_SECTION(state);
-        return grabbed_lock;
+        return try_lock(&has_lock);
     }
 
     bool common_hal_busio_i2c_has_lock(abstract_module_t * self) { return has_lock; }
@@ -79,8 +72,9 @@ extern "C" {
         size_t len, 
         bool transmit_stop_bit) {
         Wire.beginTransmission(addr);
-        for (int i = 0; i < len; i++)
+        for (int i = 0; i < len; i++){
             Wire.write(data[i]);
+        }
         transmit_stop_bit ? Wire.endTransmission(true) : Wire.endTransmission(false);
         return 0;
     }
