@@ -53,6 +53,23 @@ NORETURN void mp_raise_AttributeError(const char *msg) {
     mp_raise_msg(&mp_type_AttributeError, msg);
 }
 
+bool try_lock(volatile bool * mutex){
+    bool grabbed_lock = false;
+    uint32_t state = MICROPY_BEGIN_ATOMIC_SECTION();
+    if (!mutex[0]) {
+        grabbed_lock = true;
+        mutex[0] = true;
+    }
+    MICROPY_END_ATOMIC_SECTION(state);
+    return grabbed_lock;
+}
+
+void raise_error_if_not_locked(bool value) {
+    if (value) {
+        mp_raise_RuntimeError("Function requires lock");
+    }
+}
+
 // Check if pin is None. If so, deinit() has already been called on the object, so complain.
 void raise_error_if_deinited(bool deinited) {
     if (deinited) {
