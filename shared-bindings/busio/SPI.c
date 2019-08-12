@@ -30,12 +30,55 @@
 #include <string.h>
 
 #include "shared-bindings/microcontroller/Pin.h"
-#include "shared-bindings/busio/SPI.h"
 #include "shared-bindings/util.h"
-
-
 #include "py/mperrno.h"
 #include "py/runtime.h"
+
+// Type object used in Python. Should be shared between ports.
+extern const mp_obj_type_t busio_spi_type;
+
+// Construct an underlying SPI object.
+void common_hal_busio_spi_construct(
+    abstract_module_t * self,
+    uint32_t clock,
+    uint32_t mosi,
+    uint32_t miso
+);
+
+void common_hal_busio_spi_deinit(abstract_module_t * self);
+bool common_hal_busio_spi_deinited(abstract_module_t * self);
+bool common_hal_busio_spi_configure(
+    abstract_module_t * self, 
+    uint32_t baudrate, 
+    uint8_t polarity, 
+    uint8_t phase, 
+    uint8_t bits
+);
+
+bool common_hal_busio_spi_try_lock(abstract_module_t * self);
+bool common_hal_busio_spi_has_lock(abstract_module_t * self);
+void common_hal_busio_spi_unlock(abstract_module_t * self);
+
+// Writes out the given data.
+bool common_hal_busio_spi_write(abstract_module_t * self, const uint8_t * data, size_t len);
+
+// Reads in len bytes while outputting zeroes.
+bool common_hal_busio_spi_read(abstract_module_t * self, uint8_t * data, size_t len, uint8_t write_value);
+
+// Reads and write len bytes simultaneously.
+bool common_hal_busio_spi_transfer(abstract_module_t * self, uint8_t * data_out, uint8_t * data_in, size_t len);
+
+// Return actual SPI bus frequency.
+uint32_t common_hal_busio_spi_get_frequency(abstract_module_t * self);
+
+// Return SPI bus phase.
+uint8_t common_hal_busio_spi_get_phase(abstract_module_t * self);
+
+// Return SPI bus polarity.
+uint8_t common_hal_busio_spi_get_polarity(abstract_module_t * self);
+
+// This is used by the supervisor to claim SPI devices indefinitely.
+void common_hal_busio_spi_never_reset(abstract_module_t * self);
 
 //| .. currentmodule:: busio
 //|
@@ -68,64 +111,35 @@
 //|
 
 // TODO(tannewt): Support LSB SPI.
-STATIC mp_obj_t busio_spi_make_new(const mp_obj_type_t *type, size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
-    busio_spi_obj_t *self = m_new_obj(busio_spi_obj_t);
-    self->base.type = &busio_spi_type;
+
+m_generic_make(busio_spi) {
     enum { ARG_clock, ARG_MOSI, ARG_MISO };
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_clock, MP_ARG_REQUIRED | MP_ARG_OBJ },
-        { MP_QSTR_MOSI, MP_ARG_OBJ, {.u_obj = mp_const_none} },
-        { MP_QSTR_MISO, MP_ARG_OBJ, {.u_obj = mp_const_none} },
+        { MP_QSTR_MOSI,  MP_ARG_OBJ, { .u_obj = mp_const_none } },
+        { MP_QSTR_MISO,  MP_ARG_OBJ, { .u_obj = mp_const_none } },
     };
-    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
-    assert_pin(args[ARG_clock].u_obj, false);
-    assert_pin(args[ARG_MOSI].u_obj, true);
-    assert_pin(args[ARG_MISO].u_obj, true);
-    const mcu_pin_obj_t* clock = MP_OBJ_TO_PTR(args[ARG_clock].u_obj);
+
+    abstract_module_t * self = new_abstruct_module(&busio_spi_type);
+    mp_arg_val_t        vals[MP_ARRAY_SIZE(allowed_args)];
+    mcu_pin_obj_t *     clock;
+    mcu_pin_obj_t *     mosi;
+    mcu_pin_obj_t *     miso;
+    mp_arg_parse_all_kw_array(n_args, n_kw, args, MP_ARRAY_SIZE(allowed_args), allowed_args, vals);
+    clock = m_get_pin(ARG_clock);
+    mosi = m_get_pin(ARG_MOSI);
+    miso = m_get_pin(ARG_MISO);
+    assert_pin(clock, false);
+    assert_pin(mosi, true);
+    assert_pin(miso, true);
     assert_pin_free(clock);
-    const mcu_pin_obj_t* mosi = MP_OBJ_TO_PTR(args[ARG_MOSI].u_obj);
     assert_pin_free(mosi);
-    const mcu_pin_obj_t* miso = MP_OBJ_TO_PTR(args[ARG_MISO].u_obj);
     assert_pin_free(miso);
-    common_hal_busio_spi_construct(self, clock, mosi, miso);
-    return (mp_obj_t)self;
-}
-
-//|   .. method:: SPI.deinit()
-//|
-//|      Turn off the SPI bus.
-//|
-STATIC mp_obj_t busio_spi_obj_deinit(mp_obj_t self_in) {
-    busio_spi_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    common_hal_busio_spi_deinit(self);
-    return mp_const_none;
-}
-MP_DEFINE_CONST_FUN_OBJ_1(busio_spi_deinit_obj, busio_spi_obj_deinit);
-
-//|   .. method:: SPI.__enter__()
-//|
-//|     No-op used by Context Managers.
-//|
-//  Provided by context manager helper.
-
-//|   .. method:: SPI.__exit__()
-//|
-//|     Automatically deinitializes the hardware when exiting a context. See
-//|     :ref:`lifetime-and-contextmanagers` for more info.
-//|
-STATIC mp_obj_t busio_spi_obj___exit__(size_t n_args, const mp_obj_t *args) {
-    (void)n_args;
-    common_hal_busio_spi_deinit(args[0]);
-    return mp_const_none;
-}
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(busio_spi_obj___exit___obj, 4, 4, busio_spi_obj___exit__);
-
-static void check_lock(busio_spi_obj_t *self) {
-    asm("");
-    if (!common_hal_busio_spi_has_lock(self)) {
-        mp_raise_RuntimeError("Function requires lock");
-    }
+    raise_error_if(clock != &pin_SCK, "1st parameter not match the SCK pin.");
+    raise_error_if(mosi != &pin_MOSI, "2st parameter not match the MOSI pin.");
+    raise_error_if(miso != &pin_MISO, "3st parameter not match the MISO pin.");
+    common_hal_busio_spi_construct(self, clock->number, mosi->number, miso->number);
+    return self;
 }
 
 //|   .. method:: SPI.configure(\*, baudrate=100000, polarity=0, phase=0, bits=8)
@@ -150,35 +164,40 @@ static void check_lock(busio_spi_obj_t *self) {
 //|      to 8MHz maximum. This is a hardware restriction: there is only one high-speed SPI peripheral.
 //|      If you pick a a baudrate other than one of these, the nearest lower
 //|      baudrate will be chosen, with a minimum of 125kHz.
-STATIC mp_obj_t busio_spi_configure(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+STATIC mp_obj_t busio_spi_configure(size_t n_args, const mp_obj_t * pos_args, mp_map_t * kw_args) {
     enum { ARG_baudrate, ARG_polarity, ARG_phase, ARG_bits };
     static const mp_arg_t allowed_args[] = {
-        { MP_QSTR_baudrate, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 100000} },
-        { MP_QSTR_polarity, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
-        { MP_QSTR_phase, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
-        { MP_QSTR_bits, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 8} },
+        { MP_QSTR_baudrate, MP_ARG_KW_ONLY | MP_ARG_INT, { .u_int = 100000 } },
+        { MP_QSTR_polarity, MP_ARG_KW_ONLY | MP_ARG_INT, { .u_int = 0 } },
+        { MP_QSTR_phase,    MP_ARG_KW_ONLY | MP_ARG_INT, { .u_int = 0 } },
+        { MP_QSTR_bits,     MP_ARG_KW_ONLY | MP_ARG_INT, { .u_int = 8 } },
     };
-    busio_spi_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
-    raise_error_if_deinited(common_hal_busio_spi_deinited(self));
-    check_lock(self);
-    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
-    uint8_t polarity = args[ARG_polarity].u_int;
-    if (polarity != 0 && polarity != 1) {
+    abstract_module_t * self = (abstract_module_t *)pos_args[0];
+    mp_arg_val_t        args[MP_ARRAY_SIZE(allowed_args)];
+    uint8_t             polarity;
+    uint8_t             phase;
+    uint8_t             bits;
+    uint32_t            baudrate;
+
+    raise_error_if_deinited(common_hal_busio_spi_deinited(self));
+    raise_error_if_not_locked(common_hal_busio_i2c_has_lock(self) == false);
+    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+    polarity = args[ARG_polarity].u_int;
+    phase = args[ARG_phase].u_int;
+    bits = args[ARG_bits].u_int;
+    baudrate = args[ARG_baudrate].u_int;
+
+    if (polarity > 1) {
         mp_raise_ValueError("Invalid polarity");
     }
-    uint8_t phase = args[ARG_phase].u_int;
-    if (phase != 0 && phase != 1) {
+    if (phase > 1) {
         mp_raise_ValueError("Invalid phase");
     }
-    uint8_t bits = args[ARG_bits].u_int;
     if (bits != 8 && bits != 9) {
         mp_raise_ValueError("Invalid number of bits");
     }
-
-    if (!common_hal_busio_spi_configure(self, args[ARG_baudrate].u_int,
-                                           polarity, phase, bits)) {
+    if (common_hal_busio_spi_configure(self, baudrate, polarity, phase, bits) == ERROR) {
         mp_raise_OSError(MP_EIO);
     }
     return mp_const_none;
@@ -193,7 +212,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(busio_spi_configure_obj, 1, busio_spi_configure);
 //|     :rtype: bool
 //|
 STATIC mp_obj_t busio_spi_obj_try_lock(mp_obj_t self_in) {
-    busio_spi_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    abstract_module_t * self = (abstract_module_t *)(self_in);
     raise_error_if_deinited(common_hal_busio_spi_deinited(self));
     return mp_obj_new_bool(common_hal_busio_spi_try_lock(self));
 }
@@ -204,12 +223,67 @@ MP_DEFINE_CONST_FUN_OBJ_1(busio_spi_try_lock_obj, busio_spi_obj_try_lock);
 //|     Releases the SPI lock.
 //|
 STATIC mp_obj_t busio_spi_obj_unlock(mp_obj_t self_in) {
-    busio_spi_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    abstract_module_t * self = (abstract_module_t *)(self_in);
     raise_error_if_deinited(common_hal_busio_spi_deinited(self));
     common_hal_busio_spi_unlock(self);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(busio_spi_unlock_obj, busio_spi_obj_unlock);
+
+typedef enum {
+    READ,
+    WRITE,
+} read_write_mode_t;
+
+STATIC mp_obj_t busio_spi_read_wirte_common(
+    size_t n_args, 
+    const mp_obj_t * pos_args, 
+    mp_map_t * kw_args, 
+    read_write_mode_t mode){
+    enum { ARG_buffer, ARG_start, ARG_end, ARG_write_value };
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_buffer,      MP_ARG_REQUIRED | MP_ARG_OBJ, { .u_obj = MP_OBJ_NULL } },
+        { MP_QSTR_start,       MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = 0 } },
+        { MP_QSTR_end,         MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = INT_MAX } },
+        { MP_QSTR_write_value, MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = 0 } },
+    };
+
+    abstract_module_t * self = (abstract_module_t *)pos_args[0];
+    mp_arg_val_t        args[MP_ARRAY_SIZE(allowed_args)];
+    mp_buffer_info_t    bufinfo;
+    int32_t             start;
+    uint32_t            length;
+    uint32_t            arg_length = MP_ARRAY_SIZE(allowed_args);
+    uint8_t           * buffer;
+
+    if (WRITE == mode){
+        arg_length--;
+    }
+
+    raise_error_if_deinited(common_hal_busio_spi_deinited(self));
+    raise_error_if_not_locked(common_hal_busio_i2c_has_lock(self) == false);
+    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, arg_length, allowed_args, args);
+    mp_get_buffer_raise(args[ARG_buffer].u_obj, &bufinfo, MP_BUFFER_WRITE);
+    start = args[ARG_start].u_int;
+    length = bufinfo.len;
+    buffer = (uint8_t *)bufinfo.buf + start;
+    normalize_buffer_bounds(&start, args[ARG_end].u_int, &length);
+
+    if (length == 0) {
+        return mp_const_none;
+    }
+    if (WRITE == mode){
+        if (common_hal_busio_spi_write(self, buffer, length) == ERROR) {
+            mp_raise_OSError(MP_EIO);
+        }
+    }
+    else{
+        if (common_hal_busio_spi_read(self, buffer, length, args[ARG_write_value].u_int) == ERROR) {
+            mp_raise_OSError(MP_EIO);
+        }
+    }
+    return mp_const_none;
+}
 
 //|   .. method:: SPI.write(buffer, \*, start=0, end=len(buffer))
 //|
@@ -220,34 +294,8 @@ MP_DEFINE_CONST_FUN_OBJ_1(busio_spi_unlock_obj, busio_spi_obj_unlock);
 //|     :param int start: Start of the slice of ``buffer`` to write out: ``buffer[start:end]``
 //|     :param int end: End of the slice; this index is not included
 //|
-STATIC mp_obj_t busio_spi_write(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
-    enum { ARG_buffer, ARG_start, ARG_end };
-    static const mp_arg_t allowed_args[] = {
-        { MP_QSTR_buffer,     MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_start,      MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
-        { MP_QSTR_end,        MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = INT_MAX} },
-    };
-    busio_spi_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
-    raise_error_if_deinited(common_hal_busio_spi_deinited(self));
-    check_lock(self);
-    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
-
-    mp_buffer_info_t bufinfo;
-    mp_get_buffer_raise(args[ARG_buffer].u_obj, &bufinfo, MP_BUFFER_READ);
-    int32_t start = args[ARG_start].u_int;
-    uint32_t length = bufinfo.len;
-    normalize_buffer_bounds(&start, args[ARG_end].u_int, &length);
-
-    if (length == 0) {
-        return mp_const_none;
-    }
-
-    bool ok = common_hal_busio_spi_write(self, ((uint8_t*)bufinfo.buf) + start, length);
-    if (!ok) {
-        mp_raise_OSError(MP_EIO);
-    }
-    return mp_const_none;
+STATIC mp_obj_t busio_spi_write(size_t n_args, const mp_obj_t * pos_args, mp_map_t * kw_args) {
+    return busio_spi_read_wirte_common(n_args, pos_args, kw_args, WRITE);
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(busio_spi_write_obj, 2, busio_spi_write);
 
@@ -263,35 +311,8 @@ MP_DEFINE_CONST_FUN_OBJ_KW(busio_spi_write_obj, 2, busio_spi_write);
 //|     :param int end: End of the slice; this index is not included
 //|     :param int write_value: Value to write while reading. (Usually ignored.)
 //|
-STATIC mp_obj_t busio_spi_readinto(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
-    enum { ARG_buffer, ARG_start, ARG_end, ARG_write_value };
-    static const mp_arg_t allowed_args[] = {
-        { MP_QSTR_buffer,     MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_start,      MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
-        { MP_QSTR_end,        MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = INT_MAX} },
-        { MP_QSTR_write_value,MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
-    };
-    busio_spi_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
-    raise_error_if_deinited(common_hal_busio_spi_deinited(self));
-    check_lock(self);
-    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
-
-    mp_buffer_info_t bufinfo;
-    mp_get_buffer_raise(args[ARG_buffer].u_obj, &bufinfo, MP_BUFFER_WRITE);
-    int32_t start = args[ARG_start].u_int;
-    uint32_t length = bufinfo.len;
-    normalize_buffer_bounds(&start, args[ARG_end].u_int, &length);
-
-    if (length == 0) {
-        return mp_const_none;
-    }
-
-    bool ok = common_hal_busio_spi_read(self, ((uint8_t*)bufinfo.buf) + start, length, args[ARG_write_value].u_int);
-    if (!ok) {
-        mp_raise_OSError(MP_EIO);
-    }
-    return mp_const_none;
+STATIC mp_obj_t busio_spi_readinto(size_t n_args, const mp_obj_t * pos_args, mp_map_t * kw_args) {
+    return busio_spi_read_wirte_common(n_args, pos_args, kw_args, READ);
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(busio_spi_readinto_obj, 2, busio_spi_readinto);
 
@@ -310,85 +331,79 @@ MP_DEFINE_CONST_FUN_OBJ_KW(busio_spi_readinto_obj, 2, busio_spi_readinto);
 //|     :param int in_start: Start of the slice of ``buffer_in`` to read into: ``buffer_in[in_start:in_end]``
 //|     :param int in_end: End of the slice; this index is not included
 //|
-STATIC mp_obj_t busio_spi_write_readinto(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+STATIC mp_obj_t busio_spi_write_readinto(size_t n_args, const mp_obj_t * pos_args, mp_map_t * kw_args) {
     enum { ARG_buffer_out, ARG_buffer_in, ARG_out_start, ARG_out_end, ARG_in_start, ARG_in_end };
     static const mp_arg_t allowed_args[] = {
-        { MP_QSTR_buffer_out,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_buffer_in,     MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_out_start,     MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
-        { MP_QSTR_out_end,       MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = INT_MAX} },
-        { MP_QSTR_in_start,      MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
-        { MP_QSTR_in_end,        MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = INT_MAX} },
+        { MP_QSTR_buffer_out, MP_ARG_REQUIRED | MP_ARG_OBJ, { .u_obj = MP_OBJ_NULL } },
+        { MP_QSTR_buffer_in,  MP_ARG_REQUIRED | MP_ARG_OBJ, { .u_obj = MP_OBJ_NULL } },
+        { MP_QSTR_out_start,  MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = 0 } },
+        { MP_QSTR_out_end,    MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = INT_MAX } },
+        { MP_QSTR_in_start,   MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = 0 } },
+        { MP_QSTR_in_end,     MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = INT_MAX } },
     };
-    busio_spi_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
+    
+    abstract_module_t * self = (abstract_module_t *)pos_args[0];
+    mp_arg_val_t        args[MP_ARRAY_SIZE(allowed_args)];
+    mp_buffer_info_t    buf_in_info;
+    mp_buffer_info_t    buf_out_info;
+    int32_t             out_start;
+    uint32_t            out_length;
+    int32_t             in_start;
+    uint32_t            in_length;
+    uint8_t *           in_buffer;
+    uint8_t *           out_buffer;
+    
     raise_error_if_deinited(common_hal_busio_spi_deinited(self));
-    check_lock(self);
-    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    raise_error_if_not_locked(common_hal_busio_i2c_has_lock(self) == false);
     mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
-
-    mp_buffer_info_t buf_out_info;
+    out_start = args[ARG_out_start].u_int;
+    out_length = buf_out_info.len;
+    out_buffer = (uint8_t *)buf_in_info.buf + in_start;
+    in_start = args[ARG_in_start].u_int;
+    in_length = buf_in_info.len;
+    in_buffer = (uint8_t *)buf_out_info.buf + out_start;
     mp_get_buffer_raise(args[ARG_buffer_out].u_obj, &buf_out_info, MP_BUFFER_READ);
-    int32_t out_start = args[ARG_out_start].u_int;
-    uint32_t out_length = buf_out_info.len;
-    normalize_buffer_bounds(&out_start, args[ARG_out_end].u_int, &out_length);
-
-    mp_buffer_info_t buf_in_info;
     mp_get_buffer_raise(args[ARG_buffer_in].u_obj, &buf_in_info, MP_BUFFER_WRITE);
-    int32_t in_start = args[ARG_in_start].u_int;
-    uint32_t in_length = buf_in_info.len;
+    normalize_buffer_bounds(&out_start, args[ARG_out_end].u_int, &out_length);
     normalize_buffer_bounds(&in_start, args[ARG_in_end].u_int, &in_length);
 
     if (out_length != in_length) {
         mp_raise_ValueError("buffer slices must be of equal length");
     }
-
     if (out_length == 0) {
         return mp_const_none;
     }
-
-    bool ok = common_hal_busio_spi_transfer(self,
-                                            ((uint8_t*)buf_out_info.buf) + out_start,
-                                            ((uint8_t*)buf_in_info.buf) + in_start,
-                                            out_length);
-    if (!ok) {
+    if (common_hal_busio_spi_transfer(self, out_buffer, in_buffer, out_length) == ERROR) {
         mp_raise_OSError(MP_EIO);
     }
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(busio_spi_write_readinto_obj, 2, busio_spi_write_readinto);
 
-//|   .. attribute:: frequency
-//|
-//|     The actual SPI bus frequency. This may not match the frequency requested
-//|     due to internal limitations.
-//|
-STATIC mp_obj_t busio_spi_obj_get_frequency(mp_obj_t self_in) {
-    busio_spi_obj_t *self = MP_OBJ_TO_PTR(self_in);
+void busio_spi_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t * dest){
+    abstract_module_t * self = (abstract_module_t *)(self_in);
     raise_error_if_deinited(common_hal_busio_spi_deinited(self));
-    return MP_OBJ_NEW_SMALL_INT(common_hal_busio_spi_get_frequency(self));
+    
+    if (dest[0] != MP_OBJ_NULL || attr != MP_QSTR_frequency) {
+        generic_method_lookup(self_in, attr, dest);
+    } 
+    else {
+        dest[0] = MP_OBJ_NEW_SMALL_INT(common_hal_busio_spi_get_frequency(self));
+    }
 }
-MP_DEFINE_CONST_FUN_OBJ_1(busio_spi_get_frequency_obj, busio_spi_obj_get_frequency);
-
-const mp_obj_property_t busio_spi_frequency_obj = {
-    .base.type = &mp_type_property,
-    .proxy = {(mp_obj_t)&busio_spi_get_frequency_obj,
-              (mp_obj_t)&mp_const_none_obj,
-              (mp_obj_t)&mp_const_none_obj},
-};
 
 STATIC const mp_rom_map_elem_t busio_spi_locals_dict_table[] = {
-    { MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&busio_spi_deinit_obj) },
-    { MP_ROM_QSTR(MP_QSTR___enter__), MP_ROM_PTR(&default___enter___obj) },
-    { MP_ROM_QSTR(MP_QSTR___exit__), MP_ROM_PTR(&busio_spi_obj___exit___obj) },
+    { MP_ROM_QSTR(MP_QSTR_deinit),         MP_ROM_PTR(&busio_spi_deinit_obj) },
+    { MP_ROM_QSTR(MP_QSTR___enter__),      MP_ROM_PTR(&default___enter___obj) },
+    { MP_ROM_QSTR(MP_QSTR___exit__),       MP_ROM_PTR(&busio_spi_obj___exit___obj) },
 
-    { MP_ROM_QSTR(MP_QSTR_configure), MP_ROM_PTR(&busio_spi_configure_obj) },
-    { MP_ROM_QSTR(MP_QSTR_try_lock), MP_ROM_PTR(&busio_spi_try_lock_obj) },
-    { MP_ROM_QSTR(MP_QSTR_unlock), MP_ROM_PTR(&busio_spi_unlock_obj) },
+    { MP_ROM_QSTR(MP_QSTR_configure),      MP_ROM_PTR(&busio_spi_configure_obj) },
+    { MP_ROM_QSTR(MP_QSTR_try_lock),       MP_ROM_PTR(&busio_spi_try_lock_obj) },
+    { MP_ROM_QSTR(MP_QSTR_unlock),         MP_ROM_PTR(&busio_spi_unlock_obj) },
 
-    { MP_ROM_QSTR(MP_QSTR_readinto), MP_ROM_PTR(&busio_spi_readinto_obj) },
-    { MP_ROM_QSTR(MP_QSTR_write), MP_ROM_PTR(&busio_spi_write_obj) },
+    { MP_ROM_QSTR(MP_QSTR_readinto),       MP_ROM_PTR(&busio_spi_readinto_obj) },
+    { MP_ROM_QSTR(MP_QSTR_write),          MP_ROM_PTR(&busio_spi_write_obj) },
     { MP_ROM_QSTR(MP_QSTR_write_readinto), MP_ROM_PTR(&busio_spi_write_readinto_obj) },
-    { MP_ROM_QSTR(MP_QSTR_frequency), MP_ROM_PTR(&busio_spi_frequency_obj) }
 };
 STATIC MP_DEFINE_CONST_DICT(busio_spi_locals_dict, busio_spi_locals_dict_table);
 
@@ -396,5 +411,6 @@ const mp_obj_type_t busio_spi_type = {
    { &mp_type_type },
    .name = MP_QSTR_SPI,
    .make_new = busio_spi_make_new,
-   .locals_dict = (mp_obj_dict_t*)&busio_spi_locals_dict,
+   .locals_dict = (mp_obj_dict_t *) &busio_spi_locals_dict,
+   .attr = &busio_spi_obj_attr
 };

@@ -28,10 +28,37 @@
 // busio.I2C class.
 
 #include "shared-bindings/microcontroller/Pin.h"
-#include "shared-bindings/busio/I2C.h"
 #include "shared-bindings/util.h"
-
 #include "py/runtime.h"
+
+void common_hal_busio_i2c_construct(
+    abstract_module_t * get,
+    uint32_t scl,
+    uint32_t sda,
+    uint32_t frequency,
+    uint32_t timeout);
+
+bool common_hal_busio_i2c_deinited(abstract_module_t * module);
+void common_hal_busio_i2c_deinit(abstract_module_t * module);
+bool common_hal_busio_i2c_probe(abstract_module_t * module, uint8_t addr);
+bool common_hal_busio_i2c_try_lock(abstract_module_t * module);
+bool common_hal_busio_i2c_has_lock(abstract_module_t * module);
+void common_hal_busio_i2c_unlock(abstract_module_t * module);
+
+uint8_t common_hal_busio_i2c_write(
+    abstract_module_t * module, 
+    uint16_t addr, 
+    const uint8_t * data, 
+    size_t len, 
+    bool transmit_stop_bit);
+
+uint8_t common_hal_busio_i2c_read(
+    abstract_module_t * module, 
+    uint16_t addr, 
+    uint8_t * data, 
+    size_t len);
+
+extern const mp_obj_type_t busio_i2c_type;
 
 //| .. currentmodule:: busio
 //|
@@ -57,62 +84,32 @@
 //|   :param int frequency: The clock frequency in Hertz
 //|   :param int timeout: The maximum clock stretching timeut - (used only for bitbangio.I2C; ignored for busio.I2C)
 //|
-STATIC mp_obj_t busio_i2c_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *all_args) {
-    busio_i2c_obj_t *self = m_new_obj(busio_i2c_obj_t);
-    self->base.type = &busio_i2c_type;
+m_generic_make(busio_i2c) {
     enum { ARG_scl, ARG_sda, ARG_frequency, ARG_timeout };
     static const mp_arg_t allowed_args[] = {
-        { MP_QSTR_scl, MP_ARG_REQUIRED | MP_ARG_OBJ },
-        { MP_QSTR_sda, MP_ARG_REQUIRED | MP_ARG_OBJ },
-        { MP_QSTR_frequency, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 400000} },
-        { MP_QSTR_timeout, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 255} },
+        { MP_QSTR_scl,       MP_ARG_REQUIRED | MP_ARG_OBJ },
+        { MP_QSTR_sda,       MP_ARG_REQUIRED | MP_ARG_OBJ },
+        { MP_QSTR_frequency, MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = 400000 } },
+        { MP_QSTR_timeout,   MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = 255 } },
     };
-    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all_kw_array(n_args, n_kw, all_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
-    assert_pin(args[ARG_scl].u_obj, false);
-    assert_pin(args[ARG_sda].u_obj, false);
-    const mcu_pin_obj_t* scl = MP_OBJ_TO_PTR(args[ARG_scl].u_obj);
-    assert_pin_free(scl);
-    const mcu_pin_obj_t* sda = MP_OBJ_TO_PTR(args[ARG_sda].u_obj);
-    assert_pin_free(sda);
-    common_hal_busio_i2c_construct(self, scl, sda, args[ARG_frequency].u_int, args[ARG_timeout].u_int);
-    return (mp_obj_t)self;
-}
 
-//|   .. method:: I2C.deinit()
-//|
-//|     Releases control of the underlying hardware so other classes can use it.
-//|
-STATIC mp_obj_t busio_i2c_obj_deinit(mp_obj_t self_in) {
-    busio_i2c_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    common_hal_busio_i2c_deinit(self);
-    return mp_const_none;
-}
-MP_DEFINE_CONST_FUN_OBJ_1(busio_i2c_deinit_obj, busio_i2c_obj_deinit);
-
-//|   .. method:: I2C.__enter__()
-//|
-//|     No-op used in Context Managers.
-//|
-//  Provided by context manager helper.
-
-//|   .. method:: I2C.__exit__()
-//|
-//|     Automatically deinitializes the hardware on context exit. See
-//|     :ref:`lifetime-and-contextmanagers` for more info.
-//|
-STATIC mp_obj_t busio_i2c_obj___exit__(size_t n_args, const mp_obj_t *args) {
-    (void)n_args;
-    common_hal_busio_i2c_deinit(args[0]);
-    return mp_const_none;
-}
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(busio_i2c___exit___obj, 4, 4, busio_i2c_obj___exit__);
-
-static void check_lock(busio_i2c_obj_t *self) {
-    asm("");
-    if (!common_hal_busio_i2c_has_lock(self)) {
-        mp_raise_RuntimeError("Function requires lock");
-    }
+    abstract_module_t * self = new_abstruct_module(&busio_i2c_type);
+    mp_arg_val_t        vals[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all_kw_array(n_args, n_kw, args, MP_ARRAY_SIZE(allowed_args), allowed_args, vals);
+    assert_pin(vals[ARG_scl].u_obj, true);
+    assert_pin(vals[ARG_sda].u_obj, true);
+    assert_pin_free(vals[ARG_scl].u_obj);
+    assert_pin_free(vals[ARG_sda].u_obj);
+    raise_error_if(vals[ARG_scl].u_obj != &pin_SCL, "1st parameter not match the SCL pin.");
+    raise_error_if(vals[ARG_sda].u_obj != &pin_SDA, "2nd parameter not match the SDA pin.");
+    common_hal_busio_i2c_construct(
+        self, 
+        m_get_pin(ARG_scl)->number, 
+        m_get_pin(ARG_sda)->number, 
+        vals[ARG_frequency].u_int, 
+        vals[ARG_timeout].u_int
+    );
+    return self;
 }
 
 //|   .. method:: I2C.scan()
@@ -124,14 +121,14 @@ static void check_lock(busio_i2c_obj_t *self) {
 //|      :rtype: list
 //|
 STATIC mp_obj_t busio_i2c_scan(mp_obj_t self_in) {
-    busio_i2c_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    abstract_module_t * self = (abstract_module_t *)(self_in);
     raise_error_if_deinited(common_hal_busio_i2c_deinited(self));
-    check_lock(self);
+    raise_error_if_not_locked(common_hal_busio_i2c_has_lock(self) == false);
     mp_obj_t list = mp_obj_new_list(0, NULL);
+
     // 7-bit addresses 0b0000xxx and 0b1111xxx are reserved
     for (int addr = 0x08; addr < 0x78; ++addr) {
-        bool success = common_hal_busio_i2c_probe(self, addr);
-        if (success) {
+        if (common_hal_busio_i2c_probe(self, addr)) {
             mp_obj_list_append(list, MP_OBJ_NEW_SMALL_INT(addr));
         }
     }
@@ -147,7 +144,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(busio_i2c_scan_obj, busio_i2c_scan);
 //|     :rtype: bool
 //|
 STATIC mp_obj_t busio_i2c_obj_try_lock(mp_obj_t self_in) {
-    busio_i2c_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    abstract_module_t * self = (abstract_module_t *)(self_in);
     raise_error_if_deinited(common_hal_busio_i2c_deinited(self));
     return mp_obj_new_bool(common_hal_busio_i2c_try_lock(self));
 }
@@ -158,7 +155,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(busio_i2c_try_lock_obj, busio_i2c_obj_try_lock);
 //|     Releases the I2C lock.
 //|
 STATIC mp_obj_t busio_i2c_obj_unlock(mp_obj_t self_in) {
-    busio_i2c_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    abstract_module_t * self = (abstract_module_t *)(self_in);
     raise_error_if_deinited(common_hal_busio_i2c_deinited(self));
     common_hal_busio_i2c_unlock(self);
     return mp_const_none;
@@ -188,23 +185,28 @@ STATIC mp_obj_t busio_i2c_readfrom_into(size_t n_args, const mp_obj_t *pos_args,
         { MP_QSTR_start,      MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
         { MP_QSTR_end,        MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = INT_MAX} },
     };
-    busio_i2c_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
+
+    abstract_module_t * self = (abstract_module_t *)(pos_args[0]);
+    mp_buffer_info_t    bufinfo;
+    mp_arg_val_t        args[MP_ARRAY_SIZE(allowed_args)];
+    int32_t             start;
+    uint32_t            length;
+    uint8_t             status;
+    
     raise_error_if_deinited(common_hal_busio_i2c_deinited(self));
-    check_lock(self);
-    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    raise_error_if_not_locked(common_hal_busio_i2c_has_lock(self) == false);
     mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
-
-    mp_buffer_info_t bufinfo;
     mp_get_buffer_raise(args[ARG_buffer].u_obj, &bufinfo, MP_BUFFER_WRITE);
-
-    int32_t start = args[ARG_start].u_int;
-    uint32_t length = bufinfo.len;
+    start = args[ARG_start].u_int;
+    length = bufinfo.len;
     normalize_buffer_bounds(&start, args[ARG_end].u_int, &length);
+
     if (length == 0) {
         mp_raise_ValueError("Buffer must be at least length 1");
     }
 
-    uint8_t status = common_hal_busio_i2c_read(self, args[ARG_address].u_int, ((uint8_t*)bufinfo.buf) + start, length);
+    status = common_hal_busio_i2c_read(self, args[ARG_address].u_int, ((uint8_t*)bufinfo.buf) + start, length);
+
     if (status != 0) {
         mp_raise_OSError(status);
     }
@@ -241,42 +243,50 @@ STATIC mp_obj_t busio_i2c_writeto(size_t n_args, const mp_obj_t *pos_args, mp_ma
         { MP_QSTR_end,        MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = INT_MAX} },
         { MP_QSTR_stop,       MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = true} },
     };
-    busio_i2c_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
+
+    abstract_module_t * self = (abstract_module_t *)(pos_args[0]);
+    mp_arg_val_t        args[MP_ARRAY_SIZE(allowed_args)];
+    mp_buffer_info_t    bufinfo;
+    int32_t             start;
+    uint32_t            length;
+    uint8_t             status;
+
     raise_error_if_deinited(common_hal_busio_i2c_deinited(self));
-    check_lock(self);
-    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    raise_error_if_not_locked(common_hal_busio_i2c_has_lock(self) == false);
     mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
     // get the buffer to write the data from
-    mp_buffer_info_t bufinfo;
     mp_get_buffer_raise(args[ARG_buffer].u_obj, &bufinfo, MP_BUFFER_READ);
-
-
-    int32_t start = args[ARG_start].u_int;
-    uint32_t length = bufinfo.len;
+    start = args[ARG_start].u_int;
+    length = bufinfo.len;
     normalize_buffer_bounds(&start, args[ARG_end].u_int, &length);
 
     // do the transfer
-    uint8_t status = common_hal_busio_i2c_write(self, args[ARG_address].u_int,
-        ((uint8_t*) bufinfo.buf) + start, length, args[ARG_stop].u_bool);
+    status = common_hal_busio_i2c_write(
+        self, 
+        args[ARG_address].u_int,
+        ((uint8_t*) bufinfo.buf) + start, 
+        length, 
+        args[ARG_stop].u_bool
+    );
+
     if (status != 0) {
         mp_raise_OSError(status);
     }
     return mp_const_none;
 }
+
 STATIC MP_DEFINE_CONST_FUN_OBJ_KW(busio_i2c_writeto_obj, 1, busio_i2c_writeto);
 
 STATIC const mp_rom_map_elem_t busio_i2c_locals_dict_table[] = {
-    { MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&busio_i2c_deinit_obj) },
-    { MP_ROM_QSTR(MP_QSTR___enter__), MP_ROM_PTR(&default___enter___obj) },
-    { MP_ROM_QSTR(MP_QSTR___exit__), MP_ROM_PTR(&busio_i2c___exit___obj) },
-    { MP_ROM_QSTR(MP_QSTR_scan), MP_ROM_PTR(&busio_i2c_scan_obj) },
-
-    { MP_ROM_QSTR(MP_QSTR_try_lock), MP_ROM_PTR(&busio_i2c_try_lock_obj) },
-    { MP_ROM_QSTR(MP_QSTR_unlock), MP_ROM_PTR(&busio_i2c_unlock_obj) },
-
-    { MP_ROM_QSTR(MP_QSTR_readfrom_into), MP_ROM_PTR(&busio_i2c_readfrom_into_obj) },
-    { MP_ROM_QSTR(MP_QSTR_writeto), MP_ROM_PTR(&busio_i2c_writeto_obj) },
+    { MP_ROM_QSTR(MP_QSTR_deinit),         MP_ROM_PTR(&busio_i2c_deinit_obj) },
+    { MP_ROM_QSTR(MP_QSTR___enter__),      MP_ROM_PTR(&default___enter___obj) },
+    { MP_ROM_QSTR(MP_QSTR___exit__),       MP_ROM_PTR(&busio_i2c_obj___exit___obj) },
+    { MP_ROM_QSTR(MP_QSTR_scan),           MP_ROM_PTR(&busio_i2c_scan_obj) },
+    { MP_ROM_QSTR(MP_QSTR_try_lock),       MP_ROM_PTR(&busio_i2c_try_lock_obj) },
+    { MP_ROM_QSTR(MP_QSTR_unlock),         MP_ROM_PTR(&busio_i2c_unlock_obj) },
+    { MP_ROM_QSTR(MP_QSTR_readfrom_into),  MP_ROM_PTR(&busio_i2c_readfrom_into_obj) },
+    { MP_ROM_QSTR(MP_QSTR_writeto),        MP_ROM_PTR(&busio_i2c_writeto_obj) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(busio_i2c_locals_dict, busio_i2c_locals_dict_table);
