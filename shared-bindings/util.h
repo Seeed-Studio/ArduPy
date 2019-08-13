@@ -92,8 +92,8 @@ typedef enum{
 MP_DECLARE_CONST_FUN_OBJ_1(default___enter___obj);
 
 bool try_lock(volatile bool * mutex);
-void raise_error_if_not_locked(bool value);
 void raise_error_because(const char * msg);
+void raise_error_if_not_locked(bool value);
 void raise_error_if_deinited(bool deinited);
 void raise_error_if(bool reason, const char * msg);
 NORETURN void mp_raise_RuntimeError(const char *msg);

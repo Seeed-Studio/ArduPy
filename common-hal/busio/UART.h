@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Scott Shawcroft
+ * Copyright (c) 2016 Damien P. George
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,21 +27,10 @@
 #ifndef MICROPY_INCLUDED_ATMEL_SAMD_COMMON_HAL_BUSIO_UART_H
 #define MICROPY_INCLUDED_ATMEL_SAMD_COMMON_HAL_BUSIO_UART_H
 
-#include "common-hal/microcontroller/Pin.h"
+typedef enum {
+    PARITY_NONE,
+    PARITY_EVEN,
+    PARITY_ODD
+} uart_parity_t;
 
-
-#include "py/obj.h"
-
-typedef struct {
-    mp_obj_base_t base;
-    uint8_t rx_pin;
-    uint8_t tx_pin;
-    uint8_t character_bits;
-    bool rx_error;
-    uint32_t baudrate;
-    uint32_t timeout_ms;
-    uint32_t buffer_length;
-    uint8_t* buffer;
-} busio_uart_obj_t;
-
-#endif // MICROPY_INCLUDED_ATMEL_SAMD_COMMON_HAL_BUSIO_UART_H
+#endif

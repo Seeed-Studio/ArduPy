@@ -26,15 +26,38 @@
 
 #include <stdint.h>
 
-#include "shared-bindings/busio/UART.h"
 #include "shared-bindings/microcontroller/Pin.h"
 #include "shared-bindings/util.h"
-
+#include "common-hal/busio/UART.h"
 #include "lib/utils/interrupt_char.h"
-
 #include "py/runtime.h"
 #include "py/stream.h"
 
+void common_hal_busio_uart_construct(
+    abstract_module_t * self,
+    uint32_t pin_tx,
+    uint32_t pin_rx,
+    uint32_t baudrate,
+    uint32_t bits, 
+    uint32_t parity, 
+    uint32_t stop, 
+    uint32_t timeout,
+    uint32_t receiver_buffer_size
+);
+
+bool common_hal_busio_uart_deinited(abstract_module_t * self);
+void common_hal_busio_uart_deinit(abstract_module_t * self);
+
+// Read characters.
+uint32_t common_hal_busio_uart_read(abstract_module_t * self, uint8_t * data, size_t len, int * errcode);
+
+// Write characters.
+uint32_t common_hal_busio_uart_write(abstract_module_t * self, const uint8_t * data, size_t len, int * errcode);
+uint32_t common_hal_busio_uart_get_baudrate(abstract_module_t * self);
+uint32_t common_hal_busio_uart_rx_characters_available(abstract_module_t * self);
+void common_hal_busio_uart_set_baudrate(abstract_module_t * self, uint32_t baudrate);
+void common_hal_busio_uart_clear_rx_buffer(abstract_module_t * self);
+bool common_hal_busio_uart_ready_to_tx(abstract_module_t * self);
 
 //| .. currentmodule:: busio
 //|
@@ -59,98 +82,96 @@
 //|   *New in CircuitPython 4.0:* ``timeout`` has incompatibly changed units from milliseconds to seconds.
 //|   The new upper limit on ``timeout`` is meant to catch mistaken use of milliseconds.
 //|
-typedef struct {
-    mp_obj_base_t base;
-} busio_uart_parity_obj_t;
-extern const busio_uart_parity_obj_t busio_uart_parity_even_obj;
-extern const busio_uart_parity_obj_t busio_uart_parity_odd_obj;
 
-STATIC mp_obj_t busio_uart_make_new(const mp_obj_type_t *type, size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+extern const mp_obj_base_t busio_uart_parity_even_obj;
+extern const mp_obj_base_t busio_uart_parity_odd_obj;
+extern const mp_obj_type_t busio_uart_type;
+
+m_generic_make(busio_uart){
     // Always initially allocate the UART object within the long-lived heap.
     // This is needed to avoid crashes with certain UART implementations which
     // cannot accomodate being moved after creation. (See
     // https://github.com/adafruit/circuitpython/issues/1056)
-    busio_uart_obj_t *self = m_new_obj(busio_uart_obj_t);
-    self->base.type = &busio_uart_type;
-    enum { ARG_tx, ARG_rx, ARG_baudrate, ARG_bits, ARG_parity, ARG_stop, ARG_timeout, ARG_receiver_buffer_size};
-    static const mp_arg_t allowed_args[] = {
-        { MP_QSTR_tx, MP_ARG_REQUIRED | MP_ARG_OBJ },
-        { MP_QSTR_rx, MP_ARG_REQUIRED | MP_ARG_OBJ },
-        { MP_QSTR_baudrate, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 9600} },
-        { MP_QSTR_bits, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 8} },
-        { MP_QSTR_parity, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none} },
-        { MP_QSTR_stop, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 1} },
-        { MP_QSTR_timeout, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = MP_OBJ_NEW_SMALL_INT(1)} },
-        { MP_QSTR_receiver_buffer_size, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 64} },
+    abstract_module_t * self = new_abstruct_module(&busio_uart_type);
+    enum { 
+        ARG_tx, 
+        ARG_rx, 
+        ARG_baudrate, 
+        ARG_bits, 
+        ARG_parity, 
+        ARG_stop, 
+        ARG_timeout, 
+        ARG_receiver_buffer_size
     };
-    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
-    assert_pin(args[ARG_rx].u_obj, true);
-    const mcu_pin_obj_t* rx = MP_OBJ_TO_PTR(args[ARG_rx].u_obj);
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_tx,                   MP_ARG_REQUIRED | MP_ARG_OBJ },
+        { MP_QSTR_rx,                   MP_ARG_REQUIRED | MP_ARG_OBJ },
+        { MP_QSTR_baudrate,             MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = 9600 } },
+        { MP_QSTR_bits,                 MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = 8 } },
+        { MP_QSTR_parity,               MP_ARG_KW_ONLY  | MP_ARG_OBJ, { .u_obj = mp_const_none } },
+        { MP_QSTR_stop,                 MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = 1 } },
+        { MP_QSTR_timeout,              MP_ARG_KW_ONLY  | MP_ARG_OBJ, { .u_obj = MP_OBJ_NEW_SMALL_INT (1)} },
+        { MP_QSTR_receiver_buffer_size, MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = 64 } },
+    };
+
+    mp_arg_val_t    vals[MP_ARRAY_SIZE(allowed_args)];
+    mcu_pin_obj_t * rx;
+    mcu_pin_obj_t * tx;
+    uint8_t         bits;
+    uint8_t         stop;
+    uart_parity_t   parity;
+    uint32_t        timeout;
+    uint32_t        baudrate;
+    uint32_t        buffer_size;
+
+    mp_arg_parse_all_kw_array(n_args, n_kw, args, MP_ARRAY_SIZE(allowed_args), allowed_args, vals);
+    rx = m_get_pin(ARG_rx);
+    tx = m_get_pin(ARG_tx);
+    assert_pin(rx, true);
+    assert_pin(tx, true);
     assert_pin_free(rx);
-
-    assert_pin(args[ARG_tx].u_obj, true);
-    const mcu_pin_obj_t* tx = MP_OBJ_TO_PTR(args[ARG_tx].u_obj);
     assert_pin_free(tx);
+    bits = vals[ARG_bits].u_int;
+    stop = vals[ARG_stop].u_int;
+    baudrate = vals[ARG_baudrate].u_int;
+    buffer_size = vals[ARG_receiver_buffer_size].u_int;
 
-    uint8_t bits = args[ARG_bits].u_int;
-    if (bits < 7 || bits > 9) {
-        mp_raise_ValueError("bits must be 7, 8 or 9");
+    if (bits < 7 || bits > 8) {
+        mp_raise_ValueError("bits must be 7, 8");
     }
-
-    uart_parity_t parity = PARITY_NONE;
-    if (args[ARG_parity].u_obj == &busio_uart_parity_even_obj) {
+    if (vals[ARG_parity].u_obj == &busio_uart_parity_even_obj) {
         parity = PARITY_EVEN;
-    } else if (args[ARG_parity].u_obj == &busio_uart_parity_odd_obj) {
+    } 
+    else if (vals[ARG_parity].u_obj == &busio_uart_parity_odd_obj) {
         parity = PARITY_ODD;
     }
-
-    uint8_t stop = args[ARG_stop].u_int;
+    else{
+        parity = PARITY_NONE;
+    }
     if (stop != 1 && stop != 2) {
         mp_raise_ValueError("stop must be 1 or 2");
     }
-
-    uint32_t timeout ;
-    mp_obj_get_int_maybe(args[ARG_timeout].u_obj, &timeout);
+    if (mp_obj_get_int_maybe(vals[ARG_timeout].u_obj, &timeout) == ERROR){
+        mp_raise_TypeError("the type of timeout must be integer.");
+    }
     if (timeout > 100) {
-        mp_raise_ValueError("timeout >100 (units are now seconds, not msecs)");
+        mp_raise_ValueError("timeout > 100 (units are now seconds, not msecs)");
     }
 
-    common_hal_busio_uart_construct(self, tx, rx,
-                                    args[ARG_baudrate].u_int, bits, parity, stop, timeout,
-                                    args[ARG_receiver_buffer_size].u_int);
-    return (mp_obj_t)self;
+    common_hal_busio_uart_construct(
+        self, 
+        tx->number, 
+        rx->number, 
+        baudrate, 
+        bits, 
+        parity, 
+        stop, 
+        timeout,
+        buffer_size
+    );
+    return self;
 }
-
-//|   .. method:: deinit()
-//|
-//|      Deinitialises the UART and releases any hardware resources for reuse.
-//|
-STATIC mp_obj_t busio_uart_obj_deinit(mp_obj_t self_in) {
-    busio_uart_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    common_hal_busio_uart_deinit(self);
-    return mp_const_none;
-}
-STATIC MP_DEFINE_CONST_FUN_OBJ_1(busio_uart_deinit_obj, busio_uart_obj_deinit);
-
-//|   .. method:: __enter__()
-//|
-//|      No-op used by Context Managers.
-//|
-//  Provided by context manager helper.
-
-//|   .. method:: __exit__()
-//|
-//|      Automatically deinitializes the hardware when exiting a context. See
-//|      :ref:`lifetime-and-contextmanagers` for more info.
-//|
-STATIC mp_obj_t busio_uart_obj___exit__(size_t n_args, const mp_obj_t *args) {
-    (void)n_args;
-    common_hal_busio_uart_deinit(args[0]);
-    return mp_const_none;
-}
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(busio_uart___exit___obj, 4, 4, busio_uart_obj___exit__);
 
 // These are standard stream methods. Code is in py/stream.c.
 //
@@ -191,98 +212,77 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(busio_uart___exit___obj, 4, 4, busio_
 //|
 
 // These three methods are used by the shared stream methods.
-STATIC mp_uint_t busio_uart_read(mp_obj_t self_in, void *buf_in, mp_uint_t size, int *errcode) {
-    busio_uart_obj_t *self = MP_OBJ_TO_PTR(self_in);
+STATIC mp_uint_t busio_uart_read(mp_obj_t self_in, void * buf_in, mp_uint_t size, int * errcode) {
+    abstract_module_t * self = (abstract_module_t *)self_in;
+    const byte        * buf = (const byte *)buf_in;
     raise_error_if_deinited(common_hal_busio_uart_deinited(self));
-    byte *buf = buf_in;
 
     // make sure we want at least 1 char
     if (size == 0) {
         return 0;
     }
-
     return common_hal_busio_uart_read(self, buf, size, errcode);
 }
 
 STATIC mp_uint_t busio_uart_write(mp_obj_t self_in, const void *buf_in, mp_uint_t size, int *errcode) {
-    busio_uart_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    abstract_module_t * self = (abstract_module_t *)self_in;
+    const byte        * buf = (const byte *)buf_in;
     raise_error_if_deinited(common_hal_busio_uart_deinited(self));
-    const byte *buf = buf_in;
-
     return common_hal_busio_uart_write(self, buf, size, errcode);
 }
 
 STATIC mp_uint_t busio_uart_ioctl(mp_obj_t self_in, mp_uint_t request, mp_uint_t arg, int *errcode) {
-    busio_uart_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    abstract_module_t * self = (abstract_module_t *)self_in;
+    mp_uint_t           ret = 0;
+    mp_uint_t           flags = arg;
     raise_error_if_deinited(common_hal_busio_uart_deinited(self));
-    mp_uint_t ret;
+
     if (request == MP_IOCTL_POLL) {
-        mp_uint_t flags = arg;
-        ret = 0;
         if ((flags & MP_IOCTL_POLL_RD) && common_hal_busio_uart_rx_characters_available(self) > 0) {
             ret |= MP_IOCTL_POLL_RD;
         }
         if ((flags & MP_IOCTL_POLL_WR) && common_hal_busio_uart_ready_to_tx(self)) {
             ret |= MP_IOCTL_POLL_WR;
         }
-    } else {
-        *errcode = MP_EINVAL;
+    } 
+    else {
+        errcode[0] = MP_EINVAL;
         ret = MP_STREAM_ERROR;
     }
     return ret;
 }
 
-//|   .. attribute:: baudrate
-//|
-//|     The current baudrate.
-//|
-STATIC mp_obj_t busio_uart_obj_get_baudrate(mp_obj_t self_in) {
-    busio_uart_obj_t *self = MP_OBJ_TO_PTR(self_in);
+void busio_uart_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t * dest){
+    abstract_module_t * self = (abstract_module_t *)self_in;
     raise_error_if_deinited(common_hal_busio_uart_deinited(self));
-    return MP_OBJ_NEW_SMALL_INT(common_hal_busio_uart_get_baudrate(self));
-}
-MP_DEFINE_CONST_FUN_OBJ_1(busio_uart_get_baudrate_obj, busio_uart_obj_get_baudrate);
 
-STATIC mp_obj_t busio_uart_obj_set_baudrate(mp_obj_t self_in, mp_obj_t baudrate) {
-    busio_uart_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    raise_error_if_deinited(common_hal_busio_uart_deinited(self));
-    common_hal_busio_uart_set_baudrate(self, mp_obj_get_int(baudrate));
-    return mp_const_none;
-}
-MP_DEFINE_CONST_FUN_OBJ_2(busio_uart_set_baudrate_obj, busio_uart_obj_set_baudrate);
+    if (dest[0] != MP_OBJ_NULL){
+        dest[0] = MP_OBJ_NULL;
+        if (attr == MP_QSTR_baudrate){
+            common_hal_busio_uart_set_baudrate(self, mp_obj_get_int(dest[0]));
+            return;
+        }
+    }
+    else{
+        if (attr == MP_QSTR_baudrate){
+            dest[0] = MP_OBJ_NEW_SMALL_INT(common_hal_busio_uart_get_baudrate(self));
+            return;
+        }
+        else if (attr == MP_QSTR_in_waiting){
+            dest[0] = MP_OBJ_NEW_SMALL_INT(common_hal_busio_uart_rx_characters_available(self));
+            return;
+        }
+    }
 
-
-const mp_obj_property_t busio_uart_baudrate_obj = {
-    .base.type = &mp_type_property,
-    .proxy = {(mp_obj_t)&busio_uart_get_baudrate_obj,
-              (mp_obj_t)&busio_uart_set_baudrate_obj,
-              (mp_obj_t)&mp_const_none_obj},
-};
-
-//|   .. attribute:: in_waiting
-//|
-//|     The number of bytes in the input buffer, available to be read
-//|
-STATIC mp_obj_t busio_uart_obj_get_in_waiting(mp_obj_t self_in) {
-    busio_uart_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    raise_error_if_deinited(common_hal_busio_uart_deinited(self));
-    return MP_OBJ_NEW_SMALL_INT(common_hal_busio_uart_rx_characters_available(self));
-}
-MP_DEFINE_CONST_FUN_OBJ_1(busio_uart_get_in_waiting_obj, busio_uart_obj_get_in_waiting);
-
-const mp_obj_property_t busio_uart_in_waiting_obj = {
-    .base.type = &mp_type_property,
-    .proxy = {(mp_obj_t)&busio_uart_get_in_waiting_obj,
-              (mp_obj_t)&mp_const_none_obj,
-              (mp_obj_t)&mp_const_none_obj},
-};
+    generic_method_lookup(self_in, attr, dest);
+}    
 
 //|   .. method:: reset_input_buffer()
 //|
 //|     Discard any unread characters in the input buffer.
 //|
 STATIC mp_obj_t busio_uart_obj_reset_input_buffer(mp_obj_t self_in) {
-    busio_uart_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    abstract_module_t * self = (abstract_module_t *)self_in;
     raise_error_if_deinited(common_hal_busio_uart_deinited(self));
     common_hal_busio_uart_clear_rx_buffer(self);
     return mp_const_none;
@@ -301,14 +301,13 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(busio_uart_reset_input_buffer_obj, busio_uart_o
 //|
 //|       Total number of ones should be even.
 //|
-const mp_obj_type_t busio_uart_parity_type;
-
-const busio_uart_parity_obj_t busio_uart_parity_odd_obj = {
-    { &busio_uart_parity_type },
+extern const mp_obj_type_t busio_uart_parity_type;
+const mp_obj_base_t busio_uart_parity_odd_obj = {
+    &busio_uart_parity_type ,
 };
 
-const busio_uart_parity_obj_t busio_uart_parity_even_obj = {
-    { &busio_uart_parity_type },
+const mp_obj_base_t busio_uart_parity_even_obj = {
+    &busio_uart_parity_type,
 };
 
 STATIC const mp_rom_map_elem_t busio_uart_parity_locals_dict_table[] = {
@@ -333,24 +332,20 @@ const mp_obj_type_t busio_uart_parity_type = {
 };
 
 STATIC const mp_rom_map_elem_t busio_uart_locals_dict_table[] = {
-    { MP_ROM_QSTR(MP_QSTR_deinit),       MP_ROM_PTR(&busio_uart_deinit_obj) },
-    { MP_ROM_QSTR(MP_QSTR___enter__),    MP_ROM_PTR(&default___enter___obj) },
-    { MP_ROM_QSTR(MP_QSTR___exit__),     MP_ROM_PTR(&busio_uart___exit___obj) },
+    { MP_ROM_QSTR(MP_QSTR_deinit),                 MP_ROM_PTR(&busio_uart_deinit_obj) },
+    { MP_ROM_QSTR(MP_QSTR___enter__),              MP_ROM_PTR(&default___enter___obj) },
+    { MP_ROM_QSTR(MP_QSTR___exit__),               MP_ROM_PTR(&busio_uart_obj___exit___obj) },
 
     // Standard stream methods.
-    { MP_OBJ_NEW_QSTR(MP_QSTR_read),     MP_ROM_PTR(&mp_stream_read_obj) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_readline), MP_ROM_PTR(&mp_stream_unbuffered_readline_obj)},
-    { MP_OBJ_NEW_QSTR(MP_QSTR_readinto), MP_ROM_PTR(&mp_stream_readinto_obj) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_write),    MP_ROM_PTR(&mp_stream_write_obj) },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_read),               MP_ROM_PTR(&mp_stream_read_obj) },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_readline),           MP_ROM_PTR(&mp_stream_unbuffered_readline_obj)},
+    { MP_OBJ_NEW_QSTR(MP_QSTR_readinto),           MP_ROM_PTR(&mp_stream_readinto_obj) },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_write),              MP_ROM_PTR(&mp_stream_write_obj) },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_reset_input_buffer), MP_ROM_PTR(&busio_uart_reset_input_buffer_obj) },
 
-    // Properties
-    { MP_ROM_QSTR(MP_QSTR_baudrate), MP_ROM_PTR(&busio_uart_baudrate_obj) },
-    { MP_ROM_QSTR(MP_QSTR_in_waiting), MP_ROM_PTR(&busio_uart_in_waiting_obj) },
-
     // Nested Enum-like Classes.
-    { MP_ROM_QSTR(MP_QSTR_Parity),       MP_ROM_PTR(&busio_uart_parity_type) },
+    { MP_ROM_QSTR(MP_QSTR_Parity),                 MP_ROM_PTR(&busio_uart_parity_type) },
 };
 STATIC MP_DEFINE_CONST_DICT(busio_uart_locals_dict, busio_uart_locals_dict_table);
 
@@ -369,4 +364,5 @@ const mp_obj_type_t busio_uart_type = {
     .iternext = mp_stream_unbuffered_iter,
     .protocol = &uart_stream_p,
     .locals_dict = (mp_obj_dict_t*)&busio_uart_locals_dict,
+    .attr = busio_uart_obj_attr,
 };

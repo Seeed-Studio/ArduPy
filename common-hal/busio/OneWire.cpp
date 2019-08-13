@@ -24,46 +24,36 @@
  * THE SOFTWARE.
  */
 
-// Wraps the bitbangio implementation of OneWire for use in busio.
-#include "common-hal/microcontroller/Pin.h"
-#include "common-hal/busio/OneWire.h"
+#include <Arduino.h>
 #include "common-hal/busio/OneWire/OneWire.h"
+extern "C"{
+#include "py/objtype.h"
+#include "shared-bindings/util.h"
+}
+
+#define one   (*(OneWire *)self->module)
+void * operator new (size_t, void *);
 
 extern "C" {
-void common_hal_busio_onewire_construct(busio_onewire_obj_t* self,
-        const mcu_pin_obj_t* pin) {
-    //shared_module_bitbangio_onewire_construct(&self->bitbang, pin);
-    OneWire *OW = new OneWire(pin->number);
+    void common_hal_busio_onewire_construct(abstract_module_t * self, uint32_t pin) {
+        self->module = new (m_new_obj(OneWire))OneWire(pin);
+    }
 
-    self->ow = (onewire_struct *)OW;
+    bool common_hal_busio_onewire_deinited(abstract_module_t * self) {
+        return false;
+    }
+
+    void common_hal_busio_onewire_deinit(abstract_module_t * self) {}
+
+    bool common_hal_busio_onewire_read_bit(abstract_module_t * self) {
+        return one.read_bit() != 0;
+    }
+
+    void common_hal_busio_onewire_write_bit(abstract_module_t * self, bool bit) {
+        one.write_bit((uint8_t)bit);
+    }
     
-}
-
-bool common_hal_busio_onewire_deinited(busio_onewire_obj_t* self) {
-    //return shared_module_bitbangio_onewire_deinited(&self->bitbang);
-    return 0;
-}
-
-void common_hal_busio_onewire_deinit(busio_onewire_obj_t* self) {
-    // if (common_hal_busio_onewire_deinited(self)) {
-    //     return;
-    // }
-    // shared_module_bitbangio_onewire_deinit(&self->bitbang);
-}
-
-bool common_hal_busio_onewire_reset(busio_onewire_obj_t* self) {
-    //return shared_module_bitbangio_onewire_reset(&self->bitbang);
-    ((OneWire*)(self->ow))->reset();
-    return 0;
-}
-
-bool common_hal_busio_onewire_read_bit(busio_onewire_obj_t* self) {
-    // return shared_module_bitbangio_onewire_read_bit(&self->bitbang);
-    return 0;
-}
-
-void common_hal_busio_onewire_write_bit(busio_onewire_obj_t* self,
-        bool bit) {
-    // shared_module_bitbangio_onewire_write_bit(&self->bitbang, bit);
-}
+    result_t common_hal_busio_onewire_reset(abstract_module_t * self) {
+        return one.reset() == 0 ? ERROR : SUCCESS;
+    }
 }// extern "C"

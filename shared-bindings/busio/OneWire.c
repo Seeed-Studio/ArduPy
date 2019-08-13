@@ -30,9 +30,16 @@
 #include "py/runtime.h"
 #include "py/runtime0.h"
 #include "shared-bindings/microcontroller/Pin.h"
-#include "shared-bindings/busio/OneWire.h"
 #include "shared-bindings/util.h"
 
+void common_hal_busio_onewire_construct(abstract_module_t * module, uint32_t pin);
+bool common_hal_busio_onewire_deinited(abstract_module_t * self);
+void common_hal_busio_onewire_deinit(abstract_module_t * self);
+bool common_hal_busio_onewire_read_bit(abstract_module_t * self);
+void common_hal_busio_onewire_write_bit(abstract_module_t * self, bool bit);
+result_t common_hal_busio_onewire_reset(abstract_module_t * self);
+
+extern const mp_obj_type_t busio_onewire_type;
 //| .. currentmodule:: busio
 //|
 //| :class:`OneWire` -- Lowest-level of the Maxim OneWire protocol
@@ -61,52 +68,23 @@
 //|     onewire.write_bit(False)
 //|     print(onewire.read_bit())
 //|
-STATIC mp_obj_t busio_onewire_make_new(const mp_obj_type_t *type, size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
-    enum { ARG_pin };
+
+m_generic_make(busio_onewire){
+    enum { ARG_ctrl };
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_pin, MP_ARG_REQUIRED | MP_ARG_OBJ },
     };
-    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
-    assert_pin(args[ARG_pin].u_obj, false);
-    const mcu_pin_obj_t* pin = MP_OBJ_TO_PTR(args[ARG_pin].u_obj);
+
+    abstract_module_t * self = new_abstruct_module(&busio_onewire_type);
+    mcu_pin_obj_t     * pin;
+    mp_arg_val_t        vals[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all_kw_array(n_args, n_kw, args, MP_ARRAY_SIZE(allowed_args), allowed_args, vals);
+    pin = m_get_pin(ARG_ctrl);
+    assert_pin(pin, false);
     assert_pin_free(pin);
-
-    busio_onewire_obj_t *self = m_new_obj(busio_onewire_obj_t);
-    self->base.type = &busio_onewire_type;
-
-    common_hal_busio_onewire_construct(self, pin);
-    return MP_OBJ_FROM_PTR(self);
+    common_hal_busio_onewire_construct(self, pin->number);
+    return self;
 }
-
-//|   .. method:: deinit()
-//|
-//|      Deinitialize the OneWire bus and release any hardware resources for reuse.
-//|
-STATIC mp_obj_t busio_onewire_deinit(mp_obj_t self_in) {
-    busio_onewire_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    common_hal_busio_onewire_deinit(self);
-    return mp_const_none;
-}
-STATIC MP_DEFINE_CONST_FUN_OBJ_1(busio_onewire_deinit_obj, busio_onewire_deinit);
-
-//|   .. method:: __enter__()
-//|
-//|      No-op used by Context Managers.
-//|
-//  Provided by context manager helper.
-
-//|   .. method:: __exit__()
-//|
-//|      Automatically deinitializes the hardware when exiting a context. See
-//|      :ref:`lifetime-and-contextmanagers` for more info.
-//|
-STATIC mp_obj_t busio_onewire_obj___exit__(size_t n_args, const mp_obj_t *args) {
-    (void)n_args;
-    common_hal_busio_onewire_deinit(args[0]);
-    return mp_const_none;
-}
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(busio_onewire___exit___obj, 4, 4, busio_onewire_obj___exit__);
 
 //|   .. method:: reset()
 //|
@@ -116,10 +94,12 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(busio_onewire___exit___obj, 4, 4, bus
 //|     :rtype: bool
 //|
 STATIC mp_obj_t busio_onewire_obj_reset(mp_obj_t self_in) {
-    busio_onewire_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    abstract_module_t * self = (abstract_module_t *)self_in;
     raise_error_if_deinited(common_hal_busio_onewire_deinited(self));
-
-    return mp_obj_new_bool(common_hal_busio_onewire_reset(self));
+    return mp_obj_new_bool(
+        common_hal_busio_onewire_reset(self) == SUCCESS ? 
+        false : true
+    );
 }
 MP_DEFINE_CONST_FUN_OBJ_1(busio_onewire_reset_obj, busio_onewire_obj_reset);
 
@@ -131,9 +111,8 @@ MP_DEFINE_CONST_FUN_OBJ_1(busio_onewire_reset_obj, busio_onewire_obj_reset);
 //|     :rtype: bool
 //|
 STATIC mp_obj_t busio_onewire_obj_read_bit(mp_obj_t self_in) {
-    busio_onewire_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    abstract_module_t * self = (abstract_module_t *)self_in;
     raise_error_if_deinited(common_hal_busio_onewire_deinited(self));
-
     return mp_obj_new_bool(common_hal_busio_onewire_read_bit(self));
 }
 MP_DEFINE_CONST_FUN_OBJ_1(busio_onewire_read_bit_obj, busio_onewire_obj_read_bit);
@@ -143,9 +122,8 @@ MP_DEFINE_CONST_FUN_OBJ_1(busio_onewire_read_bit_obj, busio_onewire_obj_read_bit
 //|     Write out a bit based on value.
 //|
 STATIC mp_obj_t busio_onewire_obj_write_bit(mp_obj_t self_in, mp_obj_t bool_obj) {
-    busio_onewire_obj_t *self = MP_OBJ_TO_PTR(self_in);
+    abstract_module_t * self = (abstract_module_t *)self_in;
     raise_error_if_deinited(common_hal_busio_onewire_deinited(self));
-
     common_hal_busio_onewire_write_bit(self, mp_obj_is_true(bool_obj));
     return mp_const_none;
 }
@@ -153,11 +131,11 @@ MP_DEFINE_CONST_FUN_OBJ_2(busio_onewire_write_bit_obj, busio_onewire_obj_write_b
 
 STATIC const mp_rom_map_elem_t busio_onewire_locals_dict_table[] = {
     // Methods
-    { MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&busio_onewire_deinit_obj) },
+    { MP_ROM_QSTR(MP_QSTR_deinit),    MP_ROM_PTR(&busio_onewire_deinit_obj) },
     { MP_ROM_QSTR(MP_QSTR___enter__), MP_ROM_PTR(&default___enter___obj) },
-    { MP_ROM_QSTR(MP_QSTR___exit__), MP_ROM_PTR(&busio_onewire___exit___obj) },
-    { MP_ROM_QSTR(MP_QSTR_reset), MP_ROM_PTR(&busio_onewire_reset_obj) },
-    { MP_ROM_QSTR(MP_QSTR_read_bit), MP_ROM_PTR(&busio_onewire_read_bit_obj) },
+    { MP_ROM_QSTR(MP_QSTR___exit__),  MP_ROM_PTR(&busio_onewire_obj___exit___obj) },
+    { MP_ROM_QSTR(MP_QSTR_reset),     MP_ROM_PTR(&busio_onewire_reset_obj) },
+    { MP_ROM_QSTR(MP_QSTR_read_bit),  MP_ROM_PTR(&busio_onewire_read_bit_obj) },
     { MP_ROM_QSTR(MP_QSTR_write_bit), MP_ROM_PTR(&busio_onewire_write_bit_obj) },
 };
 STATIC MP_DEFINE_CONST_DICT(busio_onewire_locals_dict, busio_onewire_locals_dict_table);

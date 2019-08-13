@@ -24,17 +24,13 @@
  * THE SOFTWARE.
  */
 
-#include "shared-bindings/busio/I2C.h"
-#include "shared-bindings/busio/SPI.h"
-#include "shared-bindings/busio/UART.h"
-
-
-
 #include "py/obj.h"
 #include "py/runtime.h"
-
+#include "shared-bindings/util.h"
 #include "shared-bindings/board/__init__.h"
 #include "common-hal/microcontroller/Pin.h"
+#include "common-hal/busio/UART.h"
+
 //| :mod:`board` --- Board specific pin names
 //| ========================================================
 //|
@@ -55,9 +51,8 @@
 
 #if BOARD_I2C
 mp_obj_t board_i2c(void) {
-    busio_i2c_obj_t *self = m_new_obj(busio_i2c_obj_t);
-    self->base.type = &busio_i2c_type;
-
+    extern const mp_obj_type_t busio_i2c_type;
+    abstract_module_t * self = new_abstruct_module(&busio_i2c_type);
     common_hal_busio_i2c_construct(self, DEFAULT_I2C_BUS_SCL, DEFAULT_I2C_BUS_SDA, 400000, 0); 
     MP_STATE_VM(shared_i2c_bus) = MP_OBJ_FROM_PTR(self);
     return MP_STATE_VM(shared_i2c_bus);
@@ -80,22 +75,18 @@ MP_DEFINE_CONST_FUN_OBJ_0(board_i2c_obj, board_i2c);
 
 // Statically allocate the SPI object so it can live past the end of the heap and into the next VM.
 // That way it can be used by built-in FourWire displays and be accessible through board.SPI().
-STATIC busio_spi_obj_t spi_obj;
 STATIC mp_obj_t spi_singleton = NULL;
 
-
 mp_obj_t board_spi(void) {
+    extern const mp_obj_type_t busio_spi_type;
+
     if (spi_singleton != NULL) {
         return spi_singleton;
     }
-    busio_spi_obj_t *self = &spi_obj;
-    self->base.type = &busio_spi_type;
 
-    const mcu_pin_obj_t* clock = MP_OBJ_TO_PTR(DEFAULT_SPI_BUS_SCK);
-    const mcu_pin_obj_t* mosi = MP_OBJ_TO_PTR(DEFAULT_SPI_BUS_MOSI);
-    const mcu_pin_obj_t* miso = MP_OBJ_TO_PTR(DEFAULT_SPI_BUS_MISO);
-    common_hal_busio_spi_construct(self, clock, mosi, miso);
-    spi_singleton = (mp_obj_t)self;
+    abstract_module_t * self = new_abstruct_module(&busio_spi_type);
+    common_hal_busio_spi_construct(self, &pin_SCK, &pin_MOSI, &pin_MISO);
+    spi_singleton = self;
     return spi_singleton;
 }
 #else
@@ -112,13 +103,9 @@ MP_DEFINE_CONST_FUN_OBJ_0(board_spi_obj, board_spi);
 //|
 #if BOARD_UART
 mp_obj_t board_uart(void) {
-    busio_uart_obj_t *self = m_new_obj(busio_uart_obj_t);
-    self->base.type = &busio_uart_type;
-
-    const mcu_pin_obj_t* rx = MP_OBJ_TO_PTR(DEFAULT_UART_BUS_RX);
-    const mcu_pin_obj_t* tx = MP_OBJ_TO_PTR(DEFAULT_UART_BUS_TX);
-
-    common_hal_busio_uart_construct(self, tx, rx, 9600, 8, PARITY_NONE, 1, 1000, 64);
+    extern const mp_obj_type_t busio_uart_type;
+    abstract_module_t * self = new_abstruct_module(&busio_uart_type);
+    common_hal_busio_uart_construct(self, pin_TX, pin_RX, 9600, 8, PARITY_NONE, 1, 1000, 64);
     MP_STATE_VM(shared_uart_bus) = MP_OBJ_FROM_PTR(self);
     return MP_STATE_VM(shared_uart_bus);
 }
