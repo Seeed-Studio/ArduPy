@@ -126,12 +126,14 @@ m_generic_make(busio_uart){
     uint32_t        buffer_size;
 
     mp_arg_parse_all_kw_array(n_args, n_kw, args, MP_ARRAY_SIZE(allowed_args), allowed_args, vals);
-    rx = m_get_pin(ARG_rx);
     tx = m_get_pin(ARG_tx);
-    assert_pin(rx, true);
+    rx = m_get_pin(ARG_rx);
     assert_pin(tx, true);
-    assert_pin_free(rx);
+    assert_pin(rx, true);
     assert_pin_free(tx);
+    assert_pin_free(rx);
+    raise_error_if(tx != &pin_TX, "1st parameter not match TX pin.");
+    raise_error_if(rx != &pin_RX, "2nd parameter not match RX pin.");
     bits = vals[ARG_bits].u_int;
     stop = vals[ARG_stop].u_int;
     baudrate = vals[ARG_baudrate].u_int;

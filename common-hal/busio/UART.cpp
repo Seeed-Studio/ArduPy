@@ -32,6 +32,9 @@ extern "C"{
 #include "py/runtime.h"
 }
 
+#ifndef Console
+#define Console  Serial1
+#endif
 #define module  (*(uart_data_t *)self->module)
 
 typedef struct {
@@ -40,7 +43,6 @@ typedef struct {
     uint32_t  baudrate;
     uint32_t  config;
     uint32_t  timeout_ms;
-    uint32_t  buffer_length;
 }uart_data_t;
 
 extern "C"{
@@ -93,8 +95,8 @@ extern "C"{
         module.baudrate = baudrate;
         module.timeout_ms = timeout * 1000; //second to milisecond
         module.config = config;
-        Serial.begin(module.baudrate, module.config);
-        Serial.setTimeout(module.timeout_ms);
+        Console.begin(module.baudrate, module.config);
+        Console.setTimeout(module.timeout_ms);
     }
 
     bool common_hal_busio_uart_deinited(abstract_module_t * self) {
@@ -106,14 +108,14 @@ extern "C"{
 
     // Read characters.
     uint32_t common_hal_busio_uart_read(abstract_module_t * self, uint8_t * data, size_t len, int * errcode) {
-        return Serial.readBytes(data, len);
+        return Console.readBytes(data, len);
     }
 
     // Write characters.
     uint32_t common_hal_busio_uart_write(abstract_module_t * self, const uint8_t * data, size_t len, int * errcode) {
-        len = Serial.write(data, len);
-        errcode[0] = Serial.getWriteError();
-        Serial.clearWriteError();
+        len = Console.write(data, len);
+        errcode[0] = Console.getWriteError();
+        Console.clearWriteError();
         return len;
     }
 
@@ -122,24 +124,24 @@ extern "C"{
     }
 
     uint32_t common_hal_busio_uart_rx_characters_available(abstract_module_t * self) {
-        return Serial.available();
+        return Console.available();
     }
 
     void common_hal_busio_uart_set_baudrate(abstract_module_t * self, uint32_t baudrate) {
-        Serial.begin(
+        Console.begin(
             module.baudrate = baudrate,
             module.config
         );
     }
 
     void common_hal_busio_uart_clear_rx_buffer(abstract_module_t * self) {
-        for (size_t i = Serial.available(); i-- > 0;){
-            Serial.read();
+        for (size_t i = Console.available(); i-- > 0;){
+            Console.read();
         }
     }
 
     bool common_hal_busio_uart_ready_to_tx(abstract_module_t * self) {
-        return Serial.availableForWrite() != 0;
+        return Console.availableForWrite() != 0;
     }
 }
 
