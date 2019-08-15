@@ -43,7 +43,9 @@ extern "C" {
         return false;
     }
 
-    void common_hal_busio_onewire_deinit(abstract_module_t * self) {}
+    void common_hal_busio_onewire_deinit(abstract_module_t * self) {
+        one.~OneWire();
+    }
 
     bool common_hal_busio_onewire_read_bit(abstract_module_t * self) {
         return one.read_bit() != 0;
