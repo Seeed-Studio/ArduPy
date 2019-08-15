@@ -261,7 +261,7 @@ void busio_uart_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t * dest){
     if (dest[0] != MP_OBJ_NULL){
         dest[0] = MP_OBJ_NULL;
         if (attr == MP_QSTR_baudrate){
-            common_hal_busio_uart_set_baudrate(self, mp_obj_get_int(dest[0]));
+            common_hal_busio_uart_set_baudrate(self, mp_obj_get_int(dest[1]));
             return;
         }
     }
