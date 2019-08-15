@@ -25,13 +25,15 @@
  */
 
 #include <stdint.h>
-
 #include "py/runtime.h"
-
+#include "py/obj.h"
 #include "shared-bindings/microcontroller/Pin.h"
-#include "shared-bindings/pulseio/PulseOut.h"
-#include "shared-bindings/pulseio/PWMOut.h"
 #include "shared-bindings/util.h"
+
+void common_hal_pulseio_pulseout_construct(abstract_module_t * self, abstract_module_t * carrier);
+bool common_hal_pulseio_pulseout_deinited(abstract_module_t * self);
+void common_hal_pulseio_pulseout_deinit(abstract_module_t * self);
+void common_hal_pulseio_pulseout_send(abstract_module_t * self, uint16_t * pulses, uint16_t length);
 
 //| .. currentmodule:: pulseio
 //|
@@ -65,51 +67,22 @@
 //|     pulses[0] = 200
 //|     pulse.send(pulses)
 //|
-STATIC mp_obj_t pulseio_pulseout_make_new(const mp_obj_type_t *type, size_t n_args, const mp_obj_t *args, mp_map_t *kw_args) {
-    mp_arg_check_num(n_args, kw_args, 1, 1, false);
-    mp_obj_t carrier_obj = args[0];
+extern const mp_obj_type_t pulseio_pwmout_type;
+extern const mp_obj_type_t pulseio_pulseout_type;
 
-    if (!MP_OBJ_IS_TYPE(carrier_obj, &pulseio_pwmout_type)) {
+m_generic_make(pulseio_pulseout) {
+    mp_arg_check_num(n_args, args, 1, 1, false);
+    
+    if (!MP_OBJ_IS_TYPE(args[0], &pulseio_pwmout_type)) {
         mp_raise_RuntimeError("Expected a pulseio");
     }
 
     // create Pulse object from the given pin
-    pulseio_pulseout_obj_t *self = m_new_obj(pulseio_pulseout_obj_t);
-    self->base.type = &pulseio_pulseout_type;
-
-    common_hal_pulseio_pulseout_construct(self, (pulseio_pwmout_obj_t *)MP_OBJ_TO_PTR(carrier_obj));
+    abstract_module_t * self = new_abstruct_module(&pulseio_pulseout_type);
+    //common_hal_pulseio_pulseout_construct(self, (pulseio_pwmout_obj_t *)MP_OBJ_TO_PTR(carrier_obj));
 
     return MP_OBJ_FROM_PTR(self);
 }
-
-//|   .. method:: deinit()
-//|
-//|      Deinitialises the PulseOut and releases any hardware resources for reuse.
-//|
-STATIC mp_obj_t pulseio_pulseout_deinit(mp_obj_t self_in) {
-    pulseio_pulseout_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    common_hal_pulseio_pulseout_deinit(self);
-    return mp_const_none;
-}
-STATIC MP_DEFINE_CONST_FUN_OBJ_1(pulseio_pulseout_deinit_obj, pulseio_pulseout_deinit);
-
-//|   .. method:: __enter__()
-//|
-//|      No-op used by Context Managers.
-//|
-//  Provided by context manager helper.
-
-//|   .. method:: __exit__()
-//|
-//|      Automatically deinitializes the hardware when exiting a context. See
-//|      :ref:`lifetime-and-contextmanagers` for more info.
-//|
-STATIC mp_obj_t pulseio_pulseout_obj___exit__(size_t n_args, const mp_obj_t *args) {
-    (void)n_args;
-    common_hal_pulseio_pulseout_deinit(args[0]);
-    return mp_const_none;
-}
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(pulseio_pulseout___exit___obj, 4, 4, pulseio_pulseout_obj___exit__);
 
 //|   .. method:: send(pulses)
 //|
@@ -123,14 +96,16 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(pulseio_pulseout___exit___obj, 4, 4, 
 //|     :param array.array pulses: pulse durations in microseconds
 //|
 STATIC mp_obj_t pulseio_pulseout_obj_send(mp_obj_t self_in, mp_obj_t pulses) {
-    pulseio_pulseout_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    raise_error_if_deinited(common_hal_pulseio_pulseout_deinited(self));
+    abstract_module_t * self = (abstract_module_t *)self_in;
+    mp_buffer_info_t    bufinfo;
 
-    mp_buffer_info_t bufinfo;
+    raise_error_if_deinited(common_hal_pulseio_pulseout_deinited(self));
     mp_get_buffer_raise(pulses, &bufinfo, MP_BUFFER_READ);
+
     if (bufinfo.typecode != 'H') {
         mp_raise_TypeError("Array must contain halfwords (type 'H')");
     }
+
     common_hal_pulseio_pulseout_send(self, (uint16_t *)bufinfo.buf, bufinfo.len / 2);
     return mp_const_none;
 }
@@ -138,10 +113,10 @@ MP_DEFINE_CONST_FUN_OBJ_2(pulseio_pulseout_send_obj, pulseio_pulseout_obj_send);
 
 STATIC const mp_rom_map_elem_t pulseio_pulseout_locals_dict_table[] = {
     // Methods
-    { MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&pulseio_pulseout_deinit_obj) },
+    { MP_ROM_QSTR(MP_QSTR_deinit),    MP_ROM_PTR(&pulseio_pulseout_deinit_obj) },
     { MP_ROM_QSTR(MP_QSTR___enter__), MP_ROM_PTR(&default___enter___obj) },
-    { MP_ROM_QSTR(MP_QSTR___exit__), MP_ROM_PTR(&pulseio_pulseout___exit___obj) },
-    { MP_ROM_QSTR(MP_QSTR_send), MP_ROM_PTR(&pulseio_pulseout_send_obj) },
+    { MP_ROM_QSTR(MP_QSTR___exit__),  MP_ROM_PTR(&pulseio_pulseout_obj___exit___obj) },
+    { MP_ROM_QSTR(MP_QSTR_send),      MP_ROM_PTR(&pulseio_pulseout_send_obj) },
 };
 STATIC MP_DEFINE_CONST_DICT(pulseio_pulseout_locals_dict, pulseio_pulseout_locals_dict_table);
 
