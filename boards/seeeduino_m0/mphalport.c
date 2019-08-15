@@ -49,9 +49,10 @@ mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
 #include "py/obj.h"
 #include "py/mpstate.h"
 
-int mp_interrupt_char = -1;
+volatile int mp_interrupt_char = -1;
 void * pendsv_object;
 
+void print_hex(uint32_t);
 extern int mp_hal_stdin_rx_available(void);
 extern int mp_hal_stdin_rx_peek(void);
 extern int mp_hal_stdin_rx_read(void);
@@ -66,14 +67,11 @@ void usb_invoke(){
     if (token == -1 || !mp_hal_stdin_rx_available()){
         return;
     }
-    
-    int peek = mp_hal_stdin_rx_peek();
-
-    if (peek == token){
-        mp_hal_stdin_rx_read();
+    if (mp_hal_stdin_rx_read() == token){
         pendsv_kbd_intr();
     }
 }
+
 void mp_hal_usb_init(){
     USB_SetHandler(&usb_invoke);
 }
