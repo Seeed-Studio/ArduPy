@@ -135,16 +135,6 @@ m_generic_make(pulseio_pwmout) {
 //|     32 bit value that dictates the PWM frequency in Hertz (cycles per
 //|     second). Only writeable when constructed with ``variable_frequency=True``.
 //|
-STATIC mp_obj_t pulseio_pwmout_obj_get_frequency(mp_obj_t self_in) {
-    abstract_module_t * self = (abstract_module_t *)self_in;
-    raise_error_if_deinited(common_hal_pulseio_pwmout_deinited(self));
-    return MP_OBJ_NEW_SMALL_INT(common_hal_pulseio_pwmout_get_frequency(self));
-}
-
-STATIC mp_obj_t pulseio_pwmout_obj_set_frequency(mp_obj_t self_in, mp_obj_t frequency) {
-    raise_error_if_deinited(common_hal_pulseio_pwmout_deinited((abstract_module_t *)self_in));
-    return mp_const_none;
-}
 
 void pulseio_pwmout_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t * dest){
     abstract_module_t * self = (abstract_module_t *)self_in;
