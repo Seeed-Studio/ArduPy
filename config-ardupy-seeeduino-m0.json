@@ -1,0 +1,8 @@
+{
+    "home" : "https://www.seeedstudio.com/",
+    "firmware" :{
+        "path"    : "https://seeed-studio.github.io/ArduPy/firmware/ardupy-seeeduino-m0-2019-8-26.bin",
+        "name"    : "ardupy-seeeduino-m0-2019-8-26.bin",
+        "version" : "2019-8-26"
+    }
+}
