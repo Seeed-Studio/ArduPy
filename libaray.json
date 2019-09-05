@@ -1,6 +1,7 @@
-{
-    "ada-lib" : {
+[
+    {
+        "name": "circuitpython-bundle.zip",
         "version" : "2019-8-26",
-        "path" : "https://seeed-studio.github.io/ArduPy/libaray/ada-lib/adafruit-circuitpython-bundle-2019-8-26.zip"
+        "path" : "https://seeed-studio.github.io/ArduPy/libaray/circuitpython-bundle.zip"
     }
-}
+]
