@@ -151,3 +151,8 @@ void print_hex(uint32_t value){
 void * operator new(size_t bytes, void * memory){
     return memory;
 }
+extern "C"{
+    uintptr_t mp_hal_stdio_poll(uintptr_t poll_flags) {
+        return 0;
+    }
+}
