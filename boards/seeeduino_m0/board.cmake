@@ -31,6 +31,8 @@ add_source_files(
         ${ARDUINO_CORE_PATH}/libraries/SAMD_AnalogCorrection/src/*.cpp
         ${ARDUINO_CORE_PATH}/libraries/USBHost/src/*.c
         ${ARDUINO_CORE_PATH}/libraries/USBHost/src/*.cpp
+        ${ARDUINO_CORE_PATH}/cores/arduino/*.s
+        ${ARDUINO_CORE_PATH}/cores/arduino/*.S
 )
 
 set(BOARD_SRC ${BOARD_SRC}  
@@ -52,3 +54,5 @@ set(BOARD_DEF   -DF_CPU=48000000L
                 -DUSB_PRODUCT="Arduino Zero")
 # definitions in macros
 add_definitions(${BOARD_DEF})
+
+
