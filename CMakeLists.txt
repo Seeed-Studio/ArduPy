@@ -1,26 +1,15 @@
-##TODO Is it better to do this with a macro
-set(MICROPYTHON_REGEX "#define MICROPYTHON[ \t]+(.+)")
-set(BOARD_REGEX "#define BOARD[ \t]+(.+)")
-set(ARDUINO_VERIANT_REGEX "#define ARDUINO_VERIANT[ \t]+(.+)")
-set(ARM_REGEX "#define ARM[ \t]+(.+)")
 
-# Read in the line containing the version
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/buildconfig.h" MICROPYTHON REGEX ${MICROPYTHON_REGEX})
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/buildconfig.h" BOARD REGEX ${BOARD_REGEX})
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/buildconfig.h" ARDUINO_VERIANT REGEX ${ARDUINO_VERIANT_REGEX})
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/buildconfig.h" ARM REGEX ${ARM_REGEX})
+set(MICROPYTHON "1")
+set(ARM "1")
 
-# Pick out just the version
-string(REGEX REPLACE ${MICROPYTHON_REGEX} "\\1" MICROPYTHON "${MICROPYTHON}")
-string(REGEX REPLACE ${BOARD_REGEX} "\\1" BOARD "${BOARD}")
-string(REGEX REPLACE ${ARDUINO_VERIANT_REGEX} "\\1" ARDUINO_VERIANT "${ARDUINO_VERIANT}")
-string(REGEX REPLACE ${ARM_REGEX} "\\1" ARM "${ARM}")
 
-message("MICROPYTHON = ${MICROPYTHON}")
-message("BOARD = ${BOARD}")
-message("ARDUINO_VERIANT = ${ARDUINO_VERIANT}")
-message("ARM = ${ARM}")
+if (NOT BOARD)
+    set(BOARD "seeeduino_m0")
+endif ()
 
+if (NOT ARDUINO_VERIANT)
+    set(ARDUINO_VERIANT "arduino_zero")
+endif ()
 # basic config
 if (NOT ARDUINO_CORE_PATH)
     message(STATUS "ARDUINO_CORE_PATH not set, you can set it manually. e.g. -DARDUINO_CORE_PATH=/tmp/work/ArduinoCore-samd")
@@ -30,7 +19,19 @@ else()
         set(ARDUINO_CMSIS_PATH  ${ARDUINO_CORE_PATH}/../../../tools/CMSIS/4.5.0)
         set(ARDUINO_CMSIS_ATMEL_PATH  ${ARDUINO_CORE_PATH}/../../../tools/CMSIS-Atmel/1.2.0/CMSIS/Device/ATMEL)
     endif()
+
+    if ("${BOARD}" STREQUAL "grove_ui_m4")     
+        set(ARDUINO_CMSIS_PATH  ${ARDUINO_CORE_PATH}/../../../../arduino/tools/CMSIS/4.5.0)
+        set(ARDUINO_CMSIS_ATMEL_PATH  ${ARDUINO_CORE_PATH}/../../../../arduino/tools/CMSIS-Atmel/1.2.0/CMSIS/Device/ATMEL)
+    endif()
 endif ()
+
+
+message("MICROPYTHON = ${MICROPYTHON}")
+message("BOARD = ${BOARD}")
+message("ARDUINO_VERIANT = ${ARDUINO_VERIANT}")
+message("ARM = ${ARM}")
+
 
 set(ARDUPY_BOARD_PATH  ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD})
 
@@ -41,7 +42,6 @@ project(Ardupy C CXX ASM)
 # config self use headers
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros.internal.cmake)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/boards/${BOARD}/board.cmake)
 
 include_directories(${ARDUINO_CORE_PATH}/cores/arduino)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Wire)
@@ -53,8 +53,6 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/submodule)
 # compile project
 add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c 
                     ${ARDUINO_CORE_PATH}/cores/arduino/*.cpp
-                    ${ARDUINO_CORE_PATH}/cores/arduino/*.s
-                    ${ARDUINO_CORE_PATH}/cores/arduino/*.S
                     ${ARDUINO_CORE_PATH}/libraries/Wire/*.c
                     ${ARDUINO_CORE_PATH}/libraries/Wire/*.cpp
                     ${ARDUINO_CORE_PATH}/libraries/SPI/*.c
@@ -64,6 +62,9 @@ add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c
                     ${CMAKE_CURRENT_LIST_DIR}/main.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/submodule/*.cpp
                     )
+
+
+include(${ARDUPY_BOARD_PATH}/board.cmake)
 
 FILE(GLOB_RECURSE ASSEMBLY_FILES
     "${ARDUINO_CORE_PATH}/cores/arduino/*.s"
@@ -79,6 +80,10 @@ include_directories(${CMAKE_CURRENT_LIST_DIR})
 
 if ("${BOARD}" STREQUAL "seeeduino_m0")      
     include(./cmake/samd21-executable.cmake)
+endif()
+
+if ("${BOARD}" STREQUAL "grove_ui_m4")      
+    include(./cmake/samd51-executable.cmake)
 endif()
 
 target_sources(${PROJECT_NAME} PUBLIC ${BOARD_SRC}  ${GENHDR}/qstrdefs.generated.h) 
