@@ -47,6 +47,10 @@ bool speaker_enable_in_use;
 #define SWD_MUX GPIO_PIN_FUNCTION_G
 #endif
 
+#ifndef PORT_BITS
+#define PORT_BITS 84
+#endif
+
 STATIC uint32_t never_reset_pins[PORT_COUNT];
 
 void reset_all_pins(void) {

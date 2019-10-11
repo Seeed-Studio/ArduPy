@@ -57,9 +57,11 @@ void never_reset_pin_number(uint8_t pin_number);
 void claim_pin(const mcu_pin_obj_t* pin);
 bool pin_number_is_free(uint8_t pin_number);
 
+#if defined(SEEEDUINO_MO)
 #define PORT_BITS 84
+#endif
 
-#define NO_PIN PORT_BITS
+#define NO_PIN 84
 
 #if defined(ARDUINO_ARCH_SAMD)
 #define BOARD_I2C 1

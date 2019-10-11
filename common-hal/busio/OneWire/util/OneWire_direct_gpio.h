@@ -238,10 +238,15 @@ void directModeOutput(IO_REG_TYPE pin)
 #define DIRECT_MODE_INPUT(base, pin)    pin_function((PinName)pin, STM_PIN_DATA(STM_MODE_INPUT, GPIO_NOPULL, 0))
 #define DIRECT_MODE_OUTPUT(base, pin)   pin_function((PinName)pin, STM_PIN_DATA(STM_MODE_OUTPUT_PP, GPIO_NOPULL, 0))
 
-#elif defined(__SAMD21G18A__)
-#define PIN_TO_BASEREG(pin)             portModeRegister(digitalPinToPort(pin))
+#elif defined(__SAMD21G18A__) || defined(__SAMD51P19A__) 
 #define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
+#if  defined(__SAMD51P19A__) 
+#define PIN_TO_BASEREG(pin)             (volatile unsigned int*)portModeRegister(digitalPinToPort(pin))
+#define IO_REG_TYPE unsigned int
+#else
+#define PIN_TO_BASEREG(pin)             portModeRegister(digitalPinToPort(pin))
 #define IO_REG_TYPE uint32_t
+#endif
 #define IO_REG_BASE_ATTR
 #define IO_REG_MASK_ATTR
 #define DIRECT_READ(base, mask)         (((*((base)+8)) & (mask)) ? 1 : 0)

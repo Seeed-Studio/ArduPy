@@ -23,7 +23,8 @@
 #elif (F_CPU == 160000000L)
 #define COUNT 36
 #else
-#error "CPU SPEED NOT SUPPORTED"
+//#error "CPU SPEED NOT SUPPORTED"
+#define COUNT 100
 #endif
 
 /* DHT library
