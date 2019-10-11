@@ -2,6 +2,9 @@
 #ifdef SEEEDUINO_MO
 #include "seeeduino_m0_config.h"
 #endif
+#ifdef SEEED_GROVE_UI_WIRELESS
+#include "grove_ui_m4_config.h"
+#endif
 #include "mpconfigboard_common.h"
 
 // fatfs configuration

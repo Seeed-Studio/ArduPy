@@ -12,7 +12,11 @@ extern "C" {
 #include "mphalport.h"
 #include "ardupy_storage.h"
 
-#define SerialShow SerialUSB
+#if defined(SEEEDUINO_MO)
+    #define SerialShow SerialUSB
+#else if defined(SEEED_GROVE_UI_WIRELESS)
+    #define SerialShow Serial
+#endif
 
 void NORETURN __fatal_error(const char *msg);
 void reset(){
