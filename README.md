@@ -12,22 +12,7 @@ Ardupy is an embedded python running environment with arduino as hardware abstra
 
 ## Resources
 
-<table>
-  <tr>
-      <td rowspan="2">
-          <img style="float:left" height="40px" width="40px" src="https://codewith.mu/img/windows_logo.png" />
-      </td>
-      <td><a href="https://seeed-studio.github.io/ArduPy/tools/mu-editor_32bit.zip">Mu Editor on Windows</td>
-      <td rowspan="2">
-        <img style="float:left" height="40px" width="40px" src="https://codewith.mu/img/apple_logo.png" />
-      </td>
-      <td><a href="https://seeed-studio.github.io/ArduPy/tools/mu-editor-mac.dmg">Mu Editor on MacOS</td>
-  </tr>
-  <tr>
-      <td><a style="width:500px" href="https://codewith.mu/en/howto/1.0/install_windows">howto</td>
-      <td><a style="width:500px" href="https://codewith.mu/en/howto/1.0/install_macos">howto</td>
-  </tr>
-</table>
+***Only for Beta User***
 
 # Develop Ardupy
 ## install depend software
