@@ -98,43 +98,6 @@ void pendsv_kbd_intr(){
     }
 }
 
-// mp_import_stat_t mp_import_stat(const char *path) { return MP_IMPORT_STAT_NO_EXIST; }
-
-// mp_obj_t mp_builtin_open(size_t n_args, const mp_obj_t *args, mp_map_t *kwargs) { return mp_const_none; }
-// MP_DEFINE_CONST_FUN_OBJ_KW(mp_builtin_open_obj, 1, mp_builtin_open);
-
-int32_t board_flash_write(const volatile void *flash_ptr, const void *data, uint32_t size) {
-#if 0
-    int32_t error_code;
-    error_code = flash_erase(&FLASH_0,
-                             flash_ptr,
-                             FILESYSTEM_BLOCK_SIZE / flash_get_page_size(&FLASH_0));
-    if (error_code != 0) {
-        return error_code;
-    }
-
-    error_code = flash_append(&FLASH_0, flash_ptr, data, FILESYSTEM_BLOCK_SIZE);
-    if (error_code != 0) {
-        return error_code;
-    }
-#endif 
-    return true;
-}
-
-int32_t board_flash_read(const volatile void *flash_ptr, void *data, uint32_t size) {
-#if 0
-    int32_t error_code = flash_read(&FLASH_0, flash_ptr, data, size);
-    return error_code;
-#endif
-    return true;
-}
-void board_flash_init() {
-#if 0
-    _pm_enable_bus_clock(PM_BUS_APBB, NVMCTRL);
-    flash_init(&FLASH_0, NVMCTRL);
-#endif
-}
-
 uint32_t get_fattime(void) {
     // TODO: Implement this function. For now, fake it.
     return ((2016 - 1980) << 25) | ((12) << 21) | ((4) << 16) | ((00) << 11) | ((18) << 5) | (23 / 2);
