@@ -34,7 +34,7 @@ message("ARM = ${ARM}")
 
 
 set(ARDUPY_BOARD_PATH  ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD})
-
+set(ARDUPY_SUB_PATH ${CMAKE_CURRENT_LIST_DIR}/submodule)
 cmake_minimum_required(VERSION 3.0)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/common.cmake)
 project(Ardupy C CXX ASM)
@@ -47,7 +47,9 @@ include_directories(${ARDUINO_CORE_PATH}/cores/arduino)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Wire)
 include_directories(${ARDUINO_CORE_PATH}/libraries/SPI)
 include_directories(${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT})
-include_directories(${CMAKE_CURRENT_LIST_DIR}/submodule)
+include_directories(${ARDUPY_SUB_PATH})
+include_directories(${ARDUPY_SUB_PATH}/Seeed_Arduino_LCD)
+include_directories(${ARDUPY_SUB_PATH}/GroveUi/src)
 
 
 # compile project
@@ -73,7 +75,6 @@ FILE(GLOB_RECURSE ASSEMBLY_FILES
             
 SET_PROPERTY(SOURCE ${ASSEMBLY_FILES} PROPERTY LANGUAGE C)
 SET_SOURCE_FILES_PROPERTIES(${ASSEMBLY_FILES} PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")
-
 
 include(${CMAKE_CURRENT_LIST_DIR}/micropython.cmake)
 include_directories(${CMAKE_CURRENT_LIST_DIR})

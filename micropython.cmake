@@ -77,6 +77,10 @@ set(micropython_CFLAGS
         -I${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}
         -I${MP}/
         -I${CMAKE_CURRENT_LIST_DIR}
+        -DBYTE="volatile unsigned char"
+        -DWORD="volatile unsigned short"
+        -DDWORD="volatile unsigned int"
+        -DUINT="volatile unsigned int"
         -Wall
         -Werror
         -Wpointer-arith
@@ -84,14 +88,14 @@ set(micropython_CFLAGS
         -Wno-unused-label
         -std=gnu99
         -U_FORTIFY_SOURCE
-        -Os
+        -g
         ) 
 
 
 
 #TODO: verify that this works
-set_source_files_properties(${MP}/py/gc.c PROPERTIES COMPILE_FLAGS -O3)
-set_source_files_properties(${MP}/py/vm.c PROPERTIES COMPILE_FLAGS -O3) 
+set_source_files_properties(${MP}/py/gc.c PROPERTIES COMPILE_FLAGS -g)
+set_source_files_properties(${MP}/py/vm.c PROPERTIES COMPILE_FLAGS -g) 
 
 #
 set_source_files_properties(${MICROPYTHON_SRC} PROPERTIES COMPILE_FLAGS "'-DFFCONF_H=\"${MP}/lib/oofatfs/ffconf.h\"' -Wall -Werror -Wpointer-arith -Wuninitialized -Wno-unused-label -std=gnu99 -U_FORTIFY_SOURCE -Os")
