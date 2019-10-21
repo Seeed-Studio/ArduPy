@@ -1,0 +1,33 @@
+[submodule "ArduinoLibrarys/NeoPixel"]
+	path = ArduinoLibrarys/NeoPixel
+	url = https://github.com/adafruit/Adafruit_NeoPixel
+[submodule "ArduinoLibrarys/Seeed_Arduino_1602LCD"]
+	path = ArduinoLibrarys/Seeed_Arduino_1602LCD
+	url = https://github.com/Seeed-Studio/Grove_LCD_RGB_Backlight
+[submodule "ArduinoLibrarys/Seeed_Arduino_DHT"]
+	path = ArduinoLibrarys/Seeed_Arduino_DHT
+	url = https://github.com/Seeed-Studio/Grove_Temperature_And_Humidity_Sensor
+[submodule "ArduinoLibrarys/Seeed_Arduino_DS1307"]
+	path = ArduinoLibrarys/Seeed_Arduino_DS1307
+	url = https://github.com/Seeed-Studio/RTC_DS1307
+[submodule "ArduinoLibrarys/Seeed_Arduino_LCD"]
+	path = ArduinoLibrarys/Seeed_Arduino_LCD
+	url = https://github.com/Seeed-Studio/Seeed_Arduino_LCD
+[submodule "ArduinoLibrarys/Seeed_Arduino_MY9221"]
+	path = ArduinoLibrarys/Seeed_Arduino_MY9221
+	url = https://github.com/Seeed-Studio/Grove_LED_Bar
+[submodule "ArduinoLibrarys/Seeed_Arduino_P9813LED"]
+	path = ArduinoLibrarys/Seeed_Arduino_P9813LED
+	url = https://github.com/Seeed-Studio/Grove_Chainable_RGB_LED
+[submodule "ArduinoLibrarys/Seeed_Arduino_TM1637"]
+	path = ArduinoLibrarys/Seeed_Arduino_TM1637
+	url = https://github.com/Seeed-Studio/Grove_4Digital_Display
+[submodule "ArduinoLibrarys/Seeed_Arduino_MMA7660"]
+	path = ArduinoLibrarys/Seeed_Arduino_MMA7660
+	url = https://github.com/Seeed-Studio/Accelerometer_MMA7660
+[submodule "ArduinoLibrarys/Seeed_Arduino_Terminal"]
+	path = ArduinoLibrarys/Seeed_Arduino_Terminal
+	url = https://github.com/Seeed-Studio/Seeed_Arduino_Terminal
+[submodule "ArduinoLibrarys/Seeed_Arduino_UltrasonicSensor"]
+	path = ArduinoLibrarys/Seeed_Arduino_UltrasonicSensor
+	url = https://github.com/Seeed-Studio/Grove_Ultrasonic_Ranger
