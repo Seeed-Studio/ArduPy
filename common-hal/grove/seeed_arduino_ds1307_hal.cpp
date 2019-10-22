@@ -24,8 +24,8 @@
  * THE SOFTWARE.
  */
 
-#include "common-hal/grove/GroveRtc.h"
-#include "submodule/DS1307.h"
+#include "common-hal/grove/seeed_arduino_ds1307_hal.h"
+#include "Seeed_Arduino_DS1307/DS1307.h"
 extern "C"{
 #include "py/mphal.h"
 #include "py/nlr.h"

@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-#include "submodule/TM1637.h"
+#include "Seeed_Arduino_TM1637/TM1637.h"
 extern "C"{
 #include "py/objtype.h"
 #include "shared-bindings/util.h"

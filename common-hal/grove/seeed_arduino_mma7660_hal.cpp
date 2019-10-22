@@ -25,7 +25,7 @@
  */
 
 #include <Arduino.h>
-#include "submodule/MMA7660.h"
+#include "Seeed_Arduino_MMA7660/MMA7660.h"
 extern "C"{
 #include "py/objtype.h"
 #include "shared-bindings/util.h"

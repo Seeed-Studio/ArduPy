@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-#include "submodule/Adafruit_NeoPixel.h"
+#include "NeoPixel/Adafruit_NeoPixel.h"
 extern "C"{
 #include "shared-bindings/util.h"
 }

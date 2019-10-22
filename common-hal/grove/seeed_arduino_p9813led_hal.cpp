@@ -26,7 +26,7 @@
 
 #include "Arduino.h"
 #define private public
-#include "submodule/ChainableLED.h"
+#include "Seeed_Arduino_P9813LED/ChainableLED.h"
 
 extern "C" {
     #include "shared-bindings/util.h"

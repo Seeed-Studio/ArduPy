@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-#include "submodule/Ultrasonic.h"
+#include "Seeed_Arduino_UltrasonicSensor/Ultrasonic.h"
 extern "C"{
 #include "py/mphal.h"
 #include "py/nlr.h"

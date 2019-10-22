@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-#include "submodule/DHT.h"
+#include "Seeed_Arduino_DHT/DHT.h"
 extern "C"{
 #include "py/mphal.h"
 #include "py/nlr.h"

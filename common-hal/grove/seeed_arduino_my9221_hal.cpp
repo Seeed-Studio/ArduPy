@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-#include "submodule/Grove_LED_Bar.h"
+#include "Seeed_Arduino_MY9221/Grove_LED_Bar.h"
 extern "C"{
 #include "py/objtype.h"
 #include "shared-bindings/util.h"

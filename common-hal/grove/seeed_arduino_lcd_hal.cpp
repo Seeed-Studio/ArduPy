@@ -26,7 +26,7 @@
 
 #include <Arduino.h>
 #define private public
-#include "submodule/rgb_lcd.h"
+#include "Seeed_Arduino_1602LCD/rgb_lcd.h"
 
 extern "C"{
 #include "py/objtype.h"

@@ -26,7 +26,7 @@
 
 #include "shared-bindings/util.h"
 #include "shared-bindings/microcontroller/Pin.h"
-#include "common-hal/grove/GroveRtc.h"
+#include "common-hal/grove/seeed_arduino_ds1307_hal.h"
 
 extern const mp_obj_type_t grove_rtc_type;
 

@@ -27,7 +27,7 @@
 #include "py/obj.h"
 #include "shared-bindings/microcontroller/Pin.h"
 #include "shared-bindings/util.h"
-#include "common-hal/grove/GroveRtc.h"
+#include "common-hal/grove/seeed_arduino_ds1307_hal.h"
 
 void common_hal_rgb_led_strip_construct(
     abstract_module_t * self, 
