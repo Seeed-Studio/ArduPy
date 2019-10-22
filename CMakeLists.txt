@@ -34,7 +34,6 @@ message("ARM = ${ARM}")
 
 
 set(ARDUPY_BOARD_PATH  ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD})
-set(ARDUPY_SUB_PATH ${CMAKE_CURRENT_LIST_DIR}/submodule)
 cmake_minimum_required(VERSION 3.0)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/common.cmake)
 project(Ardupy C CXX ASM)
@@ -47,10 +46,6 @@ include_directories(${ARDUINO_CORE_PATH}/cores/arduino)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Wire)
 include_directories(${ARDUINO_CORE_PATH}/libraries/SPI)
 include_directories(${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT})
-include_directories(${ARDUPY_SUB_PATH})
-include_directories(${ARDUPY_SUB_PATH}/Seeed_Arduino_LCD)
-include_directories(${ARDUPY_SUB_PATH}/GroveUi/src)
-
 
 # compile project
 add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c 
@@ -62,11 +57,12 @@ add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c
                     ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}/*.c
                     ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}/*.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/main.cpp
-                    ${CMAKE_CURRENT_LIST_DIR}/submodule/*.cpp
                     )
 
 
 include(${ARDUPY_BOARD_PATH}/board.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/ArduinoLibrarys/arduinolib.cmake)
+
 
 FILE(GLOB_RECURSE ASSEMBLY_FILES
     "${ARDUINO_CORE_PATH}/cores/arduino/*.s"
