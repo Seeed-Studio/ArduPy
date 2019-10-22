@@ -1,5 +1,5 @@
 
-set(MP ${CMAKE_CURRENT_LIST_DIR}/../micropython)
+set(MP ${CMAKE_CURRENT_LIST_DIR}/MicroPython)
 
 set(GENHDR ${CMAKE_BINARY_DIR}/genhdr)
 include_directories(${MP} 

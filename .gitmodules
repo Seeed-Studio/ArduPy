@@ -31,3 +31,6 @@
 [submodule "ArduinoLibrarys/Seeed_Arduino_UltrasonicSensor"]
 	path = ArduinoLibrarys/Seeed_Arduino_UltrasonicSensor
 	url = https://github.com/Seeed-Studio/Grove_Ultrasonic_Ranger
+[submodule "MicroPython"]
+	path = MicroPython
+	url = https://github.com/micropython/micropython
