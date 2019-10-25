@@ -34,3 +34,7 @@
 [submodule "MicroPython"]
 	path = MicroPython
 	url = https://github.com/micropython/micropython
+[submodule "ArduinoLibrarys/Seeed_Arduino_FS"]
+	path = ArduinoLibrarys/Seeed_Arduino_FS
+	url = https://github.com/Seeed-Studio/Seeed_Arduino_FS
+	branch = dev

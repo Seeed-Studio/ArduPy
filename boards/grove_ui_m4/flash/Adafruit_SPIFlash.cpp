@@ -1,11 +1,10 @@
 #include <SPI.h>
-#include <string.h>
-
 #include "Adafruit_SPIFlash.h"
 #include "pins_arduino.h"
 #include "wiring_private.h"
 
 #include "flash_devices.h"
+
 #if SPIFLASH_DEBUG
   #define SPIFLASH_LOG(_block, _count)   do { \
         Serial.print(__FUNCTION__); Serial.print(": lba = "); Serial.print(_block);\
@@ -16,20 +15,58 @@
   #define SPIFLASH_LOG(_sector, _count)
 #endif
 
+/// List of all possible flash devices used by Adafruit boards
 static const external_flash_device possible_devices[] =
 {
-  W25Q32JV_SSIQ,
+  GD25Q16C, GD25Q64C,    // Main devices current Adafruit
+  S25FL116K, S25FL216K,
+  W25Q16FW, W25Q64JV_IQ, // Only a handful of production run
+
+  MX25R6435F,            // Nordic PCA10056
+  W25Q32JV_SSIQ,         // Grove UI
 };
 
-Adafruit_SPIFlash::Adafruit_SPIFlash(Adafruit_FlashTransport_QSPI * transport) {
+/// Flash device list count
+enum
+{
+  EXTERNAL_FLASH_DEVICE_COUNT = sizeof(possible_devices)/sizeof(possible_devices[0])
+};
+
+Adafruit_SPIFlash::Adafruit_SPIFlash()
+  : _cache()
+{
+  _trans = NULL;
+  _flash_dev = NULL;
+}
+
+Adafruit_SPIFlash::Adafruit_SPIFlash(Adafruit_FlashTransport* transport)
+  : _cache()
+{
   _trans = transport;
   _flash_dev = NULL;
 }
 
 bool Adafruit_SPIFlash::begin(void)
 {
+  if (_trans == NULL) return false;
+
   _trans->begin();
-  _flash_dev = possible_devices;
+
+  //------------- flash detection -------------//
+	uint8_t jedec_ids[3];
+	_trans->readCommand(SFLASH_CMD_READ_JEDEC_ID, jedec_ids, 3);
+
+	for (uint8_t i = 0; i < EXTERNAL_FLASH_DEVICE_COUNT; i++) {
+	  const external_flash_device* possible_device = &possible_devices[i];
+	  if (jedec_ids[0] == possible_device->manufacturer_id &&
+	      jedec_ids[1] == possible_device->memory_type &&
+	      jedec_ids[2] == possible_device->capacity) {
+	    _flash_dev = possible_device;
+	    break;
+	  }
+	}
+
+	if (_flash_dev == NULL) return false;
 
   // We don't know what state the flash is in so wait for any remaining writes and then reset.
 
@@ -46,7 +83,7 @@ bool Adafruit_SPIFlash::begin(void)
   delayMicroseconds(30);
 
   // Speed up to max device frequency
-  //_trans->setClockSpeed(_flash_dev->max_clock_speed_mhz*1000000UL);
+  _trans->setClockSpeed(_flash_dev->max_clock_speed_mhz*1000000UL);
 
   // Enable Quad Mode if available
   if ( _trans->supportQuadMode() && (_flash_dev->quad_enable_bit_mask) )
@@ -71,10 +108,20 @@ bool Adafruit_SPIFlash::begin(void)
     }
   }
 
+  // Turn off sector protection if needed
+//  if (_flash_dev->has_sector_protection)
+//  {
+//    writeEnable();
+//
+//    uint8_t data[1] = {0x00};
+//    QSPI0.writeCommand(QSPI_CMD_WRITE_STATUS, data, 1);
+//  }
+
   // Turn off writes in case this is a microcontroller only reset.
   _trans->runCommand(SFLASH_CMD_WRITE_DISABLE);
 
   waitUntilReady();
+
   return true;
 }
 
@@ -211,4 +258,38 @@ uint32_t Adafruit_SPIFlash::writeBuffer (uint32_t address, uint8_t const *buffer
 	}
 
 	return len - remain;
+}
+
+//--------------------------------------------------------------------+
+// SdFat BaseBlockDRiver API
+// A block is 512 bytes
+//--------------------------------------------------------------------+
+bool Adafruit_SPIFlash::readBlock(uint32_t block, uint8_t* dst)
+{
+  SPIFLASH_LOG(block, 1);
+  return _cache.read(this, block*512, dst, 512);
+}
+
+bool Adafruit_SPIFlash::syncBlocks()
+{
+  SPIFLASH_LOG(0, 0);
+  return _cache.sync(this);
+}
+
+bool Adafruit_SPIFlash::writeBlock(uint32_t block, const uint8_t* src)
+{
+  SPIFLASH_LOG(block, 1);
+  return _cache.write(this, block*512, src, 512);
+}
+
+bool Adafruit_SPIFlash::readBlocks(uint32_t block, uint8_t* dst, size_t nb)
+{
+  SPIFLASH_LOG(block, nb);
+  return _cache.read(this, block*512, dst, 512*nb);
+}
+
+bool Adafruit_SPIFlash::writeBlocks(uint32_t block, const uint8_t* src, size_t nb)
+{
+  SPIFLASH_LOG(block, nb);
+  return _cache.write(this, block*512, src, 512*nb);
 }

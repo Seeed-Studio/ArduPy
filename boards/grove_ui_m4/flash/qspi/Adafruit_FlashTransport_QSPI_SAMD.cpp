@@ -26,9 +26,7 @@
 #ifdef __SAMD51__
 
 #include <Arduino.h>
-#include <string.h>
 #include "wiring_private.h"
-#include "Adafruit_FlashTransport_QSPI.h"
 #include "Adafruit_SPIFlash.h"
 
 static void _run_instruction (uint8_t command, uint32_t iframe, uint32_t addr, uint8_t *buffer, uint32_t size);

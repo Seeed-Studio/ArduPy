@@ -26,10 +26,22 @@
 
 #ifndef ADAFRUIT_SPIFLASH_H_
 #define ADAFRUIT_SPIFLASH_H_
-#include <stdint.h>
-#include <stdio.h>
-#include "Adafruit_FlashTransport_QSPI.h"
+
+#include "Adafruit_FlashTransport.h"
+#include "Adafruit_FlashCache.h"
 #include "flash_devices.h"
+
+// implement SdFat Block Driver
+// #include "SdFat.h"
+// #include "SdFatConfig.h"
+
+// #if ENABLE_EXTENDED_TRANSFER_CLASS == 0
+//   #error ENABLE_EXTENDED_TRANSFER_CLASS must be set to 1 in SdFat SdFatConfig.h
+// #endif
+
+// #if FAT12_SUPPORT == 0
+//   #error FAT12_SUPPORT must be set to 1 in SdFat SdFatConfig.h
+// #endif
 
 enum
 {
@@ -65,19 +77,20 @@ enum {
   SFLASH_PAGE_SIZE   = 256,
 };
 
-class Adafruit_SPIFlash
+class Adafruit_SPIFlash //: public BaseBlockDriver
 {
 public:
-	Adafruit_SPIFlash(Adafruit_FlashTransport_QSPI * transport);
+	Adafruit_SPIFlash();
+	Adafruit_SPIFlash(Adafruit_FlashTransport* transport);
 	~Adafruit_SPIFlash() {}
 
 	bool begin(void);
 	bool end(void);
 
-	uint16_t numPages(void);
-	uint16_t pageSize(void);
+  uint16_t numPages(void);
+  uint16_t pageSize(void);
 
-  	uint32_t size(void);
+  uint32_t size(void);
 
 	uint8_t readStatus(void);
 	uint8_t readStatus2(void);
@@ -97,9 +110,19 @@ public:
 	uint8_t  read8(uint32_t addr);
 	uint16_t read16(uint32_t addr);
 	uint32_t read32(uint32_t addr);
+
+	//------------- SdFat BaseBlockDRiver API -------------//
+	virtual bool readBlock(uint32_t block, uint8_t* dst);
+	virtual bool syncBlocks();
+	virtual bool writeBlock(uint32_t block, const uint8_t* src);
+	virtual bool readBlocks(uint32_t block, uint8_t* dst, size_t nb);
+	virtual bool writeBlocks(uint32_t block, const uint8_t* src, size_t nb);
+
 private:
-	Adafruit_FlashTransport_QSPI * _trans;
-	external_flash_device const  * _flash_dev;
+	Adafruit_FlashTransport* _trans;
+	external_flash_device const * _flash_dev;
+
+	Adafruit_FlashCache _cache;
 };
 
 // for debugging
