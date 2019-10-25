@@ -112,7 +112,8 @@ bool storage_write_block(const uint8_t *src, uint32_t block) {
         // bad block number
         return false;
     }
-    return board_flash_write(dest, src, FILESYSTEM_BLOCK_SIZE);
+    int32_t error_code = board_flash_write(dest, src, FILESYSTEM_BLOCK_SIZE);
+    return error_code == 0;
 }
 
 mp_uint_t storage_read_blocks(uint8_t *dest, uint32_t block_num, uint32_t num_blocks) {
@@ -290,7 +291,9 @@ static void make_empty_file(FATFS *fatfs, const char *path) {
 // avoid inlining to avoid stack usage within main()
 MP_NOINLINE  bool init_flash_fs() {
     // init the vfs object
-    fs_user_mount_t *vfs_fat = (fs_user_mount_t *)gc_alloc(sizeof(fs_user_mount_t), 0);
+    static fs_user_mount_t static_vfs_fat;
+    fs_user_mount_t * vfs_fat = &static_vfs_fat;
+    memset(vfs_fat, 0, sizeof(fs_user_mount_t));
     vfs_fat->flags = 0;
     storage_init();
     ardupy_flash_init_vfs(vfs_fat);
@@ -305,9 +308,10 @@ MP_NOINLINE  bool init_flash_fs() {
     FRESULT res = f_mount(&vfs_fat->fatfs);
 
     if (res == FR_NO_FILESYSTEM) {
-        // no filesystem, or asked to reset it, so create a fresh one
-        uint8_t working_buf[FF_MAX_SS];
-        res = f_mkfs(&vfs_fat->fatfs, FM_FAT, 0, working_buf, sizeof(working_buf));
+        // HINT: DON'T USE THE STACK BUFFER, IS MAYBE RESULT STACK OVERFLOW.
+        // no filesystem, or asked to reset it, so create a fresh one 
+        uint8_t * working_buf = m_new(uint8_t, FF_MAX_SS);
+        res = f_mkfs(&vfs_fat->fatfs, FM_FAT, 0, working_buf, FF_MAX_SS);
         if (res != FR_OK) {
             printf("MPY: can't create flash filesystem\n");
             return false;
