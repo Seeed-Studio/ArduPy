@@ -3,6 +3,7 @@
 #include <string.h>
 #include "Adafruit_SPIFlash.h"
 extern "C"{
+    #include "mpconfigport.h"
     #include "py/objtype.h"
 }
 
@@ -16,20 +17,23 @@ Adafruit_FlashTransport_QSPI flashTransport(
 Adafruit_SPIFlash flash((Adafruit_FlashTransport *)& flashTransport);
 constexpr int32_t error = 1;
 extern "C"{
+    int32_t board_flash_read(const volatile void *flash_ptr, void *data, uint32_t size);
     void mp_hal_stdout_tx_strn(const char *str, mp_uint_t len);
     int32_t board_flash_write(const volatile void *flash_ptr, const void *data, uint32_t size) {
-        uint32_t len = flash.writeBuffer(size_t(flash_ptr), (uint8_t *)data, size);
+        uint32_t len = flash.writeBlocks(
+            size_t(flash_ptr) / FILESYSTEM_BLOCK_SIZE, 
+            (uint8_t *)data, 
+            size / FILESYSTEM_BLOCK_SIZE);
         if (len == 0){
             return error;
         }
-        //sprintf(buf, "write flash:%p size:%d\n", flash_ptr, size);
-        //mp_hal_stdout_tx_strn(buf, strlen(buf));
         return !error;
     }
     int32_t board_flash_read(const volatile void *flash_ptr, void *data, uint32_t size) {
-        uint32_t len = flash.readBuffer(size_t(flash_ptr), (uint8_t *)data, size);
-        //sprintf(buf, "read flash:%p size:%d %d\n", flash_ptr, size, len);
-        //mp_hal_stdout_tx_strn(buf, strlen(buf));
+        uint32_t len = flash.readBlocks(
+            size_t(flash_ptr) / FILESYSTEM_BLOCK_SIZE, 
+            (uint8_t *)data, 
+            size / FILESYSTEM_BLOCK_SIZE);
         if (len == 0){
             return error;
         }
