@@ -7,6 +7,9 @@ set(micropython_CFLAGS
         -I${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA
 )
 
+include_directories(${ARDUPY_BOARD_PATH}/flash)
+include_directories(${ARDUPY_BOARD_PATH}/flash/qspi)
+include_directories(${ARDUINO_CORE_PATH}/core/arduino/USB)
 include_directories(${ARDUINO_CORE_PATH}/libraries/HID)
 include_directories(${ARDUINO_CORE_PATH}/libraries/USBHost/src)
 include_directories(${ARDUINO_CORE_PATH}/libraries/SAMD_AnalogCorrection/src)
@@ -16,11 +19,12 @@ include_directories(${ARDUINO_CORE_PATH}/cores/arduino/Adafruit_TinyUSB_Core)
 include_directories(${ARDUINO_CORE_PATH}/cores/arduino/Adafruit_TinyUSB_Core/tinyusb/src)
 include_directories(${ARDUINO_CMSIS_ATMEL_PATH})
 
-
 add_source_files(
-        ${ARDUPY_SUB_PATH}/Seeed_Arduino_LCD/*.cpp
-        ${ARDUPY_SUB_PATH}/GroveUi/src/*.cpp
-        ${ARDUPY_BOARD_PATH}/qspi/*.cpp
+        # ${ARDUPY_SUB_PATH}/Seeed_Arduino_LCD/*.cpp
+        # ${ARDUPY_SUB_PATH}/GroveUi/src/*.cpp
+        ${ARDUINO_CORE_PATH}/core/arduino/USB/*.cpp
+        ${ARDUPY_BOARD_PATH}/flash/*.cpp
+        ${ARDUPY_BOARD_PATH}/flash/qspi/*.cpp
         ${ARDUINO_CORE_PATH}/libraries/HID/*.c
         ${ARDUINO_CORE_PATH}/libraries/HID/*.cpp
         ${ARDUINO_CORE_PATH}/libraries/USBHost/src/*.c
@@ -52,8 +56,8 @@ set(BOARD_DEF
                 # c++ 
                 # -E 
                 # -CC 
-                -DUSE_GROVE_UI_LCD
-                -DUSE_GROVE_UI_KEYBOARD
+                # -DUSE_GROVE_UI_LCD
+                # -DUSE_GROVE_UI_KEYBOARD
 
                 -DF_CPU=120000000L 
                 -DARDUINO=10810 
