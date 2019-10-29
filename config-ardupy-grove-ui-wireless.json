@@ -1,8 +1,8 @@
 {
     "home" : "https://www.seeedstudio.com/",
     "firmware" :{
-        "path"    : "https://seeed-studio.github.io/ArduPy/firmware/ardupy-grove-ui-wireless-2019-10-25.bin",
-        "name"    : "ardupy-grove-ui-wireless-2019-10-25.bin",
-        "version" : "2019-10-25"
+        "path"    : "https://seeed-studio.github.io/ArduPy/firmware/ardupy-grove-ui-wireless-2019-10-29.bin",
+        "name"    : "ardupy-grove-ui-wireless-2019-10-29.bin",
+        "version" : "2019-10-29"
     }
 }
