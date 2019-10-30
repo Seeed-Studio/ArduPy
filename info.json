@@ -8,7 +8,7 @@
         "flashParam": "-i -d --port=%s -U -i --offset=0x4000 -w -v '%s' -R"
         }, 
         {
-        "type": "ardupy-seeeduino-m0",
+        "type": "ardupy-seeeduino-m0-",
         "pvid": ["2886", "26"],
         "name": "lotusM0"
         },
