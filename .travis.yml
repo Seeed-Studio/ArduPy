@@ -2,17 +2,17 @@
 language: generic
 env:
   global:
-    - CLI_VERSION=0.7.2
+    - CLIVERSION=0.7.2
   matrix:
     - BOARD="Seeeduino:samd:zero"
 before_install:
-  - wget http://downloads.arduino.cc/arduino-cli/arduino-cli-$CLI_VERSION-linux64.tar.bz2
-  - tar xf arduino-cli-$CLI_VERSION-linux64.tar.bz2
+  - wget https://github.com/arduino/arduino-cli/releases/download/0.7.2/arduino-cli_0.7.2_Linux_64bit.tar.gz
+  - tar xf arduino-cli_0.7.2_Linux_64bit.tar.gz
   - mkdir -p $HOME/bin
-  - mv arduino-cli-*-linux64 $HOME/bin/arduino-cli
+  - mv arduino-cli $HOME/bin/arduino-cli
   - export PATH=$PATH:$HOME/bin
   - arduino-cli core update-index --additional-urls  https://raw.githubusercontent.com/Seeed-Studio/Seeed_Platform/master/package_seeeduino_boards_index.json
-  - if [[ "$BOARD" =~ "arduino:avr:" ]]; then
+  - if [[ "$BOARD" =~ "Seeeduino:samd:" ]]; then
         arduino-cli core install Seeeduino:samd  --additional-urls  https://raw.githubusercontent.com/Seeed-Studio/Seeed_Platform/master/package_seeeduino_boards_index.json;
     fi
 install:
@@ -20,3 +20,10 @@ install:
  
 script:
   - echo "hello"
+  - arduino-cli board listall --additional-urls  https://raw.githubusercontent.com/Seeed-Studio/Seeed_Platform/master/package_seeeduino_boards_index.json
+  - COREVER=$(arduino-cli core list | grep Seeeduino | awk '{print $2}')
+  - echo $COREVER
+  - ls . -lh
+  - mkdir -p build && cd  build
+  - cmake ../ -DARDUINO_CORE_PATH=$HOME/.arduino15/packages/Seeeduino/hardware/samd/$COREVER -DTOOLCHAIN=$HOME/.arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/bin -DBOARD=seeeduino_m0 -DARDUINO_VERIANT=arduino_zero
+  - make 
