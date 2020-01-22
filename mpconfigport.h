@@ -150,7 +150,7 @@ extern const struct _mp_obj_module_t supervisor_module;
     { MP_ROM_QSTR(MP_QSTR_ardupy), MP_ROM_PTR(&ardupy_module) },  \
     { MP_ROM_QSTR(MP_QSTR_os), MP_ROM_PTR(&mp_module_uos) },      \
     { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&mp_module_utime) },  \
-    { MP_ROM_QSTR(MP_QSTR_array), MP_ROM_PTR(&mp_module_array) }, \
+    { MP_ROM_QSTR(MP_QSTR_array), MP_ROM_PTR(&mp_module_uarray) }, \
     EXTRA_BUILTIN_MODULES                                         \
     
 
