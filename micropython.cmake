@@ -73,6 +73,7 @@ set(micropython_CFLAGS
         -I${ARDUINO_CORE_PATH}/cores/arduino
         -I${ARDUINO_CORE_PATH}/libraries/Wire
         -I${ARDUINO_CORE_PATH}/libraries/SPI
+        -I${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA
         -I${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}
         -I${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}
         -I${MP}/

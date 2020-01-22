@@ -175,7 +175,7 @@ void HardFault_Handler(void) {
   * @param  None
   * @retval None
   */
-void NMI_Handler(void) {
+void  __attribute__((weak))  NMI_Handler(void) {
      __fatal_error("NMI_Handler");
 }
 

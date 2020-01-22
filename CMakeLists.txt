@@ -14,16 +14,8 @@ endif ()
 if (NOT ARDUINO_CORE_PATH)
     message(STATUS "ARDUINO_CORE_PATH not set, you can set it manually. e.g. -DARDUINO_CORE_PATH=/tmp/work/ArduinoCore-samd")
 else()
-    message("ARDUINO = ${ARDUINO_CORE_PATH}")
-    if ("${BOARD}" STREQUAL "seeeduino_m0")     
-        set(ARDUINO_CMSIS_PATH  ${ARDUINO_CORE_PATH}/../../../tools/CMSIS/4.5.0)
-        set(ARDUINO_CMSIS_ATMEL_PATH  ${ARDUINO_CORE_PATH}/../../../tools/CMSIS-Atmel/1.2.0/CMSIS/Device/ATMEL)
-    endif()
-
-    if ("${BOARD}" STREQUAL "grove_ui_m4")     
         set(ARDUINO_CMSIS_PATH  ${ARDUINO_CORE_PATH}/../../../../arduino/tools/CMSIS/4.5.0)
         set(ARDUINO_CMSIS_ATMEL_PATH  ${ARDUINO_CORE_PATH}/../../../../arduino/tools/CMSIS-Atmel/1.2.0/CMSIS/Device/ATMEL)
-    endif()
 endif ()
 
 
@@ -43,8 +35,11 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros.internal.cmake)
 
 
 include_directories(${ARDUINO_CORE_PATH}/cores/arduino)
+include_directories(${ARDUINO_CORE_PATH}/cores/arduino/Adafruit_TinyUSB_Core/tinyusb/src/)
+include_directories(${ARDUINO_CORE_PATH}/cores/arduino/Adafruit_TinyUSB_Core/)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Wire)
 include_directories(${ARDUINO_CORE_PATH}/libraries/SPI)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA)
 include_directories(${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT})
 
 # compile project
@@ -54,6 +49,7 @@ add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c
                     ${ARDUINO_CORE_PATH}/libraries/Wire/*.cpp
                     ${ARDUINO_CORE_PATH}/libraries/SPI/*.c
                     ${ARDUINO_CORE_PATH}/libraries/SPI/*.cpp
+                    ${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA/*.cpp
                     ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}/*.c
                     ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}/*.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/main.cpp

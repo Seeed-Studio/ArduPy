@@ -7,7 +7,7 @@ set(micropython_CFLAGS
 )
 
 include_directories(${ARDUINO_CORE_PATH}/libraries/HID)
-include_directories(${ARDUINO_CORE_PATH}/libraries/I2S/src)
+#include_directories(${ARDUINO_CORE_PATH}/libraries/I2S/src)
 include_directories(${ARDUINO_CORE_PATH}/libraries/SAMD_AnalogCorrection/src)
 include_directories(${ARDUINO_CORE_PATH}/libraries/USBHost/src)
 include_directories(${ARDUINO_CMSIS_PATH}/CMSIS/Include)
@@ -25,8 +25,8 @@ include_directories(${ARDUPY_BOARD_PATH}/asf4/config)
 add_source_files(
         ${ARDUINO_CORE_PATH}/libraries/HID/*.c
         ${ARDUINO_CORE_PATH}/libraries/HID/*.cpp
-        ${ARDUINO_CORE_PATH}/libraries/I2S/src/*.c
-        ${ARDUINO_CORE_PATH}/libraries/I2S/src/*.cpp
+	#${ARDUINO_CORE_PATH}/libraries/I2S/src/*.c
+	#${ARDUINO_CORE_PATH}/libraries/I2S/src/*.cpp
         ${ARDUINO_CORE_PATH}/libraries/SAMD_AnalogCorrection/src/*.c
         ${ARDUINO_CORE_PATH}/libraries/SAMD_AnalogCorrection/src/*.cpp
         ${ARDUINO_CORE_PATH}/libraries/USBHost/src/*.c

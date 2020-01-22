@@ -21,6 +21,7 @@ add_compile_flags(BOTH
             --param max-inline-insns-single=500
             -MMD
             -DNDEBUG
+	    -DARM_MATH_CM0PLUS
         )
 
 add_compile_flags(C -std=gnu11)
