@@ -1,6 +1,9 @@
 # Introduction
-## What's Ardupy?
+## What's Ardupy?  [![Build Status](https://travis-ci.com/Seeed-Studio/ArduPy.svg?branch=master)](https://travis-ci.com/Seeed-Studio/ArduPy)
+
 Ardupy is an embedded python running environment with arduino as hardware abstraction layer and micropython as interpreter.
+
+
 
 ## Characteristic & Function
 - Ardupy can experience complete python3 on embedded devices with limited resources
