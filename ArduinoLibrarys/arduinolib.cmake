@@ -36,7 +36,7 @@ add_source_files(
 
 if ("${BOARD}" STREQUAL "grove_ui_m4")
     add_source_files(
-        ${CMAKE_CURRENT_LIST_DIR}/Seeed_Arduino_LCD/*.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Seeed_Arduino_LCD/Extensions/*.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Seeed_Arduino_LCD/TFT_eSPI.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Seeed_Arduino_LCD/TFT_Interface.cpp
     )
 endif()
