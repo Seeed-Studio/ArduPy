@@ -73,19 +73,19 @@ extern const struct _mp_obj_module_t ardupy_module;
 extern const struct _mp_obj_module_t mp_module_uos;
 extern const struct _mp_obj_module_t mp_module_utime;
 
-extern const struct _mp_obj_module_t microcontroller_module;
-extern const struct _mp_obj_module_t bitbangio_module;
-extern const struct _mp_obj_module_t analogio_module;
-extern const struct _mp_obj_module_t digitalio_module;
-extern const struct _mp_obj_module_t grove_module;
-extern const struct _mp_obj_module_t pulseio_module;
-extern const struct _mp_obj_module_t busio_module;
-extern const struct _mp_obj_module_t board_module;
+// extern const struct _mp_obj_module_t microcontroller_module;
+// extern const struct _mp_obj_module_t bitbangio_module;
+// extern const struct _mp_obj_module_t analogio_module;
+// extern const struct _mp_obj_module_t digitalio_module;
+// extern const struct _mp_obj_module_t grove_module;
+// extern const struct _mp_obj_module_t pulseio_module;
+// extern const struct _mp_obj_module_t busio_module;
+// extern const struct _mp_obj_module_t board_module;
 extern const struct _mp_obj_module_t math_module;
 extern const struct _mp_obj_module_t random_module;
 extern const struct _mp_obj_module_t uheap_module;
 extern const struct _mp_obj_module_t ustack_module;
-extern const struct _mp_obj_module_t supervisor_module;
+// extern const struct _mp_obj_module_t supervisor_module;
 
 
 
@@ -126,14 +126,6 @@ extern const struct _mp_obj_module_t supervisor_module;
 
 #define EXTRA_BUILTIN_MODULES                                                        \
     { MP_OBJ_NEW_QSTR(MP_QSTR_math), (mp_obj_t)&math_module },                       \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_analogio), (mp_obj_t)&analogio_module },               \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_board), (mp_obj_t)&board_module },                     \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_busio), (mp_obj_t)&busio_module },                     \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_digitalio), (mp_obj_t)&digitalio_module },             \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_grove), (mp_obj_t)&grove_module },                     \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_microcontroller), (mp_obj_t)&microcontroller_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_pulseio), (mp_obj_t)&pulseio_module },                 \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_supervisor), (mp_obj_t)&supervisor_module },           \
     { MP_OBJ_NEW_QSTR(MP_QSTR_binascii), (mp_obj_t)&mp_module_ubinascii },           \
     { MP_OBJ_NEW_QSTR(MP_QSTR_collections), (mp_obj_t)&mp_module_collections },      \
     { MP_OBJ_NEW_QSTR(MP_QSTR_hashlib), (mp_obj_t)&mp_module_uhashlib },             \

@@ -14,8 +14,8 @@ include_directories(${MP}
 FILE(GLOB_RECURSE MICROPYTHON_SRC
     "${MP}/py/*.c"
     "${CMAKE_CURRENT_LIST_DIR}/shared-bindings/*.c"
-    "${CMAKE_CURRENT_LIST_DIR}/common-hal/*.c"
-    "${CMAKE_CURRENT_LIST_DIR}/common-hal/*.cpp"
+#     "${CMAKE_CURRENT_LIST_DIR}/common-hal/*.c"
+#     "${CMAKE_CURRENT_LIST_DIR}/common-hal/*.cpp"
 )
  
 set(MICROPYTHON_SRC ${MICROPYTHON_SRC}             
@@ -61,9 +61,9 @@ set(MICROPYTHON_SRC ${MICROPYTHON_SRC}
         ${MP}/lib/oofatfs/ff.c 
         ${MP}/lib/oofatfs/ffunicode.c 
         ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}/irq_it.c
-        # ${CMAKE_CURRENT_LIST_DIR}/shared-bindings/mod_uos.c
-        # ${CMAKE_CURRENT_LIST_DIR}/shared-bindings/mod_utime.c
-        # ${CMAKE_CURRENT_LIST_DIR}/shared-bindings/mod_ardupy.c
+        ${CMAKE_CURRENT_LIST_DIR}/shared-bindings/mod_uos.c
+        ${CMAKE_CURRENT_LIST_DIR}/shared-bindings/mod_utime.c
+        ${CMAKE_CURRENT_LIST_DIR}/shared-bindings/mod_ardupy.c
         ${CMAKE_CURRENT_LIST_DIR}/ardupy_storage.c
         )
 

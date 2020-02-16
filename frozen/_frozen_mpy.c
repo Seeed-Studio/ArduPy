@@ -35,7 +35,15 @@ enum {
     MP_QSTR___repo__,
     MP_QSTR_I2CDevice,
     MP_QSTR_adafruit_bus_device_slash_i2c_device_dot_py,
+    MP_QSTR_out_start,
+    MP_QSTR_out_end,
+    MP_QSTR_in_start,
+    MP_QSTR_in_end,
     MP_QSTR_write_then_readinto,
+    MP_QSTR_try_lock,
+    MP_QSTR_writeto,
+    MP_QSTR_readfrom_into,
+    MP_QSTR_unlock,
     MP_QSTR_i2c,
     MP_QSTR_device_address,
     MP_QSTR_buf,
@@ -45,9 +53,14 @@ enum {
     MP_QSTR_adafruit_bus_device_slash___init___dot_py,
     MP_QSTR_SPIDevice,
     MP_QSTR_adafruit_bus_device_slash_spi_device_dot_py,
+    MP_QSTR_baudrate,
+    MP_QSTR_polarity,
+    MP_QSTR_phase,
     MP_QSTR_extra_clocks,
     MP_QSTR_spi,
     MP_QSTR_chip_select,
+    MP_QSTR_switch_to_output,
+    MP_QSTR_configure,
 };
 
 extern const qstr_pool_t mp_qstr_const_pool;
@@ -55,13 +68,21 @@ const qstr_pool_t mp_qstr_frozen_const_pool = {
     (qstr_pool_t*)&mp_qstr_const_pool, // previous pool
     MP_QSTRnumber_of, // previous pool size
     10, // allocated entries
-    17, // used entries
+    30, // used entries
     {
         (const byte*)"\x3f\x0b" "__version__",
         (const byte*)"\x8d\x08" "__repo__",
         (const byte*)"\x45\x09" "I2CDevice",
         (const byte*)"\xb6\x21" "adafruit_bus_device/i2c_device.py",
+        (const byte*)"\xf4\x09" "out_start",
+        (const byte*)"\x7b\x07" "out_end",
+        (const byte*)"\x7d\x08" "in_start",
+        (const byte*)"\xf2\x06" "in_end",
         (const byte*)"\x61\x13" "write_then_readinto",
+        (const byte*)"\x2e\x08" "try_lock",
+        (const byte*)"\x03\x07" "writeto",
+        (const byte*)"\x82\x0d" "readfrom_into",
+        (const byte*)"\x15\x06" "unlock",
         (const byte*)"\x5d\x03" "i2c",
         (const byte*)"\x14\x0e" "device_address",
         (const byte*)"\x74\x03" "buf",
@@ -71,9 +92,14 @@ const qstr_pool_t mp_qstr_frozen_const_pool = {
         (const byte*)"\x13\x1f" "adafruit_bus_device/__init__.py",
         (const byte*)"\x37\x09" "SPIDevice",
         (const byte*)"\xa4\x21" "adafruit_bus_device/spi_device.py",
+        (const byte*)"\xf5\x08" "baudrate",
+        (const byte*)"\x41\x08" "polarity",
+        (const byte*)"\x6a\x05" "phase",
         (const byte*)"\x1b\x0c" "extra_clocks",
         (const byte*)"\xcf\x03" "spi",
         (const byte*)"\x60\x0b" "chip_select",
+        (const byte*)"\xf3\x10" "switch_to_output",
+        (const byte*)"\x8d\x09" "configure",
     },
 };
 
