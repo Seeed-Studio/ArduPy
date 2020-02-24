@@ -30,8 +30,7 @@
 
 #include "py/obj.h"
 #include "py/runtime.h"
-#include "shared-bindings/random/__init__.h"
-// #include "shared-bindings/os/__init__.h"
+#include "shared-bindings/mod_random.h"
 
 
 inline uint64_t common_hal_time_monotonic() {

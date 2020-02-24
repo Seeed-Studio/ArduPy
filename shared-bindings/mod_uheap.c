@@ -29,7 +29,7 @@
 #include "py/obj.h"
 #include "py/runtime.h"
 
-#include "shared-bindings/uheap/__init__.h"
+#include "shared-bindings/mod_uheap.h"
 
 //| :mod:`uheap` --- Heap size analysis
 //| ================================================================

@@ -34,7 +34,10 @@
 // #include "modmachine.h"
 #include "extmod/vfs.h"
 #include "extmod/utime_mphal.h"
-#include "ardupy_storage.h"
+//#include "ardupy_storage.h"
+
+
+extern const struct _mp_obj_type_t ardupy_flash_type;
 
 STATIC mp_obj_t ardupy_fault_debug(mp_obj_t value) {
     //ardupy_hard_fault_debug = mp_obj_is_true(value);
@@ -60,7 +63,6 @@ STATIC const mp_rom_map_elem_t ardupy_module_globals_table[] = {
     #endif
     { MP_ROM_QSTR(MP_QSTR_SDCard), MP_ROM_PTR(&ardupy_sdcard_type) },
 #endif
-
 };
 
 STATIC MP_DEFINE_CONST_DICT(ardupy_module_globals, ardupy_module_globals_table);

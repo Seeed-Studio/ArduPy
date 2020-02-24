@@ -29,7 +29,7 @@
 #include "py/obj.h"
 #include "py/runtime.h"
 
-#include "shared-bindings/ustack/__init__.h"
+#include "shared-bindings/mod_ustack.h"
 
 //| :mod:`ustack` --- Stack information and analysis
 //| ========================================================
