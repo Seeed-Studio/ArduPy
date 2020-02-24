@@ -14,8 +14,8 @@ endif ()
 if (NOT ARDUINO_CORE_PATH)
     message(STATUS "ARDUINO_CORE_PATH not set, you can set it manually. e.g. -DARDUINO_CORE_PATH=/tmp/work/ArduinoCore-samd")
 else()
-        set(ARDUINO_CMSIS_PATH  ${ARDUINO_CORE_PATH}/../../../../arduino/tools/CMSIS/4.5.0)
-        set(ARDUINO_CMSIS_ATMEL_PATH  ${ARDUINO_CORE_PATH}/../../../../arduino/tools/CMSIS-Atmel/1.2.0/CMSIS/Device/ATMEL)
+        set(ARDUINO_CMSIS_PATH  ${ARDUINO_CORE_PATH}/../../../tools/CMSIS/4.5.0)
+        set(ARDUINO_CMSIS_ATMEL_PATH  ${ARDUINO_CORE_PATH}/../../../tools/CMSIS-Atmel/1.2.0/CMSIS/Device/ATMEL)
 endif ()
 
 
@@ -52,7 +52,7 @@ add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c
                     ${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA/*.cpp
                     ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}/*.c
                     ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}/*.cpp
-                    ${CMAKE_CURRENT_LIST_DIR}/main.cpp
+                    ${CMAKE_CURRENT_LIST_DIR}/ardupy_loop.cpp
                     )
 
 
@@ -81,3 +81,102 @@ endif()
 
 target_sources(${PROJECT_NAME} PUBLIC ${BOARD_SRC}  ${GENHDR}/qstrdefs.generated.h) 
 target_sources(${PROJECT_NAME} PUBLIC ${MICROPYTHON_SRC}  ${GENHDR}/qstrdefs.generated.h) 
+
+
+find_library (arm_cortexM4lf_math NAMES libarm_cortexM4lf_math.a PATHS ${ARDUINO_CMSIS_PATH}/CMSIS/Lib/GCC)
+if(NOT arm_cortexM4lf_math)
+  message(FATAL_ERROR "arm_cortexM4lf_math library not found   ${ARDUINO_CMSIS_PATH}/CMSIS/Lib/GCC/libarm_cortexM4lf_math")
+endif()
+
+
+foreach(X ${MICROPYTHON_SRC})
+        if ( "${X}" STREQUAL "${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/qstr.c" )
+            continue()
+        endif ()
+        if ( "${X}" STREQUAL "${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/parse.c" )
+            continue()
+        endif ()
+        if ( "${X}" STREQUAL "${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/objmodule.c" )
+            continue()
+        endif ()      
+        if ( "${X}" STREQUAL "${CMAKE_CURRENT_LIST_DIR}/frozen/_frozen_mpy.c" )
+            continue()
+        endif ()   
+        set(lib_MICROPYTHON_SRC ${lib_MICROPYTHON_SRC} ${X}) 
+endforeach()
+
+
+
+message(STATUS  ${lib_MICROPYTHON_SRC})
+message(STATUS  ${MICROPYTHON_SRC})
+
+add_library(micropython STATIC ${SOURCE_FILES} ${BOARD_SRC}  ${lib_MICROPYTHON_SRC}  ${GENHDR}/qstrdefs.generated.h)
+# target_link_libraries(micropython  PRIVATE  arm_cortexM4lf_math)
+
+# set(C_LIB ${CMAKE_BINARY_DIR}/libmicropython_m4.a)
+
+# add_custom_command(TARGET micropython POST_BUILD
+#         COMMAND  ${CMAKE_AR}  -x $<TARGET_FILE:micropython>
+#         COMMAND  ${CMAKE_AR}  -x ${ARDUINO_CMSIS_PATH}/CMSIS/Lib/GCC/libarm_cortexM4lf_math.a
+#         COMMAND  ${CMAKE_AR} -rcs ${C_LIB} *.o  *.obj
+#         COMMAND  echo "............................."
+#         COMMAND  rm  *.o  *.obj
+#         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+#         DEPENDS micropython 
+#         )
+
+INSTALL (
+    DIRECTORY ${ARDUINO_CORE_PATH}/../../../hardware
+    DESTINATION Seeeduino
+    FILES_MATCHING PATTERN "*.h*")
+    
+INSTALL (
+    DIRECTORY ${ARDUINO_CORE_PATH}/../../../tools/CMSIS-Atmel
+    DIRECTORY ${ARDUINO_CORE_PATH}/../../../tools/CMSIS
+    DIRECTORY ${CMAKE_BINARY_DIR}/genhdr
+    DESTINATION Seeeduino/tools
+    FILES_MATCHING PATTERN "*.h*")
+
+INSTALL (
+    DIRECTORY ${MP}/py
+    DIRECTORY ${MP}/drivers
+    DIRECTORY ${MP}/extmod
+    DIRECTORY ${MP}/lib
+    DESTINATION ArduPy/MicroPython
+    FILES_MATCHING PATTERN "*.h*")
+
+INSTALL (
+    DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}
+    DESTINATION ArduPy/boards
+    FILES_MATCHING PATTERN "*.h*")
+
+install(FILES ${CMAKE_BINARY_DIR}/libmicropython.a  
+                ${ARDUINO_CMSIS_PATH}/CMSIS/Lib/GCC/libarm_cortexM4lf_math.a
+                        DESTINATION ArduPy/lib)
+
+
+install(FILES   ${CMAKE_CURRENT_LIST_DIR}/MicroPython/mpy-cross/mpy-cross
+                ${CMAKE_CURRENT_LIST_DIR}/MicroPython/tools/mpy-tool.py
+                DESTINATION Seeeduino/tools PERMISSIONS OWNER_EXECUTE OWNER_READ
+        )
+
+install(DIRECTORY  ${ARDUINO_CORE_PATH}/../../../tools/arm-none-eabi-gcc
+            USE_SOURCE_PERMISSIONS
+            DESTINATION  Seeeduino/tools
+            )
+
+install(FILES ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h
+                ${CMAKE_CURRENT_LIST_DIR}/mpconfigboard_common.h
+                ${CMAKE_CURRENT_LIST_DIR}/portmodules.h
+                ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}/flash_with_bootloader.ld
+              DESTINATION ArduPy/boards/${BOARD})
+
+install(FILES   ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/qstr.c
+                ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/parse.c
+                ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/objmodule.c
+                ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/makeqstrdata.py
+                ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/makeqstrdefs.py
+                ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/makemoduledefs.py
+                ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/makeversionhdr.py
+                DESTINATION ArduPy/MicroPython/py
+                PERMISSIONS OWNER_READ)
