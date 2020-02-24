@@ -35,14 +35,18 @@
  
 #define UINT_FMT "%lu"
 #define INT_FMT "%ld"
- 
+
+
+#define mp_hal_pin_obj_t uint32_t
+
 typedef int32_t mp_int_t; // must be pointer size
 typedef uint32_t mp_uint_t; // must be pointer size
 typedef long mp_off_t;
 typedef uint32_t sys_prot_t; // for modlwip
 // ssize_t, off_t as required by POSIX-signatured functions in stream.h
 #include <sys/types.h> 
-  
+
+
 #if MICROPY_PY_THREAD 
 #define MICROPY_EVENT_POLL_HOOK \
     do { \
@@ -85,6 +89,10 @@ extern const struct _mp_obj_module_t math_module;
 extern const struct _mp_obj_module_t random_module;
 extern const struct _mp_obj_module_t uheap_module;
 extern const struct _mp_obj_module_t ustack_module;
+
+#ifdef ARDUPY_MODULE
+extern const struct _mp_obj_module_t mp_module_arduino;
+#endif
 // extern const struct _mp_obj_module_t supervisor_module;
 
 
@@ -113,6 +121,11 @@ extern const struct _mp_obj_module_t ustack_module;
 #define JSON_MODULE
 #endif
 
+#ifdef ARDUPY_MODULE
+#define ARDUPY_PY_MODULE  { MP_OBJ_NEW_QSTR(MP_QSTR_arduino), (mp_obj_t)&mp_module_arduino },                   
+#else
+#define ARDUPY_PY_MODULE
+#endif
 
 
 // extra built in names to add to the global namespace
@@ -136,6 +149,9 @@ extern const struct _mp_obj_module_t ustack_module;
     JSON_MODULE                                                                      \
     ERRNO_MODULE                                                                     \
     RE_MODULE                                                                        \
+    ARDUPY_PY_MODULE                                                                 \
+
+    
 
 
 #define MICROPY_PORT_BUILTIN_MODULES                              \
