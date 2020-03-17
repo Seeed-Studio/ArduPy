@@ -57,7 +57,7 @@ add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c
 
 
 include(${ARDUPY_BOARD_PATH}/board.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/ArduinoLibrarys/arduinolib.cmake)
+#include(${CMAKE_CURRENT_LIST_DIR}/ArduinoLibrarys/arduinolib.cmake)
 
 
 FILE(GLOB_RECURSE ASSEMBLY_FILES
@@ -160,10 +160,10 @@ install(FILES   ${CMAKE_CURRENT_LIST_DIR}/MicroPython/mpy-cross/mpy-cross
                 DESTINATION Seeeduino/tools PERMISSIONS OWNER_EXECUTE OWNER_READ
         )
 
-install(DIRECTORY  ${ARDUINO_CORE_PATH}/../../../tools/arm-none-eabi-gcc
-            USE_SOURCE_PERMISSIONS
-            DESTINATION  Seeeduino/tools
-            )
+# install(DIRECTORY  ${ARDUINO_CORE_PATH}/../../../tools/arm-none-eabi-gcc
+#             USE_SOURCE_PERMISSIONS
+#             DESTINATION  Seeeduino/tools
+#             )
 
 install(FILES ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h
                 ${CMAKE_CURRENT_LIST_DIR}/mpconfigboard_common.h
