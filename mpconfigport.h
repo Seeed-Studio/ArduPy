@@ -2,8 +2,8 @@
 #ifdef SEEEDUINO_MO
 #include "seeeduino_m0_config.h"
 #endif
-#ifdef SEEED_GROVE_UI_WIRELESS
-#include "grove_ui_m4_config.h"
+#ifdef WIO_TERMINAL
+#include "wio_terminal.h"
 #endif
 #include "mpconfigboard_common.h"
 
@@ -146,6 +146,7 @@ extern const struct _mp_obj_module_t mp_module_arduino;
     { MP_OBJ_NEW_QSTR(MP_QSTR_io), (mp_obj_t)&mp_module_io },                        \
     { MP_OBJ_NEW_QSTR(MP_QSTR_select), (mp_obj_t)&mp_module_uselect },               \
     { MP_OBJ_NEW_QSTR(MP_QSTR_zlib), (mp_obj_t)&mp_module_uzlib },                   \
+     { MP_OBJ_NEW_QSTR(MP_QSTR_machine), (mp_obj_t)&mp_module_machine },             \
     JSON_MODULE                                                                      \
     ERRNO_MODULE                                                                     \
     RE_MODULE                                                                        \

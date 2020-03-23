@@ -59,7 +59,6 @@ add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c
 include(${ARDUPY_BOARD_PATH}/board.cmake)
 #include(${CMAKE_CURRENT_LIST_DIR}/ArduinoLibrarys/arduinolib.cmake)
 
-
 FILE(GLOB_RECURSE ASSEMBLY_FILES
     "${ARDUINO_CORE_PATH}/cores/arduino/*.s"
     "${ARDUINO_CORE_PATH}/cores/arduino/*.S"
@@ -75,7 +74,7 @@ if ("${BOARD}" STREQUAL "seeeduino_m0")
     include(./cmake/samd21-executable.cmake)
 endif()
 
-if ("${BOARD}" STREQUAL "grove_ui_m4")      
+if ("${BOARD}" STREQUAL "wio_terminal")      
     include(./cmake/samd51-executable.cmake)
 endif()
 
@@ -105,10 +104,9 @@ foreach(X ${MICROPYTHON_SRC})
         set(lib_MICROPYTHON_SRC ${lib_MICROPYTHON_SRC} ${X}) 
 endforeach()
 
-
-
 message(STATUS  ${lib_MICROPYTHON_SRC})
 message(STATUS  ${MICROPYTHON_SRC})
+
 
 add_library(micropython STATIC ${SOURCE_FILES} ${BOARD_SRC}  ${lib_MICROPYTHON_SRC}  ${GENHDR}/qstrdefs.generated.h)
 # target_link_libraries(micropython  PRIVATE  arm_cortexM4lf_math)
