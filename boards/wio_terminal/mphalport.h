@@ -62,4 +62,57 @@ extern void mp_hal_delay_ms(mp_uint_t ms) ;
 
 extern void mp_hal_delay_us(mp_uint_t ms) ;
 
+
+#define   GPIO_NUM_0    BCM0
+#define   GPIO_NUM_1    BCM1
+#define   GPIO_NUM_2    BCM2
+#define   GPIO_NUM_3    BCM3
+#define   GPIO_NUM_4    BCM4
+#define   GPIO_NUM_5    BCM5
+#define   GPIO_NUM_6    BCM6
+#define   GPIO_NUM_7    BCM7
+#define   GPIO_NUM_8    BCM8
+#define   GPIO_NUM_9    BCM9
+#define   GPIO_NUM_10   BCM10
+#define   GPIO_NUM_11   BCM11
+#define   GPIO_NUM_12   BCM12
+#define   GPIO_NUM_13   BCM13
+#define   GPIO_NUM_14   BCM14
+#define   GPIO_NUM_15   BCM15
+#define   GPIO_NUM_16   BCM16
+#define   GPIO_NUM_17   BCM17
+#define   GPIO_NUM_18   BCM18
+#define   GPIO_NUM_19   BCM19
+#define   GPIO_NUM_20   BCM20
+#define   GPIO_NUM_21   BCM21
+#define   GPIO_NUM_22   BCM22
+#define   GPIO_NUM_23   BCM23
+#define   GPIO_NUM_24   BCM24
+#define   GPIO_NUM_25   BCM25
+#define   GPIO_NUM_26   BCM26
+#define   GPIO_NUM_27   BCM27
+#define   GPIO_NUM_28   PIN_LED_13
+#define   GPIO_NUM_29   -1
+#define   GPIO_NUM_30   -1
+#define   GPIO_NUM_31   FPC1
+#define   GPIO_NUM_32   FPC2
+#define   GPIO_NUM_33   FPC3
+#define   GPIO_NUM_34   FPC4
+#define   GPIO_NUM_35   FPC5
+#define   GPIO_NUM_36   FPC6
+#define   GPIO_NUM_37   FPC7
+#define   GPIO_NUM_38   FPC8
+#define   GPIO_NUM_39   FPC9
+
+
+#define    ADC_A0 RPI_A0 
+#define    ADC_A1 RPI_A1 
+#define    ADC_A2 RPI_A2 
+#define    ADC_A3 RPI_A3 
+#define    ADC_A4 RPI_A4 
+#define    ADC_A5 RPI_A5 
+#define    ADC_A6 RPI_A6 
+#define    ADC_A7 RPI_A7 
+#define    ADC_A8 RPI_A8 
+
 #endif //

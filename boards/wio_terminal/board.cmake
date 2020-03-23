@@ -61,10 +61,9 @@ set(BOARD_DEF
 
                 -DF_CPU=120000000L 
                 -DARDUINO=10810 
-                -DARDUINO_GROVE_UI_WIRELESS 
+                -DWIO_TERMINAL
                 -DARDUINO_ARCH_SAMD 
                 -D__SAMD51P19A__ 
-                -DSEEED_GROVE_UI_WIRELESS 
                 -D__SAMD51__ 
                 -DUSB_VID=0x2886 -DUSB_PID=0x802D 
                 -DUSBCON 
