@@ -115,4 +115,7 @@ extern void mp_hal_delay_us(mp_uint_t ms) ;
 #define    ADC_A7 RPI_A7 
 #define    ADC_A8 RPI_A8 
 
+#define    DAC0 PIN_DAC0 
+#define    DAC1 PIN_DAC1 
+
 #endif //

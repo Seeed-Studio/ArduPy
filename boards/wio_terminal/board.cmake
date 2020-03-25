@@ -62,6 +62,7 @@ set(BOARD_DEF
                 -DF_CPU=120000000L 
                 -DARDUINO=10810 
                 -DWIO_TERMINAL
+                -DDSEEED_GROVE_UI_WIRELESS
                 -DARDUINO_ARCH_SAMD 
                 -D__SAMD51P19A__ 
                 -D__SAMD51__ 
@@ -69,7 +70,7 @@ set(BOARD_DEF
                 -DUSBCON 
                 -DUSB_CONFIG_POWER=100 
                 "-DUSB_MANUFACTURER=\"Seeed Studio\"" 
-                "-DUSB_PRODUCT=\"Seeed Grove UI Wireles\"" 
+                "-DUSB_PRODUCT=\"Seeed Wio Terminal\"" 
                 # -I/home/the-cat/.arduino15/packages/adafruit/hardware/samd/1.5.3/cores/arduino/Adafruit_TinyUSB_Core 
                 # -I/home/the-cat/.arduino15/packages/adafruit/hardware/samd/1.5.3/cores/arduino/Adafruit_TinyUSB_Core/tinyusb/src 
                 -D__FPU_PRESENT 
