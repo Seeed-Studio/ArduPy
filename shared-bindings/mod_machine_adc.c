@@ -1,10 +1,13 @@
 /*
  * This file is part of the MicroPython project, http://micropython.org/
  *
+ * Development of the code in this file was sponsored by Microbric Pty Ltd
+ *
+ * Author: Hontai Liu (hontai.liu@seeed.cc)
+ *
+ * Copyright (C) 2020  Seeed Technology Co.,Ltd.
  * The MIT License (MIT)
- *
- * Copyright (c) 2017 Nick Moore
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights

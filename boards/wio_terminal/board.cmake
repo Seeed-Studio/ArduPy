@@ -18,6 +18,15 @@ include_directories(${ARDUINO_CMSIS_PATH}/CMSIS/Include)
 include_directories(${ARDUINO_CORE_PATH}/cores/arduino/Adafruit_TinyUSB_Core)
 include_directories(${ARDUINO_CORE_PATH}/cores/arduino/Adafruit_TinyUSB_Core/tinyusb/src)
 include_directories(${ARDUINO_CMSIS_ATMEL_PATH})
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/Extensions)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/Extensions/Touch_Drivers/4WiresTouch)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/Fonts)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/Fonts/GFXFF)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/Fonts/TrueType)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/Fonts/Custom)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/TFT_Drivers)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/User_Setups)
 
 add_source_files(
         # ${ARDUPY_SUB_PATH}/Seeed_Arduino_LCD/*.cpp
@@ -32,6 +41,8 @@ add_source_files(
         ${ARDUINO_CORE_PATH}/libraries/SAMD_AnalogCorrection/src/*.c
         ${ARDUINO_CORE_PATH}/libraries/SAMD_AnalogCorrection/src/*.cpp
         ${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA/*.cpp
+        ${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/TFT_eSPI.cpp
+        ${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/TFT_Interface.cpp
 )
 
 set(BOARD_SRC ${BOARD_SRC}  
@@ -62,7 +73,9 @@ set(BOARD_DEF
                 -DF_CPU=120000000L 
                 -DARDUINO=10810 
                 -DWIO_TERMINAL
-                -DDSEEED_GROVE_UI_WIRELESS
+                -DARDUINO_ARCH_SAMD
+                -DLCD_SUPPORT
+                -DSEEED_GROVE_UI_WIRELESS
                 -DARDUINO_ARCH_SAMD 
                 -D__SAMD51P19A__ 
                 -D__SAMD51__ 
