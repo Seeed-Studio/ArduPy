@@ -92,8 +92,8 @@ extern void mp_hal_delay_us(mp_uint_t ms) ;
 #define   GPIO_NUM_26   BCM26
 #define   GPIO_NUM_27   BCM27
 #define   GPIO_NUM_28   PIN_LED_13
-#define   GPIO_NUM_29   -1
-#define   GPIO_NUM_30   -1
+#define   GPIO_NUM_29   WIO_BUZZER
+#define   GPIO_NUM_30   WIO_LIGHT
 #define   GPIO_NUM_31   FPC1
 #define   GPIO_NUM_32   FPC2
 #define   GPIO_NUM_33   FPC3
@@ -103,19 +103,41 @@ extern void mp_hal_delay_us(mp_uint_t ms) ;
 #define   GPIO_NUM_37   FPC7
 #define   GPIO_NUM_38   FPC8
 #define   GPIO_NUM_39   FPC9
+#define   GPIO_NUM_40   WIO_MIC
+#define   GPIO_NUM_41   BUTTON_1
+#define   GPIO_NUM_42   BUTTON_2
+#define   GPIO_NUM_43   BUTTON_3
+#define   GPIO_NUM_44   WIO_5S_UP
+#define   GPIO_NUM_45   WIO_5S_LEFT
+#define   GPIO_NUM_46   WIO_5S_RIGHT
+#define   GPIO_NUM_47   WIO_5S_DOWM
+#define   GPIO_NUM_48   WIO_5S_PRESS
 
 
-#define    ADC_A0 RPI_A0 
-#define    ADC_A1 RPI_A1 
-#define    ADC_A2 RPI_A2 
-#define    ADC_A3 RPI_A3 
-#define    ADC_A4 RPI_A4 
-#define    ADC_A5 RPI_A5 
-#define    ADC_A6 RPI_A6 
-#define    ADC_A7 RPI_A7 
-#define    ADC_A8 RPI_A8 
 
-#define    DAC0 PIN_DAC0 
-#define    DAC1 PIN_DAC1 
+#define    ADC_A0 (27ul) 
+#define    ADC_A1 (22ul) 
+#define    ADC_A2 (23ul)  
+#define    ADC_A3 (24ul)  
+#define    ADC_A4 (25ul)  
+#define    ADC_A5 (26ul)  
+#define    ADC_A6 (13ul)  
+#define    ADC_A7 (16ul)  
+#define    ADC_A8 (26ul)   
+
+#define    DAC0 (17ul) 
+#define    DAC1 (7ul) 
+
+#define PWM0 (27ul) 
+#define PWM1 (22ul) 
+#define PWM2 (23ul) 
+#define PWM3 (13ul) 
+#define PWM4 (26ul) 
+#define PWM5 (31ul) 
+#define PWM6 (32ul) 
+#define PWM7 (33ul) 
+#define PWM8 (34ul) 
+#define PWM9 (38ul) 
+#define PWM10 (29ul) 
 
 #endif //

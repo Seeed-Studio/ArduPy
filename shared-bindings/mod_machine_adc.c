@@ -75,7 +75,8 @@ STATIC mp_obj_t madc_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
     mp_arg_check_num(n_args, n_kw, 1, MP_OBJ_FUN_ARGS_MAX, true);
 
     // get the wanted pin object
-    int wanted_pin = mp_obj_get_int(args[0]);
+    mp_hal_pin_obj_t wanted_pin = machine_pin_get_id(args[0]);
+
     const madc_obj_t *self = NULL;
 
     for (uint8_t i = 0; i < MP_ARRAY_SIZE(madc_obj); i++)
@@ -105,7 +106,7 @@ STATIC mp_obj_t madc_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
 STATIC void madc_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind)
 {
     madc_obj_t *self = self_in;
-    mp_printf(print, "ADC(Pin(%u))", self->gpio_id);
+    mp_printf(print, "ADC(Arduino Pin(%u))", self->gpio_id);
 }
 
 STATIC mp_obj_t madc_read(mp_obj_t self_in)

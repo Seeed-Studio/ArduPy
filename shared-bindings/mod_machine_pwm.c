@@ -25,16 +25,18 @@
  */
 #include <stdio.h>
 
-
 #include "py/nlr.h"
 #include "py/runtime.h"
 #include "modmachine.h"
 #include "mphalport.h"
-#include "wrapper_tone.h"
+
+#include "wrapper_pwm.h"
+
 // Forward dec'l
 extern const mp_obj_type_t machine_pwm_type;
 
-typedef struct _mp_pwm_obj_t {
+typedef struct _mp_pwm_obj_t
+{
     mp_obj_base_t base;
     mp_hal_pin_obj_t pin;
     uint32_t freq;
@@ -45,23 +47,29 @@ typedef struct _mp_pwm_obj_t {
 
 // MicroPython bindings for PWM
 
-STATIC void mp_pwm_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
+STATIC void mp_pwm_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind)
+{
     mp_pwm_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    mp_printf(print, "PWM(%u", self->pin);
-    mp_printf(print, ", freq=%u, duty=%u", self->freq,self->duty);
+    mp_printf(print, "PWM(Arduino Pin(%u)", self->pin);
+    mp_printf(print, ", freq=%u, duty=%u", self->freq, self->duty);
     mp_printf(print, ")");
 }
 
 STATIC void mp_pwm_init_helper(mp_pwm_obj_t *self,
-        size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
-    enum { ARG_freq, ARG_duty };
+                               size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args)
+{
+    enum
+    {
+        ARG_freq,
+        ARG_duty
+    };
     static const mp_arg_t allowed_args[] = {
-        { MP_QSTR_freq, MP_ARG_INT, {.u_int = 1000} },
-        { MP_QSTR_duty, MP_ARG_INT, {.u_int = 500} },
+        {MP_QSTR_freq, MP_ARG_INT, {.u_int = 1000}},
+        {MP_QSTR_duty, MP_ARG_INT, {.u_int = 512}},
     };
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args, pos_args, kw_args,
-        MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+                     MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
     // Maybe change PWM timer
     int tval = args[ARG_freq].u_int;
@@ -70,25 +78,21 @@ STATIC void mp_pwm_init_helper(mp_pwm_obj_t *self,
     self->freq = tval;
     self->duty = dval;
 
-    wrapper_tone(self->pin, tval, dval);
+    wrapper_pwm(self->pin, tval, dval);
 }
 
 STATIC mp_obj_t mp_pwm_make_new(const mp_obj_type_t *type,
-        size_t n_args, size_t n_kw, const mp_obj_t *args) {
+                                size_t n_args, size_t n_kw, const mp_obj_t *args)
+{
     mp_arg_check_num(n_args, n_kw, 1, MP_OBJ_FUN_ARGS_MAX, true);
     mp_hal_pin_obj_t pin_id = machine_pin_get_id(args[0]);
 
-    // create PWM object from the given pin
     mp_pwm_obj_t *self = m_new_obj(mp_pwm_obj_t);
     self->base.type = &machine_pwm_type;
     self->pin = pin_id;
-
-    // // start the PWM subsystem if it's not already running
-    // if (!pwm_inited) {
-    //     pwm_init();
-    //     pwm_inited = true;
-    // }
-
+    self->freq = 1000;
+    self->duty = 512;
+   
     // start the PWM running for this channel
     mp_map_t kw_args;
     mp_map_init_fixed_table(&kw_args, n_kw, args + n_args);
@@ -98,39 +102,45 @@ STATIC mp_obj_t mp_pwm_make_new(const mp_obj_type_t *type,
 }
 
 STATIC mp_obj_t mp_pwm_init(size_t n_args,
-        const mp_obj_t *args, mp_map_t *kw_args) {
+                            const mp_obj_t *args, mp_map_t *kw_args)
+{
     mp_pwm_init_helper(args[0], n_args - 1, args + 1, kw_args);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(mp_pwm_init_obj, 1, mp_pwm_init);
 
-STATIC mp_obj_t mp_pwm_deinit(mp_obj_t self_in) {
+STATIC mp_obj_t mp_pwm_deinit(mp_obj_t self_in)
+{
     mp_pwm_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    wrapper_notone(self->pin);
+    wrapper_noPwm(self->pin);
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_pwm_deinit_obj, mp_pwm_deinit);
 
-STATIC mp_obj_t mp_pwm_freq(size_t n_args, const mp_obj_t *args) {
+STATIC mp_obj_t mp_pwm_freq(size_t n_args, const mp_obj_t *args)
+{
     mp_pwm_obj_t *self = MP_OBJ_TO_PTR(args[0]);
-    if (n_args == 1) {
+    if (n_args == 1)
+    {
         // get
         return MP_OBJ_NEW_SMALL_INT(self->freq);
     }
     // set
     int tval = mp_obj_get_int(args[1]);
     self->freq = tval;
-    wrapper_tone(self->pin, tval,self->duty);
+    wrapper_pwm(self->pin, tval, self->duty);
     return mp_const_none;
 }
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(mp_pwm_freq_obj, 1, 2, mp_pwm_freq);
 
-STATIC mp_obj_t mp_pwm_duty(size_t n_args, const mp_obj_t *args) {
+STATIC mp_obj_t mp_pwm_duty(size_t n_args, const mp_obj_t *args)
+{
     mp_pwm_obj_t *self = MP_OBJ_TO_PTR(args[0]);
     int duty;
 
-    if (n_args == 1) {
+    if (n_args == 1)
+    {
         // get
         return MP_OBJ_NEW_SMALL_INT(self->duty);
     }
@@ -138,27 +148,27 @@ STATIC mp_obj_t mp_pwm_duty(size_t n_args, const mp_obj_t *args) {
     // set
     duty = mp_obj_get_int(args[1]);
     self->duty = duty;
-    wrapper_tone(self->pin,self->freq,self->duty);
+    wrapper_pwm(self->pin, self->freq, self->duty);
 
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(mp_pwm_duty_obj,
-    1, 2, mp_pwm_duty);
+                                           1, 2, mp_pwm_duty);
 
 STATIC const mp_rom_map_elem_t mp_pwm_locals_dict_table[] = {
-    { MP_ROM_QSTR(MP_QSTR_init), MP_ROM_PTR(&mp_pwm_init_obj) },
-    { MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&mp_pwm_deinit_obj) },
-    { MP_ROM_QSTR(MP_QSTR_freq), MP_ROM_PTR(&mp_pwm_freq_obj) },
-    { MP_ROM_QSTR(MP_QSTR_duty), MP_ROM_PTR(&mp_pwm_duty_obj) },
+    {MP_ROM_QSTR(MP_QSTR_init), MP_ROM_PTR(&mp_pwm_init_obj)},
+    {MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&mp_pwm_deinit_obj)},
+    {MP_ROM_QSTR(MP_QSTR_freq), MP_ROM_PTR(&mp_pwm_freq_obj)},
+    {MP_ROM_QSTR(MP_QSTR_duty), MP_ROM_PTR(&mp_pwm_duty_obj)},
 };
 
 STATIC MP_DEFINE_CONST_DICT(mp_pwm_locals_dict,
-    mp_pwm_locals_dict_table);
+                            mp_pwm_locals_dict_table);
 
 const mp_obj_type_t machine_pwm_type = {
-    { &mp_type_type },
+    {&mp_type_type},
     .name = MP_QSTR_PWM,
     .print = mp_pwm_print,
     .make_new = mp_pwm_make_new,
-    .locals_dict = (mp_obj_dict_t*)&mp_pwm_locals_dict,
+    .locals_dict = (mp_obj_dict_t *)&mp_pwm_locals_dict,
 };

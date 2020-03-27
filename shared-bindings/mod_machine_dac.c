@@ -41,14 +41,14 @@ typedef struct _madc_obj_t
     mp_hal_pin_obj_t gpio_id;
 } mdac_obj_t;
 
-STATIC const mdac_obj_t mdac_obj[] = {
-#ifdef DAC0
-    {{&machine_dac_type}, DAC0},
-#endif
-#ifdef DAC1
-    {{&machine_dac_type}, DAC1},
-#endif
-};
+// STATIC const mdac_obj_t mdac_obj[] = {
+// #ifdef DAC0
+//     {{&machine_dac_type}, DAC0},
+// #endif
+// #ifdef DAC1
+//     {{&machine_dac_type}, DAC1},
+// #endif
+// };
 
 STATIC mp_obj_t mdac_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw,
                               const mp_obj_t *args)
@@ -57,23 +57,12 @@ STATIC mp_obj_t mdac_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
     mp_arg_check_num(n_args, n_kw, 1, MP_OBJ_FUN_ARGS_MAX, true);
 
     // get the wanted pin object
-    int wanted_pin = mp_obj_get_int(args[0]);
-    const mdac_obj_t *self = NULL;
+    mp_hal_pin_obj_t wanted_pin = machine_pin_get_id(args[0]);
 
-    for (uint8_t i = 0; i < MP_ARRAY_SIZE(mdac_obj); i++)
-    {
-        if (wanted_pin == mdac_obj[i].gpio_id)
-        {
-            self = (mdac_obj_t *)&mdac_obj[i];
-            break;
-        }
-    }
-
-    if (self == NULL || self->base.type == NULL)
-    {
-        mp_raise_ValueError("invalid pin");
-    }
-
+    mdac_obj_t *self = m_new_obj(mdac_obj_t);
+    self->base.type = &machine_dac_type;
+    self->gpio_id = wanted_pin;
+    
     if (n_args > 1 || n_kw > 0)
     {
         // pin mode given, so configure this GPIO
@@ -87,7 +76,7 @@ STATIC mp_obj_t mdac_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
 STATIC void mdac_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind)
 {
     mdac_obj_t *self = self_in;
-    mp_printf(print, "DAC(Pin(%u))", self->gpio_id);
+    mp_printf(print, "DAC(Arduino Pin(%u))", self->gpio_id);
 }
 
 STATIC mp_obj_t mdac_resolution(mp_obj_t self_in, mp_obj_t value_in)

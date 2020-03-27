@@ -24,16 +24,16 @@
  * THE SOFTWARE.
  */
 
-#include "wrapper_tone.h"
+#include "wrapper_pwm.h"
 #ifdef ARDUINO
 #include "Arduino.h"
 #endif
 extern "C"{ 
-    void wrapper_tone(uint32_t _pin, uint32_t frequency, uint32_t duration){
-        tone(_pin, frequency, duration);
+    void wrapper_pwm(uint32_t _pin, uint32_t frequency, uint32_t duty){
+        pwm(_pin, frequency, duty);
     }
-    void wrapper_notone(uint32_t _pin){
-        noTone(_pin);
+    void wrapper_noPwm(uint32_t _pin){
+        noPwm(_pin);
     }
 
 }
