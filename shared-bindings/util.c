@@ -108,6 +108,10 @@ void generic_method_lookup(mp_obj_t obj, qstr attr, mp_obj_t *dest) {
     }
 }
 
-
+inline abstract_module_t * new_abstruct_module(mp_obj_type_t * type){
+    abstract_module_t * self = m_new_obj(abstract_module_t);
+    self->base.type = type;
+    return self;
+}
 
 #endif // MICROPY_INCLUDED_SHARED_BINDINGS_UTIL_H
