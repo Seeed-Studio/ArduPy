@@ -55,7 +55,6 @@ add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c
                     ${CMAKE_CURRENT_LIST_DIR}/ardupy_loop.cpp
                     )
 
-
 include(${ARDUPY_BOARD_PATH}/board.cmake)
 #include(${CMAKE_CURRENT_LIST_DIR}/ArduinoLibrarys/arduinolib.cmake)
 
@@ -98,9 +97,9 @@ foreach(X ${MICROPYTHON_SRC})
         if ( "${X}" STREQUAL "${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/objmodule.c" )
             continue()
         endif ()      
-        if ( "${X}" STREQUAL "${CMAKE_CURRENT_LIST_DIR}/frozen/_frozen_mpy.c" )
-            continue()
-        endif ()   
+        # if ( "${X}" STREQUAL "${CMAKE_CURRENT_LIST_DIR}/frozen/_frozen_mpy.c" )
+        #     continue()
+        # endif ()   
         set(lib_MICROPYTHON_SRC ${lib_MICROPYTHON_SRC} ${X}) 
 endforeach()
 
@@ -144,9 +143,15 @@ INSTALL (
     FILES_MATCHING PATTERN "*.h*")
 
 INSTALL (
-    DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}
-    DESTINATION ArduPy/boards
+    DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/boards
+    DESTINATION ArduPy/
     FILES_MATCHING PATTERN "*.h*")
+
+INSTALL (
+        DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/shared-bindings
+        DESTINATION ArduPy/
+        FILES_MATCHING PATTERN "*.h*")
+    
 
 install(FILES ${CMAKE_BINARY_DIR}/libmicropython.a  
                 ${ARDUINO_CMSIS_PATH}/CMSIS/Lib/GCC/libarm_cortexM4lf_math.a
