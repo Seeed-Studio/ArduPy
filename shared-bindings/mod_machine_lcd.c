@@ -576,6 +576,37 @@ void lcd_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest)
 DEFINE_PTR_OBJ(common_hal_lcd_monitor_flush);
 #endif
 
+const mp_rom_map_elem_t lcd_color_locals_dict_table[] = {
+    {MP_ROM_QSTR(MP_QSTR_BLACK), MP_ROM_INT(TFT_BLACK)},
+    {MP_ROM_QSTR(MP_QSTR_NAVY), MP_ROM_INT(TFT_NAVY)},
+    {MP_ROM_QSTR(MP_QSTR_DARKGREEN), MP_ROM_INT(TFT_DARKGREEN)},
+    {MP_ROM_QSTR(MP_QSTR_DARKCYAN), MP_ROM_INT(TFT_DARKCYAN)},
+    {MP_ROM_QSTR(MP_QSTR_MAROON), MP_ROM_INT(TFT_MAROON)},
+    {MP_ROM_QSTR(MP_QSTR_PURPLE), MP_ROM_INT(TFT_PURPLE)},
+    {MP_ROM_QSTR(MP_QSTR_OLIVE), MP_ROM_INT(TFT_OLIVE)},
+    {MP_ROM_QSTR(MP_QSTR_LIGHTGREY), MP_ROM_INT(TFT_LIGHTGREY)},
+    {MP_ROM_QSTR(MP_QSTR_DARKGREY), MP_ROM_INT(TFT_DARKGREY)},
+    {MP_ROM_QSTR(MP_QSTR_BLUE), MP_ROM_INT(TFT_BLUE)},
+    {MP_ROM_QSTR(MP_QSTR_GREEN), MP_ROM_INT(TFT_GREEN)},
+    {MP_ROM_QSTR(MP_QSTR_CYAN), MP_ROM_INT(TFT_CYAN)},
+    {MP_ROM_QSTR(MP_QSTR_RED), MP_ROM_INT(TFT_RED)},
+    {MP_ROM_QSTR(MP_QSTR_MAGENTA), MP_ROM_INT(TFT_MAGENTA)},
+    {MP_ROM_QSTR(MP_QSTR_YELLOW), MP_ROM_INT(TFT_YELLOW)},
+    {MP_ROM_QSTR(MP_QSTR_WHITE), MP_ROM_INT(TFT_WHITE)},
+    {MP_ROM_QSTR(MP_QSTR_ORANGE), MP_ROM_INT(TFT_ORANGE)},
+    {MP_ROM_QSTR(MP_QSTR_GREENYELLOW), MP_ROM_INT(TFT_GREENYELLOW)},
+    {MP_ROM_QSTR(MP_QSTR_BLACK), MP_ROM_INT(TFT_BLACK)},
+    {MP_ROM_QSTR(MP_QSTR_PINK), MP_ROM_INT(TFT_PINK)},
+};
+
+MP_DEFINE_CONST_DICT(lcd_color_locals_dict, lcd_color_locals_dict_table);
+
+const mp_obj_type_t lcd_color_type = {
+    {&mp_type_type},
+    .name = MP_QSTR_color,
+     .locals_dict = (mp_obj_t)&lcd_color_locals_dict,
+};
+
 const mp_rom_map_elem_t lcd_locals_dict_table[] = {
     // instance methods
     {MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&lcd_deinit_obj)},
@@ -616,6 +647,7 @@ const mp_rom_map_elem_t lcd_locals_dict_table[] = {
     {MP_ROM_QSTR(MP_QSTR_fillEllipse), MP_ROM_PTR(&lcd_fillEllipse_obj)},
     {MP_ROM_QSTR(MP_QSTR_drawTriangle), MP_ROM_PTR(&lcd_drawTriangle_obj)},
     {MP_ROM_QSTR(MP_QSTR_fillTriangle), MP_ROM_PTR(&lcd_fillTriangle_obj)},
+    {MP_ROM_QSTR(MP_QSTR_color), MP_ROM_PTR(&lcd_color_type)},
 #ifdef MICROPY_PY_LVGL
     {MP_ROM_QSTR(MP_QSTR_flush), MP_ROM_PTR(&PTR_OBJ(common_hal_lcd_monitor_flush))},
 #endif

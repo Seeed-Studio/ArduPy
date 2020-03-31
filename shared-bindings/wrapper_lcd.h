@@ -2,6 +2,44 @@
 
 #ifdef LCD_SUPPORT
 
+//These enumerate the text plotting alignment (reference datum point)
+#define TL_DATUM 0    // Top left (default)
+#define TC_DATUM 1    // Top centre
+#define TR_DATUM 2    // Top right
+#define ML_DATUM 3    // Middle left
+#define CL_DATUM 3    // Centre left, same as above
+#define MC_DATUM 4    // Middle centre
+#define CC_DATUM 4    // Centre centre, same as above
+#define MR_DATUM 5    // Middle right
+#define CR_DATUM 5    // Centre right, same as above
+#define BL_DATUM 6    // Bottom left
+#define BC_DATUM 7    // Bottom centre
+#define BR_DATUM 8    // Bottom right
+#define L_BASELINE 9  // Left character baseline (Line the 'A' character would sit on)
+#define C_BASELINE 10 // Centre character baseline
+#define R_BASELINE 11 // Right character baseline
+
+// New color definitions use for all my libraries
+#define TFT_BLACK 0x0000       /*   0,   0,   0 */
+#define TFT_NAVY 0x000F        /*   0,   0, 128 */
+#define TFT_DARKGREEN 0x03E0   /*   0, 128,   0 */
+#define TFT_DARKCYAN 0x03EF    /*   0, 128, 128 */
+#define TFT_MAROON 0x7800      /* 128,   0,   0 */
+#define TFT_PURPLE 0x780F      /* 128,   0, 128 */
+#define TFT_OLIVE 0x7BE0       /* 128, 128,   0 */
+#define TFT_LIGHTGREY 0xC618   /* 192, 192, 192 */
+#define TFT_DARKGREY 0x7BEF    /* 128, 128, 128 */
+#define TFT_BLUE 0x001F        /*   0,   0, 255 */
+#define TFT_GREEN 0x07E0       /*   0, 255,   0 */
+#define TFT_CYAN 0x07FF        /*   0, 255, 255 */
+#define TFT_RED 0xF800         /* 255,   0,   0 */
+#define TFT_MAGENTA 0xF81F     /* 255,   0, 255 */
+#define TFT_YELLOW 0xFFE0      /* 255, 255,   0 */
+#define TFT_WHITE 0xFFFF       /* 255, 255, 255 */
+#define TFT_ORANGE 0xFDA0      /* 255, 180,   0 */
+#define TFT_GREENYELLOW 0xB7E0 /* 180, 255,   0 */
+#define TFT_PINK 0xFC9F
+
 #include <stdint.h>
 #ifdef __cplusplus
 extern "C"
@@ -56,6 +94,7 @@ extern "C"
     void common_hal_lcd_fillEllipse(abstract_module_t *self, int16_t x0, int16_t y0, int32_t rx, int32_t ry, uint16_t color);
     void common_hal_lcd_drawTriangle(abstract_module_t *self, int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color);
     void common_hal_lcd_fillTriangle(abstract_module_t *self, int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color);
+
 #ifdef __cplusplus
 }
 #endif
