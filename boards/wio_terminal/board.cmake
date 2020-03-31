@@ -84,8 +84,6 @@ set(BOARD_DEF
                 -DUSB_CONFIG_POWER=100 
                 "-DUSB_MANUFACTURER=\"Seeed Studio\"" 
                 "-DUSB_PRODUCT=\"Seeed Wio Terminal\"" 
-                # -I/home/the-cat/.arduino15/packages/adafruit/hardware/samd/1.5.3/cores/arduino/Adafruit_TinyUSB_Core 
-                # -I/home/the-cat/.arduino15/packages/adafruit/hardware/samd/1.5.3/cores/arduino/Adafruit_TinyUSB_Core/tinyusb/src 
                 -D__FPU_PRESENT 
                 -DARM_MATH_CM4 
                 # -mfloat-abi=hard 
@@ -93,11 +91,6 @@ set(BOARD_DEF
                 -DENABLE_CACHE 
                 # -Os 
                 -DVARIANT_QSPI_BAUD_DEFAULT=50000000 
-                # -I/home/the-cat/.arduino15/packages/arduino/tools/CMSIS/4.5.0/CMSIS/Include/ 
-                # -I/home/the-cat/.arduino15/packages/arduino/tools/CMSIS-Atmel/1.2.0/CMSIS/Device/ATMEL/ 
-                # -I/home/the-cat/.arduino15/packages/adafruit/hardware/samd/1.5.3/cores/arduino 
-                # -I/home/the-cat/.arduino15/packages/adafruit/hardware/samd/1.5.3/variants/grove_ui_wireless 
-                # a.cpp -o /tmp/arduino_build_636011/preproc/ctags_target_for_gcc_minus_e.cpp
                 )
 # definitions in macros
 add_definitions(${BOARD_DEF})

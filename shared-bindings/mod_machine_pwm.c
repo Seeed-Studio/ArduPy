@@ -23,14 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdio.h>
 
-#include "py/nlr.h"
-#include "py/runtime.h"
-#include "modmachine.h"
-#include "mphalport.h"
-
-#include "wrapper_pwm.h"
 #include <stdio.h>
 
 #include "py/nlr.h"
