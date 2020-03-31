@@ -86,7 +86,7 @@ extern "C"
         tft.setRotation(r);
     }
 
-    uint8_t  common_hal_lcd_getRotation(abstract_module_t *self)
+    uint8_t common_hal_lcd_getRotation(abstract_module_t *self)
     {
         return tft.getRotation();
     }
@@ -170,7 +170,7 @@ extern "C"
     {
         tft.setTextDatum(datum);
     }
-    uint8_t  common_hal_lcd_getTextDatum(abstract_module_t *self)
+    uint8_t common_hal_lcd_getTextDatum(abstract_module_t *self)
     {
         return tft.getTextDatum();
     }
@@ -179,6 +179,69 @@ extern "C"
         tft.setTextPadding(x_width);
     }
 
+    void common_hal_lcd_drawLine(abstract_module_t *self, int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint32_t color)
+    {
+        tft.drawLine(x0, y0, x1, y1, color);
+    }
+    void common_hal_lcd_drawFastVLine(abstract_module_t *self, int32_t x, int32_t y, int32_t h, uint32_t color)
+    {
+        tft.drawFastVLine(x, y, h, color);
+    }
+
+    void common_hal_lcd_drawFastHLine(abstract_module_t *self, int32_t x, int32_t y, int32_t w, uint32_t color)
+    {
+        tft.drawFastHLine(x, y, w, color);
+    }
+
+    void common_hal_lcd_fillRect(abstract_module_t *self, int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color)
+    {
+        tft.fillRect(x, y, w, h, color);
+    }
+
+    void common_hal_lcd_drawRect(abstract_module_t *self, int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color)
+    {
+        tft.drawRect(x, y, w, h, color);
+    }
+    void common_hal_lcd_drawRoundRect(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, int32_t radius, uint32_t color)
+    {
+        tft.drawRoundRect(x0, y0, w, h, radius, color);
+    }
+    void common_hal_lcd_fillRoundRect(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, int32_t radius, uint32_t color)
+    {
+        tft.fillRoundRect(x0, y0, w, h, radius, color);
+    }
+    void common_hal_lcd_drawCircle(abstract_module_t *self, int32_t x0, int32_t y0, int32_t r, uint32_t color)
+    {
+        tft.drawCircle(x0, y0, r, color);
+    }
+    void common_hal_lcd_drawCircleHelper(abstract_module_t *self, int32_t x0, int32_t y0, int32_t r, uint8_t cornername, uint32_t color)
+    {
+        tft.drawCircleHelper(x0, y0, r, cornername, color);
+    }
+    void common_hal_lcd_fillCircle(abstract_module_t *self, int32_t x0, int32_t y0, int32_t r, uint32_t color)
+    {
+        tft.fillCircle(x0, y0, r, color);
+    }
+    void common_hal_lcd_fillCircleHelper(abstract_module_t *self, int32_t x0, int32_t y0, int32_t r, uint8_t cornername, int32_t delta, uint32_t color)
+    {
+        tft.fillCircleHelper(x0, y0, r, cornername, delta, color);
+    }
+    void common_hal_lcd_drawEllipse(abstract_module_t *self, int16_t x0, int16_t y0, int32_t rx, int32_t ry, uint16_t color)
+    {
+        tft.drawEllipse(x0, y0, rx, ry, color);
+    }
+    void common_hal_lcd_fillEllipse(abstract_module_t *self, int16_t x0, int16_t y0, int32_t rx, int32_t ry, uint16_t color)
+    {
+        tft.fillEllipse(x0, y0, rx, ry, color);
+    }
+    void common_hal_lcd_drawTriangle(abstract_module_t *self, int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color)
+    {
+        tft.drawTriangle(x0, y0, x1, y1, x2, y2, color);
+    }
+    void common_hal_lcd_fillTriangle(abstract_module_t *self, int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color)
+    {
+        tft.fillTriangle(x0, y0, x1, y1, x2, y2, color);
+    }
 #ifdef MICROPY_PY_LVGL
     void common_hal_lcd_monitor_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
     {

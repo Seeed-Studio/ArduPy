@@ -272,7 +272,6 @@ mp_obj_t lcd_drawFloat(size_t n_args, const mp_obj_t *args)
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_drawFloat_obj, 5, 6, lcd_drawFloat);
 
-
 mp_obj_t lcd_setTextWrap(size_t n_args, const mp_obj_t *args)
 {
     abstract_module_t *self = (abstract_module_t *)args[0];
@@ -280,9 +279,9 @@ mp_obj_t lcd_setTextWrap(size_t n_args, const mp_obj_t *args)
     bool wrapY = false;
     if (n_args == 3)
     {
-       wrapY = mp_obj_get_int(args[2]);
+        wrapY = mp_obj_get_int(args[2]);
     }
- 
+
     common_hal_lcd_setTextWrap(self, wrapX, wrapY);
     return mp_const_none;
 }
@@ -296,15 +295,14 @@ mp_obj_t lcd_setTextColor(size_t n_args, const mp_obj_t *args)
     int16_t bgcolor = 0;
     if (n_args == 3)
     {
-       bgcolor = mp_obj_get_int(args[2]);
+        bgcolor = mp_obj_get_int(args[2]);
     }
- 
+
     common_hal_lcd_setTextColor(self, fgcolor, bgcolor);
     return mp_const_none;
 }
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_setTextColor_obj, 2, 3, lcd_setTextColor);
-
 
 mp_obj_t lcd_setTextSize(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args)
 {
@@ -341,6 +339,219 @@ mp_obj_t lcd_setTextPadding(size_t n_args, const mp_obj_t *pos_args, mp_map_t *k
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(lcd_setTextPadding_obj, 1, lcd_setTextPadding);
+
+mp_obj_t lcd_drawLine(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x0 = mp_obj_get_int(args[1]);
+    int32_t y0 = mp_obj_get_int(args[2]);
+    int32_t x1 = mp_obj_get_int(args[3]);
+    int32_t y1 = mp_obj_get_int(args[4]);
+    uint32_t color = mp_obj_get_int(args[5]);
+    common_hal_lcd_drawLine(self, x0, y0, x1, y1, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_drawLine_obj, 6, 6, lcd_drawLine);
+
+mp_obj_t lcd_drawFastVLine(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x = mp_obj_get_int(args[1]);
+    int32_t y = mp_obj_get_int(args[2]);
+    int32_t h = mp_obj_get_int(args[3]);
+    uint32_t color = mp_obj_get_int(args[4]);
+    common_hal_lcd_drawFastVLine(self, x, y, h, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_drawFastVLine_obj, 5, 5, lcd_drawFastVLine);
+
+mp_obj_t lcd_drawFastHLine(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x = mp_obj_get_int(args[1]);
+    int32_t y = mp_obj_get_int(args[2]);
+    int32_t w = mp_obj_get_int(args[3]);
+    uint32_t color = mp_obj_get_int(args[4]);
+    common_hal_lcd_drawFastHLine(self, x, y, w, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_drawFastHLine_obj, 5, 5, lcd_drawFastHLine);
+
+mp_obj_t lcd_fillRect(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x = mp_obj_get_int(args[1]);
+    int32_t y = mp_obj_get_int(args[2]);
+    int32_t w = mp_obj_get_int(args[3]);
+    int32_t h = mp_obj_get_int(args[4]);
+    uint32_t color = mp_obj_get_int(args[5]);
+    common_hal_lcd_fillRect(self, x, y, w, h, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_fillRect_obj, 6, 6, lcd_fillRect);
+
+mp_obj_t lcd_drawRect(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x = mp_obj_get_int(args[1]);
+    int32_t y = mp_obj_get_int(args[2]);
+    int32_t w = mp_obj_get_int(args[3]);
+    int32_t h = mp_obj_get_int(args[4]);
+    uint32_t color = mp_obj_get_int(args[5]);
+    common_hal_lcd_drawRect(self, x, y, w, h, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_drawRect_obj, 6, 6, lcd_drawRect);
+
+mp_obj_t lcd_drawRoundRect(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x = mp_obj_get_int(args[1]);
+    int32_t y = mp_obj_get_int(args[2]);
+    int32_t w = mp_obj_get_int(args[3]);
+    int32_t h = mp_obj_get_int(args[4]);
+    int32_t r = mp_obj_get_int(args[5]);
+    uint32_t color = mp_obj_get_int(args[6]);
+    common_hal_lcd_drawRoundRect(self, x, y, w, h, r, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_drawRoundRect_obj, 7, 7, lcd_drawRoundRect);
+
+mp_obj_t lcd_fillRoundRect(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x = mp_obj_get_int(args[1]);
+    int32_t y = mp_obj_get_int(args[2]);
+    int32_t w = mp_obj_get_int(args[3]);
+    int32_t h = mp_obj_get_int(args[4]);
+    int32_t r = mp_obj_get_int(args[5]);
+    uint32_t color = mp_obj_get_int(args[6]);
+    common_hal_lcd_fillRoundRect(self, x, y, w, h, r, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_fillRoundRect_obj, 7, 7, lcd_fillRoundRect);
+
+mp_obj_t lcd_drawCircle(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x = mp_obj_get_int(args[1]);
+    int32_t y = mp_obj_get_int(args[2]);
+    int32_t r = mp_obj_get_int(args[3]);
+    uint32_t color = mp_obj_get_int(args[4]);
+    common_hal_lcd_drawCircle(self, x, y, r, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_drawCircle_obj, 5, 5, lcd_drawCircle);
+
+mp_obj_t lcd_fillCircle(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x = mp_obj_get_int(args[1]);
+    int32_t y = mp_obj_get_int(args[2]);
+    int32_t r = mp_obj_get_int(args[3]);
+    uint32_t color = mp_obj_get_int(args[4]);
+    common_hal_lcd_fillCircle(self, x, y, r, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_fillCircle_obj, 5, 5, lcd_fillCircle);
+
+mp_obj_t lcd_drawCircleHelper(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x = mp_obj_get_int(args[1]);
+    int32_t y = mp_obj_get_int(args[2]);
+    int32_t r = mp_obj_get_int(args[3]);
+    uint8_t c = mp_obj_get_int(args[4]);
+    uint32_t color = mp_obj_get_int(args[5]);
+    common_hal_lcd_drawCircleHelper(self, x, y, r, c, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_drawCircleHelper_obj, 6, 6, lcd_drawCircleHelper);
+
+mp_obj_t lcd_fillCircleHelper(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x = mp_obj_get_int(args[1]);
+    int32_t y = mp_obj_get_int(args[2]);
+    int32_t r = mp_obj_get_int(args[3]);
+    uint8_t c = mp_obj_get_int(args[4]);
+    int32_t d = mp_obj_get_int(args[3]);
+    uint32_t color = mp_obj_get_int(args[5]);
+    common_hal_lcd_fillCircleHelper(self, x, y, r, c, d, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_fillCircleHelper_obj, 7, 7, lcd_fillCircleHelper);
+
+mp_obj_t lcd_drawEllipse(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x0 = mp_obj_get_int(args[1]);
+    int32_t y0 = mp_obj_get_int(args[2]);
+    int32_t rx = mp_obj_get_int(args[3]);
+    int32_t ry = mp_obj_get_int(args[4]);
+    uint32_t color = mp_obj_get_int(args[5]);
+    common_hal_lcd_drawEllipse(self, x0, y0, rx, ry, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_drawEllipse_obj, 6, 6, lcd_drawEllipse);
+
+mp_obj_t lcd_fillEllipse(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x0 = mp_obj_get_int(args[1]);
+    int32_t y0 = mp_obj_get_int(args[2]);
+    int32_t rx = mp_obj_get_int(args[3]);
+    int32_t ry = mp_obj_get_int(args[4]);
+    uint32_t color = mp_obj_get_int(args[5]);
+    common_hal_lcd_fillEllipse(self, x0, y0, rx, ry, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_fillEllipse_obj, 6, 6, lcd_fillEllipse);
+
+mp_obj_t lcd_drawTriangle(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x0 = mp_obj_get_int(args[1]);
+    int32_t y0 = mp_obj_get_int(args[2]);
+    int32_t x1 = mp_obj_get_int(args[3]);
+    int32_t y1 = mp_obj_get_int(args[4]);
+    int32_t x2 = mp_obj_get_int(args[5]);
+    int32_t y2 = mp_obj_get_int(args[6]);
+    uint32_t color = mp_obj_get_int(args[7]);
+    common_hal_lcd_drawTriangle(self, x0, y0, x1, y1, x2, y2, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_drawTriangle_obj, 8, 8, lcd_drawTriangle);
+
+mp_obj_t lcd_fillTriangle(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x0 = mp_obj_get_int(args[1]);
+    int32_t y0 = mp_obj_get_int(args[2]);
+    int32_t x1 = mp_obj_get_int(args[3]);
+    int32_t y1 = mp_obj_get_int(args[4]);
+    int32_t x2 = mp_obj_get_int(args[5]);
+    int32_t y2 = mp_obj_get_int(args[6]);
+    uint32_t color = mp_obj_get_int(args[7]);
+    common_hal_lcd_fillTriangle(self, x0, y0, x1, y1, x2, y2, color);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_fillTriangle_obj, 8, 8, lcd_fillTriangle);
 
 void lcd_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest)
 {
@@ -390,6 +601,21 @@ const mp_rom_map_elem_t lcd_locals_dict_table[] = {
     {MP_ROM_QSTR(MP_QSTR_setTextDatum), MP_ROM_PTR(&lcd_setTextDatum_obj)},
     {MP_ROM_QSTR(MP_QSTR_getTextDatum), MP_ROM_PTR(&lcd_getTextDatum_obj)},
     {MP_ROM_QSTR(MP_QSTR_setTextPadding), MP_ROM_PTR(&lcd_setTextPadding_obj)},
+    {MP_ROM_QSTR(MP_QSTR_drawLine), MP_ROM_PTR(&lcd_drawLine_obj)},
+    {MP_ROM_QSTR(MP_QSTR_drawFastVLine), MP_ROM_PTR(&lcd_drawFastVLine_obj)},
+    {MP_ROM_QSTR(MP_QSTR_drawFastHLine), MP_ROM_PTR(&lcd_drawFastHLine_obj)},
+    {MP_ROM_QSTR(MP_QSTR_drawRect), MP_ROM_PTR(&lcd_drawRect_obj)},
+    {MP_ROM_QSTR(MP_QSTR_fillRect), MP_ROM_PTR(&lcd_fillRect_obj)},
+    {MP_ROM_QSTR(MP_QSTR_drawRoundRect), MP_ROM_PTR(&lcd_drawRoundRect_obj)},
+    {MP_ROM_QSTR(MP_QSTR_fillRoundRect), MP_ROM_PTR(&lcd_fillRoundRect_obj)},
+    {MP_ROM_QSTR(MP_QSTR_drawCircle), MP_ROM_PTR(&lcd_drawCircle_obj)},
+    {MP_ROM_QSTR(MP_QSTR_drawCircleHelper), MP_ROM_PTR(&lcd_drawCircleHelper_obj)},
+    {MP_ROM_QSTR(MP_QSTR_fillCircle), MP_ROM_PTR(&lcd_fillCircle_obj)},
+    {MP_ROM_QSTR(MP_QSTR_fillCircleHelper), MP_ROM_PTR(&lcd_fillCircleHelper_obj)},
+    {MP_ROM_QSTR(MP_QSTR_drawEllipse), MP_ROM_PTR(&lcd_drawEllipse_obj)},
+    {MP_ROM_QSTR(MP_QSTR_fillEllipse), MP_ROM_PTR(&lcd_fillEllipse_obj)},
+    {MP_ROM_QSTR(MP_QSTR_drawTriangle), MP_ROM_PTR(&lcd_drawTriangle_obj)},
+    {MP_ROM_QSTR(MP_QSTR_fillTriangle), MP_ROM_PTR(&lcd_fillTriangle_obj)},
 #ifdef MICROPY_PY_LVGL
     {MP_ROM_QSTR(MP_QSTR_flush), MP_ROM_PTR(&PTR_OBJ(common_hal_lcd_monitor_flush))},
 #endif
