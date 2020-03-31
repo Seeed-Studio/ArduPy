@@ -607,6 +607,32 @@ const mp_obj_type_t lcd_color_type = {
      .locals_dict = (mp_obj_t)&lcd_color_locals_dict,
 };
 
+const mp_rom_map_elem_t lcd_datum_locals_dict_table[] = {
+    {MP_ROM_QSTR(MP_QSTR_TL_DATUM), MP_ROM_INT(TL_DATUM)},
+    {MP_ROM_QSTR(MP_QSTR_TC_DATUM), MP_ROM_INT(TC_DATUM)},
+    {MP_ROM_QSTR(MP_QSTR_TR_DATUM), MP_ROM_INT(TR_DATUM)},
+    {MP_ROM_QSTR(MP_QSTR_ML_DATUM), MP_ROM_INT(ML_DATUM)},
+    {MP_ROM_QSTR(MP_QSTR_CL_DATUM), MP_ROM_INT(CL_DATUM)},
+    {MP_ROM_QSTR(MP_QSTR_MC_DATUM), MP_ROM_INT(MC_DATUM)},
+    {MP_ROM_QSTR(MP_QSTR_CC_DATUM), MP_ROM_INT(CC_DATUM)},
+    {MP_ROM_QSTR(MP_QSTR_MR_DATUM), MP_ROM_INT(MR_DATUM)},
+    {MP_ROM_QSTR(MP_QSTR_CR_DATUM), MP_ROM_INT(CR_DATUM)},
+    {MP_ROM_QSTR(MP_QSTR_BL_DATUM), MP_ROM_INT(BL_DATUM)},
+    {MP_ROM_QSTR(MP_QSTR_BC_DATUM), MP_ROM_INT(BC_DATUM)},
+    {MP_ROM_QSTR(MP_QSTR_BR_DATUM), MP_ROM_INT(BR_DATUM)},
+    {MP_ROM_QSTR(MP_QSTR_L_BASELINE), MP_ROM_INT(L_BASELINE)},
+    {MP_ROM_QSTR(MP_QSTR_C_BASELINE), MP_ROM_INT(C_BASELINE)},
+    {MP_ROM_QSTR(MP_QSTR_R_BASELINE), MP_ROM_INT(R_BASELINE)},
+};
+
+MP_DEFINE_CONST_DICT(lcd_datum_locals_dict, lcd_datum_locals_dict_table);
+
+const mp_obj_type_t lcd_datum_type = {
+    {&mp_type_type},
+    .name = MP_QSTR_datum,
+     .locals_dict = (mp_obj_t)&lcd_datum_locals_dict,
+};
+
 const mp_rom_map_elem_t lcd_locals_dict_table[] = {
     // instance methods
     {MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&lcd_deinit_obj)},
@@ -648,6 +674,7 @@ const mp_rom_map_elem_t lcd_locals_dict_table[] = {
     {MP_ROM_QSTR(MP_QSTR_drawTriangle), MP_ROM_PTR(&lcd_drawTriangle_obj)},
     {MP_ROM_QSTR(MP_QSTR_fillTriangle), MP_ROM_PTR(&lcd_fillTriangle_obj)},
     {MP_ROM_QSTR(MP_QSTR_color), MP_ROM_PTR(&lcd_color_type)},
+    {MP_ROM_QSTR(MP_QSTR_datum), MP_ROM_PTR(&lcd_datum_type)},
 #ifdef MICROPY_PY_LVGL
     {MP_ROM_QSTR(MP_QSTR_flush), MP_ROM_PTR(&PTR_OBJ(common_hal_lcd_monitor_flush))},
 #endif
