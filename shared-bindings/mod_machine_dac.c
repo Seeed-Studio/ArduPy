@@ -26,7 +26,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifdef LCD_SUPPORT
 #include <stdio.h>
 
 #include "py/runtime.h"
@@ -130,4 +129,3 @@ const mp_obj_type_t machine_dac_type = {
     .make_new = mdac_make_new,
     .locals_dict = (mp_obj_t)&mdac_locals_dict,
 };
-#endif

@@ -42,36 +42,6 @@ typedef struct _madc_obj_t
     mp_hal_pin_obj_t gpio_id;
 } madc_obj_t;
 
-STATIC const madc_obj_t madc_obj[] = {
-#ifdef ADC_A0
-    {{&machine_adc_type}, ADC_A0},
-#endif
-#ifdef ADC_A1
-    {{&machine_adc_type}, ADC_A1},
-#endif
-#ifdef ADC_A2
-    {{&machine_adc_type}, ADC_A2},
-#endif
-#ifdef ADC_A3
-    {{&machine_adc_type}, ADC_A3},
-#endif
-#ifdef ADC_A4
-    {{&machine_adc_type}, ADC_A4},
-#endif
-#ifdef ADC_A5
-    {{&machine_adc_type}, ADC_A5},
-#endif
-#ifdef ADC_A6
-    {{&machine_adc_type}, ADC_A6},
-#endif
-#ifdef ADC_A7
-    {{&machine_adc_type}, ADC_A7},
-#endif
-#ifdef ADC_A8
-    {{&machine_adc_type}, ADC_A8},
-#endif
-};
-
 STATIC mp_obj_t madc_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw,
                               const mp_obj_t *args)
 {
@@ -80,21 +50,9 @@ STATIC mp_obj_t madc_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
     // get the wanted pin object
     mp_hal_pin_obj_t wanted_pin = machine_pin_get_id(args[0]);
 
-    const madc_obj_t *self = NULL;
-
-    for (uint8_t i = 0; i < MP_ARRAY_SIZE(madc_obj); i++)
-    {
-        if (wanted_pin == madc_obj[i].gpio_id)
-        {
-            self = (madc_obj_t *)&madc_obj[i];
-            break;
-        }
-    }
-
-    if (self == NULL || self->base.type == NULL)
-    {
-        mp_raise_ValueError("invalid pin");
-    }
+    madc_obj_t *self = m_new_obj(madc_obj_t);
+    self->base.type = &machine_adc_type;
+    self->gpio_id = wanted_pin;
 
     if (n_args > 1 || n_kw > 0)
     {
