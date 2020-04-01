@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Damien P. George
+ * Development of the code in this file was sponsored by Seeed Studio
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -173,3 +173,4 @@ const mp_obj_type_t machine_pwm_type = {
     .make_new = mp_pwm_make_new,
     .locals_dict = (mp_obj_dict_t *)&mp_pwm_locals_dict,
 };
+

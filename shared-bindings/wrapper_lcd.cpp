@@ -242,6 +242,62 @@ extern "C"
     {
         tft.fillTriangle(x0, y0, x1, y1, x2, y2, color);
     }
+    uint16_t common_hal_lcd_color565(abstract_module_t *self, uint8_t red, uint8_t green, uint8_t blue)
+    {
+        return tft.color565(red, green, blue);
+    }
+    uint16_t common_hal_lcd_color8to16(abstract_module_t *self, uint8_t color332)
+    {
+        return tft.color8to16(color332);
+    }
+    uint16_t common_hal_lcd_color16to8(abstract_module_t *self, uint8_t color565)
+    {
+        return tft.color16to8(color565);
+    }
+    uint16_t common_hal_lcd_getPivotX(abstract_module_t *self)
+    {
+        return tft.getPivotX();
+    }
+    uint16_t common_hal_lcd_getPivotY(abstract_module_t *self)
+    {
+        return tft.getPivotY();
+    }
+    uint16_t common_hal_lcd_getCursorX(abstract_module_t *self)
+    {
+        return tft.getCursorX();
+    }
+    uint16_t common_hal_lcd_getCursorY(abstract_module_t *self)
+    {
+        return tft.getCursorY();
+    }
+    void common_hal_lcd_setPivot(abstract_module_t *self, int16_t x, int16_t y)
+    {
+        return tft.setPivot(x, y);
+    }
+    void common_hal_lcd_setCursor(abstract_module_t *self, int16_t x, int16_t y, uint8_t font)
+    {
+        return tft.setCursor(x, y, font);
+    }
+    void common_hal_lcd_pushImage(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, uint8_t *data)
+    {
+        tft.pushImage(x0, y0, w, h, (uint8_t *)data);
+    }
+    void common_hal_lcd_setSwapBytes(abstract_module_t *self, bool swap)
+    {
+        tft.setSwapBytes(swap);
+    }
+    bool common_hal_lcd_getSwapBytes(abstract_module_t *self)
+    {
+        return tft.getSwapBytes();
+    }
+    void common_hal_lcd_pushRect(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, uint16_t *data)
+    {
+        tft.pushRect(x0, y0, w, h, data);
+    }
+    void common_hal_lcd_readRect(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, uint16_t *data)
+    {
+        tft.readRect(x0, y0, w, h, data);
+    }
 #ifdef MICROPY_PY_LVGL
     void common_hal_lcd_monitor_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
     {

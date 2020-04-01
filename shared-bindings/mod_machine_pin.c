@@ -1,7 +1,7 @@
 /*
  * This file is part of the MicroPython project, http://micropython.org/
  *
- * Development of the code in this file was sponsored by Microbric Pty Ltd
+ * Development of the code in this file was sponsored by Seeed Studio
  *
  * Author: Baozhu Zuo (baozhu.zuo@gmail.com)
  *

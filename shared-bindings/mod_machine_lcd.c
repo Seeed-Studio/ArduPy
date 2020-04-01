@@ -1,7 +1,7 @@
 /*
  * This file is part of the MicroPython project, http://micropython.org/
  *
- * Development of the code in this file was sponsored by Microbric Pty Ltd
+ * Development of the code in this file was sponsored by Seeed Stduio
  *
  * Author: Hontai Liu (hontai.liu@seeed.cc)
  *
@@ -553,6 +553,135 @@ mp_obj_t lcd_fillTriangle(size_t n_args, const mp_obj_t *args)
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_fillTriangle_obj, 8, 8, lcd_fillTriangle);
 
+mp_obj_t lcd_color565(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    uint8_t red = mp_obj_get_int(args[1]);
+    uint8_t green = mp_obj_get_int(args[2]);
+    uint8_t blue = mp_obj_get_int(args[3]);
+
+    uint16_t color = common_hal_lcd_color565(self, red, green, blue);
+    return MP_OBJ_NEW_SMALL_INT(color);
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_color565_obj, 4, 4, lcd_color565);
+
+mp_obj_t lcd_color8to16(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    uint8_t color332 = mp_obj_get_int(args[1]);
+
+    uint16_t color = common_hal_lcd_color8to16(self, color332);
+    return MP_OBJ_NEW_SMALL_INT(color);
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_color8to16_obj, 2, 2, lcd_color8to16);
+
+mp_obj_t lcd_color16to8(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    uint16_t color565 = mp_obj_get_int(args[1]);
+
+    uint16_t color = common_hal_lcd_color16to8(self, color565);
+    return MP_OBJ_NEW_SMALL_INT(color);
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_color16to8_obj, 2, 2, lcd_color16to8);
+
+mp_obj_t lcd_setPivot(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int16_t x = mp_obj_get_int(args[1]);
+    int16_t y = mp_obj_get_int(args[2]);
+    common_hal_lcd_setPivot(self, x, y);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_setPivot_obj, 3, 3, lcd_setPivot);
+
+mp_obj_t lcd_setCursor(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int16_t x = mp_obj_get_int(args[1]);
+    int16_t y = mp_obj_get_int(args[2]);
+    uint8_t font = 1;
+    if (n_args == 3)
+    {
+        font = common_hal_lcd_getTextFont(self);
+    }
+    else
+    {
+        font = mp_obj_get_int(args[3]);
+    }
+    common_hal_lcd_setCursor(self, x, y, font);
+    return mp_const_none;
+}
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_setCursor_obj, 3, 4, lcd_setCursor);
+
+mp_obj_t lcd_getPivotX(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args)
+{
+    abstract_module_t *self = (abstract_module_t *)pos_args[0];
+
+    uint16_t value = common_hal_lcd_getPivotX(self);
+
+    return MP_OBJ_NEW_SMALL_INT(value);
+}
+MP_DEFINE_CONST_FUN_OBJ_KW(lcd_getPivotX_obj, 1, lcd_getPivotX);
+
+mp_obj_t lcd_getPivotY(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args)
+{
+    abstract_module_t *self = (abstract_module_t *)pos_args[0];
+
+    uint16_t value = common_hal_lcd_getPivotY(self);
+
+    return MP_OBJ_NEW_SMALL_INT(value);
+}
+MP_DEFINE_CONST_FUN_OBJ_KW(lcd_getPivotY_obj, 1, lcd_getPivotY);
+
+mp_obj_t lcd_getCursorX(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args)
+{
+    abstract_module_t *self = (abstract_module_t *)pos_args[0];
+
+    uint16_t value = common_hal_lcd_getCursorX(self);
+
+    return MP_OBJ_NEW_SMALL_INT(value);
+}
+MP_DEFINE_CONST_FUN_OBJ_KW(lcd_getCursorX_obj, 1, lcd_getCursorX);
+
+mp_obj_t lcd_getCursorY(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args)
+{
+    abstract_module_t *self = (abstract_module_t *)pos_args[0];
+
+    uint16_t value = common_hal_lcd_getCursorY(self);
+
+    return MP_OBJ_NEW_SMALL_INT(value);
+}
+MP_DEFINE_CONST_FUN_OBJ_KW(lcd_getCursorY_obj, 1, lcd_getCursorY);
+
+mp_obj_t lcd_pushImage(size_t n_args, const mp_obj_t *args)
+{
+    abstract_module_t *self = (abstract_module_t *)args[0];
+    int32_t x0 = mp_obj_get_int(args[1]);
+    int32_t y0 = mp_obj_get_int(args[2]);
+    int32_t w = mp_obj_get_int(args[3]);
+    int32_t h = mp_obj_get_int(args[4]);
+    const uint8_t *data = (uint8_t *)mp_to_ptr(args[5]);
+    // uint8_t transparent = 0;
+    // bool bpp8 = true;
+    // if (n_args == 7)
+    // {
+    //     transparent = mp_obj_get_int(args[6]);
+    // }
+    common_hal_lcd_pushImage(self, x0, y0, w, h, data);
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lcd_pushImage_obj, 6, 6, lcd_pushImage);
+
+#ifdef MICROPY_PY_LVGL
+DEFINE_PTR_OBJ(common_hal_lcd_monitor_flush);
+#endif
+
 void lcd_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest)
 {
     abstract_module_t *self = (abstract_module_t *)(self_in);
@@ -571,10 +700,6 @@ void lcd_obj_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest)
     }
     generic_method_lookup(self_in, attr, dest);
 }
-
-#ifdef MICROPY_PY_LVGL
-DEFINE_PTR_OBJ(common_hal_lcd_monitor_flush);
-#endif
 
 const mp_rom_map_elem_t lcd_color_locals_dict_table[] = {
     {MP_ROM_QSTR(MP_QSTR_BLACK), MP_ROM_INT(TFT_BLACK)},
@@ -604,7 +729,7 @@ MP_DEFINE_CONST_DICT(lcd_color_locals_dict, lcd_color_locals_dict_table);
 const mp_obj_type_t lcd_color_type = {
     {&mp_type_type},
     .name = MP_QSTR_color,
-     .locals_dict = (mp_obj_t)&lcd_color_locals_dict,
+    .locals_dict = (mp_obj_t)&lcd_color_locals_dict,
 };
 
 const mp_rom_map_elem_t lcd_datum_locals_dict_table[] = {
@@ -630,7 +755,7 @@ MP_DEFINE_CONST_DICT(lcd_datum_locals_dict, lcd_datum_locals_dict_table);
 const mp_obj_type_t lcd_datum_type = {
     {&mp_type_type},
     .name = MP_QSTR_datum,
-     .locals_dict = (mp_obj_t)&lcd_datum_locals_dict,
+    .locals_dict = (mp_obj_t)&lcd_datum_locals_dict,
 };
 
 const mp_rom_map_elem_t lcd_locals_dict_table[] = {
@@ -673,8 +798,19 @@ const mp_rom_map_elem_t lcd_locals_dict_table[] = {
     {MP_ROM_QSTR(MP_QSTR_fillEllipse), MP_ROM_PTR(&lcd_fillEllipse_obj)},
     {MP_ROM_QSTR(MP_QSTR_drawTriangle), MP_ROM_PTR(&lcd_drawTriangle_obj)},
     {MP_ROM_QSTR(MP_QSTR_fillTriangle), MP_ROM_PTR(&lcd_fillTriangle_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getCursorX), MP_ROM_PTR(&lcd_getCursorX_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getCursorY), MP_ROM_PTR(&lcd_getCursorY_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getPivotX), MP_ROM_PTR(&lcd_getPivotX_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getPivotY), MP_ROM_PTR(&lcd_getPivotY_obj)},
+    {MP_ROM_QSTR(MP_QSTR_color16to8), MP_ROM_PTR(&lcd_color16to8_obj)},
+    {MP_ROM_QSTR(MP_QSTR_color565), MP_ROM_PTR(&lcd_color565_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getPivotX), MP_ROM_PTR(&lcd_color8to16_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setCursor), MP_ROM_PTR(&lcd_setCursor_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setPivot), MP_ROM_PTR(&lcd_setPivot_obj)},
+    {MP_ROM_QSTR(MP_QSTR_pushImage), MP_ROM_PTR(&lcd_pushImage_obj)},
     {MP_ROM_QSTR(MP_QSTR_color), MP_ROM_PTR(&lcd_color_type)},
     {MP_ROM_QSTR(MP_QSTR_datum), MP_ROM_PTR(&lcd_datum_type)},
+
 #ifdef MICROPY_PY_LVGL
     {MP_ROM_QSTR(MP_QSTR_flush), MP_ROM_PTR(&PTR_OBJ(common_hal_lcd_monitor_flush))},
 #endif

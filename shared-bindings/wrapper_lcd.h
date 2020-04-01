@@ -94,7 +94,20 @@ extern "C"
     void common_hal_lcd_fillEllipse(abstract_module_t *self, int16_t x0, int16_t y0, int32_t rx, int32_t ry, uint16_t color);
     void common_hal_lcd_drawTriangle(abstract_module_t *self, int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color);
     void common_hal_lcd_fillTriangle(abstract_module_t *self, int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color);
-
+    uint16_t common_hal_lcd_color565(abstract_module_t *self, uint8_t red, uint8_t green, uint8_t blue);
+    uint16_t common_hal_lcd_color8to16(abstract_module_t *self, uint8_t color332);
+    uint16_t common_hal_lcd_color16to8(abstract_module_t *self, uint8_t color565);
+    uint16_t common_hal_lcd_getPivotX(abstract_module_t *self);
+    uint16_t common_hal_lcd_getPivotY(abstract_module_t *self);
+    uint16_t common_hal_lcd_getCursorX(abstract_module_t *self);
+    uint16_t common_hal_lcd_getCursorY(abstract_module_t *self);
+    void common_hal_lcd_setPivot(abstract_module_t *self, int16_t x, int16_t y);
+    void common_hal_lcd_setCursor(abstract_module_t *self, int16_t x, int16_t y, uint8_t font);
+    void common_hal_lcd_pushImage(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, uint8_t *data);
+    void common_hal_lcd_setSwapBytes(abstract_module_t *self, bool swap);
+    bool common_hal_lcd_getSwapBytes(abstract_module_t *self);
+    void common_hal_lcd_pushRect(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, uint16_t *data);
+    void common_hal_lcd_readRect(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, uint16_t *data);
 #ifdef __cplusplus
 }
 #endif
