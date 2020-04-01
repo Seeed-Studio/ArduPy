@@ -40,6 +40,7 @@ typedef struct _mp_pwm_obj_t
 {
     mp_obj_base_t base;
     mp_hal_pin_obj_t pin;
+    int arudpy_gpio_id;
     uint32_t freq;
     uint32_t duty;
 } mp_pwm_obj_t;
@@ -87,10 +88,14 @@ STATIC mp_obj_t mp_pwm_make_new(const mp_obj_type_t *type,
 {
     mp_arg_check_num(n_args, n_kw, 1, MP_OBJ_FUN_ARGS_MAX, true);
     mp_hal_pin_obj_t pin_id = machine_pin_get_id(args[0]);
-
+     if(pin_id == -1)
+    {
+          mp_raise_ValueError("invalid pin");
+    }
     mp_pwm_obj_t *self = m_new_obj(mp_pwm_obj_t);
     self->base.type = &machine_pwm_type;
     self->pin = pin_id;
+    self->arudpy_gpio_id = machine_pin_get_arudpy_id(pin_id);
     self->freq = 1000;
     self->duty = 512;
    

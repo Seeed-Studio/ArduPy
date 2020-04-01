@@ -45,6 +45,7 @@ typedef struct _machine_pin_obj_t
 {
     mp_obj_base_t base;
     mp_hal_pin_obj_t id;
+    int arudpy_gpio_id;
 } machine_pin_obj_t;
 
 typedef struct _machine_pin_irq_obj_t
@@ -55,151 +56,199 @@ typedef struct _machine_pin_irq_obj_t
 
 STATIC const machine_pin_obj_t machine_pin_obj[] = {
 #ifdef GPIO_NUM_0
-    {{&machine_pin_type}, GPIO_NUM_0},
+    {{&machine_pin_type}, GPIO_NUM_0, 0},
 #endif
 #ifdef GPIO_NUM_1
-    {{&machine_pin_type}, GPIO_NUM_1},
+    {{&machine_pin_type}, GPIO_NUM_1, 1},
 #endif
 #ifdef GPIO_NUM_2
-    {{&machine_pin_type}, GPIO_NUM_2},
+    {{&machine_pin_type}, GPIO_NUM_2, 2},
 #endif
 #ifdef GPIO_NUM_3
-    {{&machine_pin_type}, GPIO_NUM_3},
+    {{&machine_pin_type}, GPIO_NUM_3, 3},
 #endif
 #ifdef GPIO_NUM_4
-    {{&machine_pin_type}, GPIO_NUM_4},
+    {{&machine_pin_type}, GPIO_NUM_4, 4},
 #endif
 #ifdef GPIO_NUM_5
-    {{&machine_pin_type}, GPIO_NUM_5},
+    {{&machine_pin_type}, GPIO_NUM_5, 5},
 #endif
 #ifdef GPIO_NUM_6
-    {{&machine_pin_type}, GPIO_NUM_6},
+    {{&machine_pin_type}, GPIO_NUM_6, 6},
 #endif
 #ifdef GPIO_NUM_7
-    {{&machine_pin_type}, GPIO_NUM_7},
+    {{&machine_pin_type}, GPIO_NUM_7, 7},
 #endif
 #ifdef GPIO_NUM_8
-    {{&machine_pin_type}, GPIO_NUM_8},
+    {{&machine_pin_type}, GPIO_NUM_8, 8},
 #endif
 #ifdef GPIO_NUM_9
-    {{&machine_pin_type}, GPIO_NUM_9},
+    {{&machine_pin_type}, GPIO_NUM_9, 9},
 #endif
 #ifdef GPIO_NUM_10
-    {{&machine_pin_type}, GPIO_NUM_10},
+    {{&machine_pin_type}, GPIO_NUM_10, 10},
 #endif
 #ifdef GPIO_NUM_11
-    {{&machine_pin_type}, GPIO_NUM_11},
+    {{&machine_pin_type}, GPIO_NUM_11, 11},
 #endif
 #ifdef GPIO_NUM_12
-    {{&machine_pin_type}, GPIO_NUM_12},
+    {{&machine_pin_type}, GPIO_NUM_12, 12},
 #endif
 #ifdef GPIO_NUM_13
-    {{&machine_pin_type}, GPIO_NUM_13},
+    {{&machine_pin_type}, GPIO_NUM_13, 13},
 #endif
 #ifdef GPIO_NUM_14
-    {{&machine_pin_type}, GPIO_NUM_14},
+    {{&machine_pin_type}, GPIO_NUM_14, 14},
 #endif
 #ifdef GPIO_NUM_15
-    {{&machine_pin_type}, GPIO_NUM_15},
+    {{&machine_pin_type}, GPIO_NUM_15, 15},
 #endif
 #ifdef GPIO_NUM_16
-    {{&machine_pin_type}, GPIO_NUM_16},
+    {{&machine_pin_type}, GPIO_NUM_16, 16},
 #endif
 #ifdef GPIO_NUM_17
-    {{&machine_pin_type}, GPIO_NUM_17},
+    {{&machine_pin_type}, GPIO_NUM_17, 17},
 #endif
 #ifdef GPIO_NUM_18
-    {{&machine_pin_type}, GPIO_NUM_18},
+    {{&machine_pin_type}, GPIO_NUM_18, 18},
 #endif
 #ifdef GPIO_NUM_19
-    {{&machine_pin_type}, GPIO_NUM_19},
+    {{&machine_pin_type}, GPIO_NUM_19, 19},
 #endif
 #ifdef GPIO_NUM_20
-    {{&machine_pin_type}, GPIO_NUM_20},
+    {{&machine_pin_type}, GPIO_NUM_20, 20},
 #endif
 #ifdef GPIO_NUM_21
-    {{&machine_pin_type}, GPIO_NUM_21},
+    {{&machine_pin_type}, GPIO_NUM_21, 21},
 #endif
 #ifdef GPIO_NUM_22
-    {{&machine_pin_type}, GPIO_NUM_22},
+    {{&machine_pin_type}, GPIO_NUM_22, 22},
 #endif
 #ifdef GPIO_NUM_23
-    {{&machine_pin_type}, GPIO_NUM_23},
+    {{&machine_pin_type}, GPIO_NUM_23, 23},
 #endif
 #ifdef GPIO_NUM_24
-    {{&machine_pin_type}, GPIO_NUM_24},
+    {{&machine_pin_type}, GPIO_NUM_24, 24},
 #endif
 #ifdef GPIO_NUM_25
-    {{&machine_pin_type}, GPIO_NUM_25},
+    {{&machine_pin_type}, GPIO_NUM_25, 25},
 #endif
 #ifdef GPIO_NUM_26
-    {{&machine_pin_type}, GPIO_NUM_26},
+    {{&machine_pin_type}, GPIO_NUM_26, 26},
 #endif
 #ifdef GPIO_NUM_27
-    {{&machine_pin_type}, GPIO_NUM_27},
+    {{&machine_pin_type}, GPIO_NUM_27, 27},
 #endif
 #ifdef GPIO_NUM_28
-    {{&machine_pin_type}, GPIO_NUM_28},
+    {{&machine_pin_type}, GPIO_NUM_28, 28},
 #endif
 #ifdef GPIO_NUM_29
-    {{&machine_pin_type}, GPIO_NUM_29},
+    {{&machine_pin_type}, GPIO_NUM_29, 29},
 #endif
 #ifdef GPIO_NUM_30
-    {{&machine_pin_type}, GPIO_NUM_30},
+    {{&machine_pin_type}, GPIO_NUM_30, 30},
 #endif
 #ifdef GPIO_NUM_31
-    {{&machine_pin_type}, GPIO_NUM_31},
+    {{&machine_pin_type}, GPIO_NUM_31, 31},
 #endif
 #ifdef GPIO_NUM_32
-    {{&machine_pin_type}, GPIO_NUM_32},
+    {{&machine_pin_type}, GPIO_NUM_32, 32},
 #endif
 #ifdef GPIO_NUM_33
-    {{&machine_pin_type}, GPIO_NUM_33},
+    {{&machine_pin_type}, GPIO_NUM_33, 33},
 #endif
 #ifdef GPIO_NUM_34
-    {{&machine_pin_type}, GPIO_NUM_34},
+    {{&machine_pin_type}, GPIO_NUM_34, 34},
 #endif
 #ifdef GPIO_NUM_35
-    {{&machine_pin_type}, GPIO_NUM_35},
+    {{&machine_pin_type}, GPIO_NUM_35, 35},
 #endif
 #ifdef GPIO_NUM_36
-    {{&machine_pin_type}, GPIO_NUM_36},
+    {{&machine_pin_type}, GPIO_NUM_36, 36},
 #endif
 #ifdef GPIO_NUM_37
-    {{&machine_pin_type}, GPIO_NUM_37},
+    {{&machine_pin_type}, GPIO_NUM_37, 37},
 #endif
 #ifdef GPIO_NUM_38
-    {{&machine_pin_type}, GPIO_NUM_38},
+    {{&machine_pin_type}, GPIO_NUM_38, 38},
 #endif
 #ifdef GPIO_NUM_39
-    {{&machine_pin_type}, GPIO_NUM_39},
+    {{&machine_pin_type}, GPIO_NUM_39, 39},
 #endif
 #ifdef GPIO_NUM_40
-    {{&machine_pin_type}, GPIO_NUM_40},
+    {{&machine_pin_type}, GPIO_NUM_40, 40},
 #endif
 #ifdef GPIO_NUM_41
-    {{&machine_pin_type}, GPIO_NUM_41},
+    {{&machine_pin_type}, GPIO_NUM_41, 41},
 #endif
 #ifdef GPIO_NUM_42
-    {{&machine_pin_type}, GPIO_NUM_42},
+    {{&machine_pin_type}, GPIO_NUM_42, 42},
 #endif
 #ifdef GPIO_NUM_43
-    {{&machine_pin_type}, GPIO_NUM_43},
+    {{&machine_pin_type}, GPIO_NUM_43, 43},
 #endif
 #ifdef GPIO_NUM_44
-    {{&machine_pin_type}, GPIO_NUM_44},
+    {{&machine_pin_type}, GPIO_NUM_44, 44},
 #endif
 #ifdef GPIO_NUM_45
-    {{&machine_pin_type}, GPIO_NUM_45},
+    {{&machine_pin_type}, GPIO_NUM_45, 45},
 #endif
 #ifdef GPIO_NUM_46
-    {{&machine_pin_type}, GPIO_NUM_46},
+    {{&machine_pin_type}, GPIO_NUM_46, 46},
 #endif
 #ifdef GPIO_NUM_47
-    {{&machine_pin_type}, GPIO_NUM_47},
+    {{&machine_pin_type}, GPIO_NUM_47, 47},
 #endif
 #ifdef GPIO_NUM_48
-    {{&machine_pin_type}, GPIO_NUM_48},
+    {{&machine_pin_type}, GPIO_NUM_48, 48},
+#endif
+#ifdef GPIO_NUM_49
+    {{&machine_pin_type}, GPIO_NUM_49, 49},
+#endif
+#ifdef GPIO_NUM_50
+    {{&machine_pin_type}, GPIO_NUM_50, 50},
+#endif
+#ifdef GPIO_NUM_51
+    {{&machine_pin_type}, GPIO_NUM_51, 51},
+#endif
+#ifdef GPIO_NUM_52
+    {{&machine_pin_type}, GPIO_NUM_52, 52},
+#endif
+#ifdef GPIO_NUM_53
+    {{&machine_pin_type}, GPIO_NUM_53, 53},
+#endif
+#ifdef GPIO_NUM_54
+    {{&machine_pin_type}, GPIO_NUM_54, 54},
+#endif
+#ifdef GPIO_NUM_55
+    {{&machine_pin_type}, GPIO_NUM_55, 55},
+#endif
+#ifdef GPIO_NUM_56
+    {{&machine_pin_type}, GPIO_NUM_56, 56},
+#endif
+#ifdef GPIO_NUM_57
+    {{&machine_pin_type}, GPIO_NUM_57, 57},
+#endif
+#ifdef GPIO_NUM_58
+    {{&machine_pin_type}, GPIO_NUM_58, 58},
+#endif
+#ifdef GPIO_NUM_59
+    {{&machine_pin_type}, GPIO_NUM_59, 59},
+#endif
+#ifdef GPIO_NUM_60
+    {{&machine_pin_type}, GPIO_NUM_60, 60},
+#endif
+#ifdef GPIO_NUM_61
+    {{&machine_pin_type}, GPIO_NUM_61, 61},
+#endif
+#ifdef GPIO_NUM_62
+    {{&machine_pin_type}, GPIO_NUM_62, 62},
+#endif
+#ifdef GPIO_NUM_63
+    {{&machine_pin_type}, GPIO_NUM_63, 63},
+#endif
+#ifdef GPIO_NUM_64
+    {{&machine_pin_type}, GPIO_NUM_64, 64},
 #endif
 };
 
@@ -212,6 +261,12 @@ STATIC void machine_pin_isr_handler(void *arg)
     // mp_obj_t handler = MP_STATE_PORT(machine_pin_irq_handler)[self->id];
     // mp_sched_schedule(handler, MP_OBJ_FROM_PTR(self));
     // mp_hal_wake_main_task_from_isr();
+}
+
+int machine_pin_get_arudpy_id(mp_hal_pin_obj_t pin)
+{
+    
+    return machine_pin_obj[pin].arudpy_gpio_id;
 }
 
 mp_hal_pin_obj_t machine_pin_get_id(mp_obj_t pin_in)
@@ -227,7 +282,7 @@ mp_hal_pin_obj_t machine_pin_get_id(mp_obj_t pin_in)
 STATIC void machine_pin_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind)
 {
     machine_pin_obj_t *self = self_in;
-    mp_printf(print, "Arduino Pin(%u)", self->id);
+    mp_printf(print, "Pin(%u)", self->arudpy_gpio_id);
 }
 
 // pin.init(mode, pull=None, *, value)

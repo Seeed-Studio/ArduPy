@@ -40,6 +40,7 @@ typedef struct _madc_obj_t
 {
     mp_obj_base_t base;
     mp_hal_pin_obj_t gpio_id;
+    int arudpy_gpio_id;
 } madc_obj_t;
 
 STATIC mp_obj_t madc_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw,
@@ -50,9 +51,15 @@ STATIC mp_obj_t madc_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
     // get the wanted pin object
     mp_hal_pin_obj_t wanted_pin = machine_pin_get_id(args[0]);
 
+    if(wanted_pin == -1)
+    {
+          mp_raise_ValueError("invalid pin");
+    }
+
     madc_obj_t *self = m_new_obj(madc_obj_t);
     self->base.type = &machine_adc_type;
     self->gpio_id = wanted_pin;
+    self->arudpy_gpio_id = machine_pin_get_arudpy_id(wanted_pin);
 
     if (n_args > 1 || n_kw > 0)
     {
@@ -67,7 +74,7 @@ STATIC mp_obj_t madc_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
 STATIC void madc_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind)
 {
     madc_obj_t *self = self_in;
-    mp_printf(print, "ADC(Arduino Pin(%u))", self->gpio_id);
+    mp_printf(print, "ADC(Pin(%u))", self->arudpy_gpio_id);
 }
 
 STATIC mp_obj_t madc_read(mp_obj_t self_in)
