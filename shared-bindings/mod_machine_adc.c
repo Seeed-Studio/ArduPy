@@ -69,13 +69,13 @@ STATIC mp_obj_t madc_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
 STATIC void madc_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind)
 {
     madc_obj_t *self = self_in;
-    mp_printf(print, "ADC(Pin(%u))", self->hardware_id);
+    mp_printf(print, "ADC(Pin(%u))", self->id);
 }
 
 STATIC mp_obj_t madc_read(mp_obj_t self_in)
 {
     madc_obj_t *self = self_in;
-    int val = analogRead(self->id);
+    int val = analogRead(self->hardware_id);
     // if (val == -1) mp_raise_ValueError("Parameter Error");
     return MP_OBJ_NEW_SMALL_INT(val);
 }
@@ -84,7 +84,7 @@ STATIC mp_obj_t mdac_width(mp_obj_t self_in, mp_obj_t value_in)
 {
     madc_obj_t *self = self_in;
     int value = mp_obj_get_int(value_in);
-    analogWrite(self->id, value);
+    analogWrite(self->hardware_id, value);
     return mp_const_none;
 }
 

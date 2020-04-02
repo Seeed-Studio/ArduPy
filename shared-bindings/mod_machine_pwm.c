@@ -80,7 +80,7 @@ STATIC void mp_pwm_init_helper(mp_pwm_obj_t *self,
     self->freq = tval;
     self->duty = dval;
 
-    wrapper_pwm(self->id, tval, dval);
+    wrapper_pwm(self->hardware_id, tval, dval);
 }
 
 STATIC mp_obj_t mp_pwm_make_new(const mp_obj_type_t *type,
@@ -114,7 +114,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(mp_pwm_init_obj, 1, mp_pwm_init);
 STATIC mp_obj_t mp_pwm_deinit(mp_obj_t self_in)
 {
     mp_pwm_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    wrapper_noPwm(self->id);
+    wrapper_noPwm(self->hardware_id);
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_pwm_deinit_obj, mp_pwm_deinit);
@@ -130,7 +130,7 @@ STATIC mp_obj_t mp_pwm_freq(size_t n_args, const mp_obj_t *args)
     // set
     int tval = mp_obj_get_int(args[1]);
     self->freq = tval;
-    wrapper_pwm(self->id, tval, self->duty);
+    wrapper_pwm(self->hardware_id, tval, self->duty);
     return mp_const_none;
 }
 
@@ -150,7 +150,7 @@ STATIC mp_obj_t mp_pwm_duty(size_t n_args, const mp_obj_t *args)
     // set
     duty = mp_obj_get_int(args[1]);
     self->duty = duty;
-    wrapper_pwm(self->id, self->freq, self->duty);
+    wrapper_pwm(self->hardware_id, self->freq, self->duty);
 
     return mp_const_none;
 }
