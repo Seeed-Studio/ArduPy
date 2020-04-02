@@ -38,8 +38,8 @@
 typedef struct _madc_obj_t
 {
     mp_obj_base_t base;
-    mp_hal_pin_obj_t gpio_id;
-    int arudpy_gpio_id;
+    int32_t hardware_id;
+    mp_hal_pin_obj_t id;
 } mdac_obj_t;
 
 // STATIC const mdac_obj_t mdac_obj[] = {
@@ -60,15 +60,10 @@ STATIC mp_obj_t mdac_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
     // get the wanted pin object
     mp_hal_pin_obj_t wanted_pin = machine_pin_get_id(args[0]);
 
-     if(wanted_pin == -1)
-    {
-          mp_raise_ValueError("invalid pin");
-    }
-    
     mdac_obj_t *self = m_new_obj(mdac_obj_t);
     self->base.type = &machine_dac_type;
-    self->gpio_id = wanted_pin;
-    self->arudpy_gpio_id = machine_pin_get_arudpy_id(wanted_pin);
+    self->id = wanted_pin;
+    self->hardware_id = machine_pin_get_hardware_id(wanted_pin);
 
     if (n_args > 1 || n_kw > 0)
     {
@@ -83,7 +78,7 @@ STATIC mp_obj_t mdac_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
 STATIC void mdac_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind)
 {
     mdac_obj_t *self = self_in;
-    mp_printf(print, "DAC(Arduino Pin(%u))", self->arudpy_gpio_id);
+    mp_printf(print, "DAC(Arduino Pin(%u))", self->hardware_id);
 }
 
 STATIC mp_obj_t mdac_resolution(mp_obj_t self_in, mp_obj_t value_in)
@@ -106,7 +101,7 @@ STATIC mp_obj_t mdac_write(mp_obj_t self_in, mp_obj_t value_in)
 {
     mdac_obj_t *self = self_in;
     int value = mp_obj_get_int(value_in);
-    analogWrite(self->gpio_id, value);
+    analogWrite(self->id, value);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_2(mdac_write_obj, mdac_write);

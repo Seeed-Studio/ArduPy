@@ -39,8 +39,8 @@ extern const mp_obj_type_t machine_pwm_type;
 typedef struct _mp_pwm_obj_t
 {
     mp_obj_base_t base;
-    mp_hal_pin_obj_t pin;
-    int arudpy_gpio_id;
+    int32_t hardware_id;
+    mp_hal_pin_obj_t id;
     uint32_t freq;
     uint32_t duty;
 } mp_pwm_obj_t;
@@ -52,7 +52,7 @@ typedef struct _mp_pwm_obj_t
 STATIC void mp_pwm_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind)
 {
     mp_pwm_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    mp_printf(print, "PWM(Arduino Pin(%u)", self->pin);
+    mp_printf(print, "PWM(Arduino Pin(%u)", self->id);
     mp_printf(print, ", freq=%u, duty=%u", self->freq, self->duty);
     mp_printf(print, ")");
 }
@@ -80,22 +80,18 @@ STATIC void mp_pwm_init_helper(mp_pwm_obj_t *self,
     self->freq = tval;
     self->duty = dval;
 
-    wrapper_pwm(self->pin, tval, dval);
+    wrapper_pwm(self->id, tval, dval);
 }
 
 STATIC mp_obj_t mp_pwm_make_new(const mp_obj_type_t *type,
                                 size_t n_args, size_t n_kw, const mp_obj_t *args)
 {
     mp_arg_check_num(n_args, n_kw, 1, MP_OBJ_FUN_ARGS_MAX, true);
-    mp_hal_pin_obj_t pin_id = machine_pin_get_id(args[0]);
-     if(pin_id == -1)
-    {
-          mp_raise_ValueError("invalid pin");
-    }
+    mp_hal_pin_obj_t wanted_pin = machine_pin_get_id(args[0]);
     mp_pwm_obj_t *self = m_new_obj(mp_pwm_obj_t);
     self->base.type = &machine_pwm_type;
-    self->pin = pin_id;
-    self->arudpy_gpio_id = machine_pin_get_arudpy_id(pin_id);
+    self->id = wanted_pin;
+    self->hardware_id = machine_pin_get_hardware_id(wanted_pin);
     self->freq = 1000;
     self->duty = 512;
    
@@ -118,7 +114,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(mp_pwm_init_obj, 1, mp_pwm_init);
 STATIC mp_obj_t mp_pwm_deinit(mp_obj_t self_in)
 {
     mp_pwm_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    wrapper_noPwm(self->pin);
+    wrapper_noPwm(self->id);
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_pwm_deinit_obj, mp_pwm_deinit);
@@ -134,7 +130,7 @@ STATIC mp_obj_t mp_pwm_freq(size_t n_args, const mp_obj_t *args)
     // set
     int tval = mp_obj_get_int(args[1]);
     self->freq = tval;
-    wrapper_pwm(self->pin, tval, self->duty);
+    wrapper_pwm(self->id, tval, self->duty);
     return mp_const_none;
 }
 
@@ -154,7 +150,7 @@ STATIC mp_obj_t mp_pwm_duty(size_t n_args, const mp_obj_t *args)
     // set
     duty = mp_obj_get_int(args[1]);
     self->duty = duty;
-    wrapper_pwm(self->pin, self->freq, self->duty);
+    wrapper_pwm(self->id, self->freq, self->duty);
 
     return mp_const_none;
 }

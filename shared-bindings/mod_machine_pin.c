@@ -44,13 +44,14 @@ extern const mp_obj_type_t machine_pin_type;
 typedef struct _machine_pin_obj_t
 {
     mp_obj_base_t base;
+    int32_t hardware_id;
     mp_hal_pin_obj_t id;
-    int arudpy_gpio_id;
 } machine_pin_obj_t;
 
 typedef struct _machine_pin_irq_obj_t
 {
     mp_obj_base_t base;
+    int32_t hardware_id;
     mp_hal_pin_obj_t id;
 } machine_pin_irq_obj_t;
 
@@ -263,10 +264,10 @@ STATIC void machine_pin_isr_handler(void *arg)
     // mp_hal_wake_main_task_from_isr();
 }
 
-int machine_pin_get_arudpy_id(mp_hal_pin_obj_t pin)
+int machine_pin_get_hardware_id(mp_hal_pin_obj_t pin)
 {
     
-    return machine_pin_obj[pin].arudpy_gpio_id;
+    return machine_pin_obj[pin].hardware_id;
 }
 
 mp_hal_pin_obj_t machine_pin_get_id(mp_obj_t pin_in)
@@ -282,7 +283,7 @@ mp_hal_pin_obj_t machine_pin_get_id(mp_obj_t pin_in)
 STATIC void machine_pin_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind)
 {
     machine_pin_obj_t *self = self_in;
-    mp_printf(print, "Pin(%u)", self->arudpy_gpio_id);
+    mp_printf(print, "Pin(%u)", self->id);
 }
 
 // pin.init(mode, pull=None, *, value)
@@ -308,13 +309,13 @@ STATIC mp_obj_t machine_pin_obj_init_helper(const machine_pin_obj_t *self, size_
     if (args[ARG_mode].u_obj != mp_const_none)
     {
         mp_int_t pin_io_mode = mp_obj_get_int(args[ARG_mode].u_obj);
-        pinMode(self->id, pin_io_mode);
+        pinMode(self->hardware_id, pin_io_mode);
     }
 
     // set initial value (do this before configuring mode/pull)
     if (args[ARG_value].u_obj != MP_OBJ_NULL)
     {
-        digitalWrite(self->id, mp_obj_is_true(args[ARG_value].u_obj));
+        digitalWrite(self->hardware_id, mp_obj_is_true(args[ARG_value].u_obj));
     }
 
     return mp_const_none;
@@ -328,6 +329,12 @@ mp_obj_t mp_pin_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, 
     // get the wanted pin object
     int wanted_pin = mp_obj_get_int(args[0]);
     const machine_pin_obj_t *self = NULL;
+    int hardware_id = machine_pin_get_hardware_id(wanted_pin);
+
+    if(hardware_id < 0)
+    {
+        mp_raise_ValueError("invalid pin");
+    }
 
     if (0 <= wanted_pin && wanted_pin < MP_ARRAY_SIZE(machine_pin_obj))
     {
@@ -358,12 +365,12 @@ STATIC mp_obj_t machine_pin_call(mp_obj_t self_in, size_t n_args, size_t n_kw, c
     if (n_args == 0)
     {
         // get pin
-        return MP_OBJ_NEW_SMALL_INT(digitalRead(self->id));
+        return MP_OBJ_NEW_SMALL_INT(digitalRead(self->hardware_id));
     }
     else
     {
         // set pin
-        digitalWrite(self->id, mp_obj_is_true(args[0]));
+        digitalWrite(self->hardware_id, mp_obj_is_true(args[0]));
         return mp_const_none;
     }
 }
@@ -386,7 +393,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(machine_pin_value_obj, 1, 2, machine_
 STATIC mp_obj_t machine_pin_off(mp_obj_t self_in)
 {
     machine_pin_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    digitalWrite(self->id, 0);
+    digitalWrite(self->hardware_id, 0);
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(machine_pin_off_obj, machine_pin_off);
@@ -395,7 +402,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(machine_pin_off_obj, machine_pin_off);
 STATIC mp_obj_t machine_pin_on(mp_obj_t self_in)
 {
     machine_pin_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    digitalWrite(self->id, 1);
+    digitalWrite(self->hardware_id, 1);
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(machine_pin_on_obj, machine_pin_on);
@@ -459,11 +466,11 @@ STATIC mp_uint_t pin_ioctl(mp_obj_t self_in, mp_uint_t request, uintptr_t arg, i
     {
     case MP_PIN_READ:
     {
-        return digitalRead(self->id);
+        return digitalRead(self->hardware_id);
     }
     case MP_PIN_WRITE:
     {
-        digitalWrite(self->id, arg);
+        digitalWrite(self->hardware_id, arg);
         return 0;
     }
     }
