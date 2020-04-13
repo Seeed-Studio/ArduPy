@@ -18,6 +18,15 @@ include_directories(${ARDUINO_CMSIS_PATH}/CMSIS/Include)
 include_directories(${ARDUINO_CORE_PATH}/cores/arduino/Adafruit_TinyUSB_Core)
 include_directories(${ARDUINO_CORE_PATH}/cores/arduino/Adafruit_TinyUSB_Core/tinyusb/src)
 include_directories(${ARDUINO_CMSIS_ATMEL_PATH})
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/Extensions)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/Extensions/Touch_Drivers/4WiresTouch)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/Fonts)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/Fonts/GFXFF)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/Fonts/TrueType)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/Fonts/Custom)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/TFT_Drivers)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/User_Setups)
 
 add_source_files(
         # ${ARDUPY_SUB_PATH}/Seeed_Arduino_LCD/*.cpp
@@ -32,6 +41,8 @@ add_source_files(
         ${ARDUINO_CORE_PATH}/libraries/SAMD_AnalogCorrection/src/*.c
         ${ARDUINO_CORE_PATH}/libraries/SAMD_AnalogCorrection/src/*.cpp
         ${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA/*.cpp
+        ${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/TFT_eSPI.cpp
+        ${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/TFT_Interface.cpp
 )
 
 set(BOARD_SRC ${BOARD_SRC}  
@@ -62,6 +73,9 @@ set(BOARD_DEF
                 -DF_CPU=120000000L 
                 -DARDUINO=10810 
                 -DWIO_TERMINAL
+                -DARDUINO_ARCH_SAMD
+                -DLCD_SUPPORT
+                -DSEEED_GROVE_UI_WIRELESS
                 -DARDUINO_ARCH_SAMD 
                 -D__SAMD51P19A__ 
                 -D__SAMD51__ 
@@ -69,9 +83,7 @@ set(BOARD_DEF
                 -DUSBCON 
                 -DUSB_CONFIG_POWER=100 
                 "-DUSB_MANUFACTURER=\"Seeed Studio\"" 
-                "-DUSB_PRODUCT=\"Seeed Grove UI Wireles\"" 
-                # -I/home/the-cat/.arduino15/packages/adafruit/hardware/samd/1.5.3/cores/arduino/Adafruit_TinyUSB_Core 
-                # -I/home/the-cat/.arduino15/packages/adafruit/hardware/samd/1.5.3/cores/arduino/Adafruit_TinyUSB_Core/tinyusb/src 
+                "-DUSB_PRODUCT=\"Seeed Wio Terminal\"" 
                 -D__FPU_PRESENT 
                 -DARM_MATH_CM4 
                 # -mfloat-abi=hard 
@@ -79,11 +91,6 @@ set(BOARD_DEF
                 -DENABLE_CACHE 
                 # -Os 
                 -DVARIANT_QSPI_BAUD_DEFAULT=50000000 
-                # -I/home/the-cat/.arduino15/packages/arduino/tools/CMSIS/4.5.0/CMSIS/Include/ 
-                # -I/home/the-cat/.arduino15/packages/arduino/tools/CMSIS-Atmel/1.2.0/CMSIS/Device/ATMEL/ 
-                # -I/home/the-cat/.arduino15/packages/adafruit/hardware/samd/1.5.3/cores/arduino 
-                # -I/home/the-cat/.arduino15/packages/adafruit/hardware/samd/1.5.3/variants/grove_ui_wireless 
-                # a.cpp -o /tmp/arduino_build_636011/preproc/ctags_target_for_gcc_minus_e.cpp
                 )
 # definitions in macros
 add_definitions(${BOARD_DEF})

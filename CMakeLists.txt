@@ -39,6 +39,7 @@ include_directories(${ARDUINO_CORE_PATH}/cores/arduino/Adafruit_TinyUSB_Core/tin
 include_directories(${ARDUINO_CORE_PATH}/cores/arduino/Adafruit_TinyUSB_Core/)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Wire)
 include_directories(${ARDUINO_CORE_PATH}/libraries/SPI)
+include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA)
 include_directories(${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT})
 

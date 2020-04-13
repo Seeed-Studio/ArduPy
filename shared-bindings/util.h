@@ -100,6 +100,6 @@ NORETURN void mp_raise_RuntimeError(const char *msg);
 NORETURN void mp_raise_AttributeError(const char *msg) ;
 void normalize_buffer_bounds(int32_t* start, int32_t end, uint32_t* length);
 void generic_method_lookup(mp_obj_t obj, qstr attr, mp_obj_t *dest);
-
+void* mp_to_ptr(mp_obj_t self_in);
 
 #endif // MICROPY_INCLUDED_ATMEL_SAMD_COMMON_HAL_UTIL_H

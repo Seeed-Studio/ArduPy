@@ -26,7 +26,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 #include <stdio.h>
 
 #include "py/runtime.h"
@@ -41,18 +40,28 @@ typedef struct _madc_obj_t
     mp_obj_base_t base;
     int32_t hardware_id;
     mp_hal_pin_obj_t id;
-} madc_obj_t;
+} mdac_obj_t;
 
-STATIC mp_obj_t madc_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw,
+// STATIC const mdac_obj_t mdac_obj[] = {
+// #ifdef DAC0
+//     {{&machine_dac_type}, DAC0},
+// #endif
+// #ifdef DAC1
+//     {{&machine_dac_type}, DAC1},
+// #endif
+// };
+
+STATIC mp_obj_t mdac_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw,
                               const mp_obj_t *args)
 {
+
     mp_arg_check_num(n_args, n_kw, 1, MP_OBJ_FUN_ARGS_MAX, true);
 
     // get the wanted pin object
     mp_hal_pin_obj_t wanted_pin = machine_pin_get_id(args[0]);
 
-    madc_obj_t *self = m_new_obj(madc_obj_t);
-    self->base.type = &machine_adc_type;
+    mdac_obj_t *self = m_new_obj(mdac_obj_t);
+    self->base.type = &machine_dac_type;
     self->id = wanted_pin;
     self->hardware_id = machine_pin_get_hardware_id(wanted_pin);
 
@@ -66,71 +75,59 @@ STATIC mp_obj_t madc_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
     return MP_OBJ_FROM_PTR(self);
 }
 
-STATIC void madc_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind)
+STATIC void mdac_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind)
 {
-    madc_obj_t *self = self_in;
-    mp_printf(print, "ADC(Pin(%u))", self->id);
+    mdac_obj_t *self = self_in;
+    mp_printf(print, "DAC(Pin(%u))", self->id);
 }
 
-STATIC mp_obj_t madc_read(mp_obj_t self_in)
+STATIC mp_obj_t mdac_resolution(mp_obj_t self_in, mp_obj_t value_in)
 {
-    madc_obj_t *self = self_in;
-    int val = analogRead(self->hardware_id);
-    // if (val == -1) mp_raise_ValueError("Parameter Error");
-    return MP_OBJ_NEW_SMALL_INT(val);
+    mdac_obj_t *self = self_in;
+    int value = mp_obj_get_int(value_in);
+    analogWriteResolution(value);
+    return mp_const_none;
 }
 
-STATIC mp_obj_t mdac_width(mp_obj_t self_in, mp_obj_t value_in)
+STATIC mp_obj_t mdac_reference(mp_obj_t self_in, mp_obj_t value_in)
 {
-    madc_obj_t *self = self_in;
+    mdac_obj_t *self = self_in;
+    int value = mp_obj_get_int(value_in);
+    analogReference(value);
+    return mp_const_none;
+}
+
+STATIC mp_obj_t mdac_write(mp_obj_t self_in, mp_obj_t value_in)
+{
+    mdac_obj_t *self = self_in;
     int value = mp_obj_get_int(value_in);
     analogWrite(self->hardware_id, value);
     return mp_const_none;
 }
+MP_DEFINE_CONST_FUN_OBJ_2(mdac_write_obj, mdac_write);
+MP_DEFINE_CONST_FUN_OBJ_2(mdac_resolution_obj, mdac_resolution);
+MP_DEFINE_CONST_FUN_OBJ_2(mdac_reference_obj, mdac_reference);
 
+STATIC const mp_rom_map_elem_t mdac_locals_dict_table[] = {
+    {MP_ROM_QSTR(MP_QSTR_write), MP_ROM_PTR(&mdac_write_obj)},
+    {MP_ROM_QSTR(MP_QSTR_resolution), MP_ROM_PTR(&mdac_resolution_obj)},
+    {MP_ROM_QSTR(MP_QSTR_reference), MP_ROM_PTR(&mdac_reference_obj)},
 
-MP_DEFINE_CONST_FUN_OBJ_1(madc_read_obj, madc_read);
-
-STATIC const mp_rom_map_elem_t madc_locals_dict_table[] = {
-    {MP_ROM_QSTR(MP_QSTR_read), MP_ROM_PTR(&madc_read_obj)},
-
-//const
-#ifdef ADC_A0
-    {MP_ROM_QSTR(MP_QSTR_A0), MP_ROM_INT(ADC_A0)},
+// class constants
+#ifdef DAC0
+    {MP_ROM_QSTR(MP_QSTR_DAC0), MP_ROM_INT(DAC0)},
 #endif
-#ifdef ADC_A1
-    {MP_ROM_QSTR(MP_QSTR_A1), MP_ROM_INT(ADC_A1)},
-#endif
-#ifdef ADC_A2
-    {MP_ROM_QSTR(MP_QSTR_A2), MP_ROM_INT(ADC_A2)},
-#endif
-#ifdef ADC_A3
-    {MP_ROM_QSTR(MP_QSTR_A3), MP_ROM_INT(ADC_A3)},
-#endif
-#ifdef ADC_A4
-    {MP_ROM_QSTR(MP_QSTR_A4), MP_ROM_INT(ADC_A4)},
-#endif
-#ifdef ADC_A5
-    {MP_ROM_QSTR(MP_QSTR_A5), MP_ROM_INT(ADC_A5)},
-#endif
-#ifdef ADC_A6
-    {MP_ROM_QSTR(MP_QSTR_A6), MP_ROM_INT(ADC_A6)},
-#endif
-#ifdef ADC_A7
-    {MP_ROM_QSTR(MP_QSTR_A7), MP_ROM_INT(ADC_A7)},
-#endif
-#ifdef ADC_A8
-    {MP_ROM_QSTR(MP_QSTR_A8), MP_ROM_INT(ADC_A8)},
+#ifdef DAC1
+    {MP_ROM_QSTR(MP_QSTR_DAC1), MP_ROM_INT(DAC1)}
 #endif
 };
 
+STATIC MP_DEFINE_CONST_DICT(mdac_locals_dict, mdac_locals_dict_table);
 
-STATIC MP_DEFINE_CONST_DICT(madc_locals_dict, madc_locals_dict_table);
-
-const mp_obj_type_t machine_adc_type = {
+const mp_obj_type_t machine_dac_type = {
     {&mp_type_type},
-    .name = MP_QSTR_ADC,
-    .print = madc_print,
-    .make_new = madc_make_new,
-    .locals_dict = (mp_obj_t)&madc_locals_dict,
+    .name = MP_QSTR_DAC,
+    .print = mdac_print,
+    .make_new = mdac_make_new,
+    .locals_dict = (mp_obj_t)&mdac_locals_dict,
 };
