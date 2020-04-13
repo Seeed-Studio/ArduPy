@@ -26,6 +26,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+#ifdef LCD_SUPPORT
 #include <stdio.h>
 
 #include "py/nlr.h"
@@ -825,3 +827,4 @@ const mp_obj_type_t machine_lcd_type = {
     .locals_dict = (mp_obj_t)&lcd_locals_dict,
     .attr = lcd_obj_attr,
 };
+#endif
