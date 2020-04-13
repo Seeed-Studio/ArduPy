@@ -33,7 +33,7 @@ if ("${BOARD}" STREQUAL "seeeduino_m0")
     include(${CMAKE_CURRENT_LIST_DIR}/samd21-compile-flags.cmake)
 endif()
 
-if ("${BOARD}" STREQUAL "grove_ui_m4")     
+if ("${BOARD}" STREQUAL "wio_terminal")     
     include(${CMAKE_CURRENT_LIST_DIR}/samd51-compile-flags.cmake)
 endif()
 

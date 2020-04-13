@@ -2,8 +2,8 @@
 #ifdef SEEEDUINO_MO
 #include "seeeduino_m0_config.h"
 #endif
-#ifdef SEEED_GROVE_UI_WIRELESS
-#include "grove_ui_m4_config.h"
+#ifdef WIO_TERMINAL
+#include "wio_terminal.h"
 #endif
 #include "mpconfigboard_common.h"
 
@@ -35,14 +35,18 @@
  
 #define UINT_FMT "%lu"
 #define INT_FMT "%ld"
- 
+
+
+#define mp_hal_pin_obj_t uint32_t
+
 typedef int32_t mp_int_t; // must be pointer size
 typedef uint32_t mp_uint_t; // must be pointer size
 typedef long mp_off_t;
 typedef uint32_t sys_prot_t; // for modlwip
 // ssize_t, off_t as required by POSIX-signatured functions in stream.h
 #include <sys/types.h> 
-  
+
+
 #if MICROPY_PY_THREAD 
 #define MICROPY_EVENT_POLL_HOOK \
     do { \
@@ -73,19 +77,23 @@ extern const struct _mp_obj_module_t ardupy_module;
 extern const struct _mp_obj_module_t mp_module_uos;
 extern const struct _mp_obj_module_t mp_module_utime;
 
-extern const struct _mp_obj_module_t microcontroller_module;
-extern const struct _mp_obj_module_t bitbangio_module;
-extern const struct _mp_obj_module_t analogio_module;
-extern const struct _mp_obj_module_t digitalio_module;
-extern const struct _mp_obj_module_t grove_module;
-extern const struct _mp_obj_module_t pulseio_module;
-extern const struct _mp_obj_module_t busio_module;
-extern const struct _mp_obj_module_t board_module;
+// extern const struct _mp_obj_module_t microcontroller_module;
+// extern const struct _mp_obj_module_t bitbangio_module;
+// extern const struct _mp_obj_module_t analogio_module;
+// extern const struct _mp_obj_module_t digitalio_module;
+// extern const struct _mp_obj_module_t grove_module;
+// extern const struct _mp_obj_module_t pulseio_module;
+// extern const struct _mp_obj_module_t busio_module;
+// extern const struct _mp_obj_module_t board_module;
 extern const struct _mp_obj_module_t math_module;
 extern const struct _mp_obj_module_t random_module;
 extern const struct _mp_obj_module_t uheap_module;
 extern const struct _mp_obj_module_t ustack_module;
-extern const struct _mp_obj_module_t supervisor_module;
+
+#ifdef ARDUPY_MODULE
+extern const struct _mp_obj_module_t mp_module_arduino;
+#endif
+// extern const struct _mp_obj_module_t supervisor_module;
 
 
 
@@ -113,6 +121,11 @@ extern const struct _mp_obj_module_t supervisor_module;
 #define JSON_MODULE
 #endif
 
+#ifdef ARDUPY_MODULE
+#define ARDUPY_PY_MODULE  { MP_OBJ_NEW_QSTR(MP_QSTR_arduino), (mp_obj_t)&mp_module_arduino },                   
+#else
+#define ARDUPY_PY_MODULE
+#endif
 
 
 // extra built in names to add to the global namespace
@@ -126,14 +139,6 @@ extern const struct _mp_obj_module_t supervisor_module;
 
 #define EXTRA_BUILTIN_MODULES                                                        \
     { MP_OBJ_NEW_QSTR(MP_QSTR_math), (mp_obj_t)&math_module },                       \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_analogio), (mp_obj_t)&analogio_module },               \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_board), (mp_obj_t)&board_module },                     \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_busio), (mp_obj_t)&busio_module },                     \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_digitalio), (mp_obj_t)&digitalio_module },             \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_grove), (mp_obj_t)&grove_module },                     \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_microcontroller), (mp_obj_t)&microcontroller_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_pulseio), (mp_obj_t)&pulseio_module },                 \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_supervisor), (mp_obj_t)&supervisor_module },           \
     { MP_OBJ_NEW_QSTR(MP_QSTR_binascii), (mp_obj_t)&mp_module_ubinascii },           \
     { MP_OBJ_NEW_QSTR(MP_QSTR_collections), (mp_obj_t)&mp_module_collections },      \
     { MP_OBJ_NEW_QSTR(MP_QSTR_hashlib), (mp_obj_t)&mp_module_uhashlib },             \
@@ -141,9 +146,13 @@ extern const struct _mp_obj_module_t supervisor_module;
     { MP_OBJ_NEW_QSTR(MP_QSTR_io), (mp_obj_t)&mp_module_io },                        \
     { MP_OBJ_NEW_QSTR(MP_QSTR_select), (mp_obj_t)&mp_module_uselect },               \
     { MP_OBJ_NEW_QSTR(MP_QSTR_zlib), (mp_obj_t)&mp_module_uzlib },                   \
+     { MP_OBJ_NEW_QSTR(MP_QSTR_machine), (mp_obj_t)&mp_module_machine },             \
     JSON_MODULE                                                                      \
     ERRNO_MODULE                                                                     \
     RE_MODULE                                                                        \
+    ARDUPY_PY_MODULE                                                                 \
+
+    
 
 
 #define MICROPY_PORT_BUILTIN_MODULES                              \

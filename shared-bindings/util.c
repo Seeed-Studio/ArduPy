@@ -28,8 +28,13 @@
 #define MICROPY_INCLUDED_SHARED_BINDINGS_UTIL_H
 
 #include "py/runtime.h"
-
+#include "py/obj.h"
+#include "py/objstr.h"
+#include "py/runtime.h"
+#include "py/binary.h"
+#include "py/objarray.h"
 #include "shared-bindings/util.h"
+
 void normalize_buffer_bounds(int32_t* start, int32_t end, uint32_t* length) {
     if (end < 0) {
         end += *length;
@@ -107,7 +112,42 @@ void generic_method_lookup(mp_obj_t obj, qstr attr, mp_obj_t *dest) {
          }
     }
 }
+void* mp_to_ptr(mp_obj_t self_in)
+{
+    mp_buffer_info_t buffer_info;
+    if (self_in == mp_const_none)
+        return NULL;
 
+//    if (MP_OBJ_IS_INT(self_in))
+//        return (void*)mp_obj_get_int(self_in);
+
+    if (!mp_get_buffer(self_in, &buffer_info, MP_BUFFER_READ)) {
+        // No buffer protocol - this is not a Struct or a Blob, it's some other mp object.
+        // We only allow setting dict directly, since it's useful to setting user_data for passing data to C.
+        // On other cases throw an exception, to avoid a crash later
+        if (MP_OBJ_IS_TYPE(self_in, &mp_type_dict))
+            return MP_OBJ_TO_PTR(self_in);
+        else nlr_raise(
+                mp_obj_new_exception_msg_varg(
+                    &mp_type_SyntaxError, "Cannot convert '%s' to pointer!", mp_obj_get_type_str(self_in)));
+    }
+
+    if (MP_OBJ_IS_STR_OR_BYTES(self_in) || 
+        MP_OBJ_IS_TYPE(self_in, &mp_type_bytearray) ||
+        MP_OBJ_IS_TYPE(self_in, &mp_type_memoryview))
+            return buffer_info.buf;
+    else
+    {
+        void *result;
+        if (buffer_info.len != sizeof(result) || buffer_info.typecode != BYTEARRAY_TYPECODE){
+            nlr_raise(
+                mp_obj_new_exception_msg_varg(
+                    &mp_type_SyntaxError, "Cannot convert %s to pointer! (buffer does not represent a pointer)", mp_obj_get_type_str(self_in)));
+        }
+        memcpy(&result, buffer_info.buf, sizeof(result));
+        return result;
+    }
+}
 
 
 #endif // MICROPY_INCLUDED_SHARED_BINDINGS_UTIL_H

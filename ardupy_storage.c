@@ -311,7 +311,7 @@ MP_NOINLINE  bool init_flash_fs() {
         // HINT: DON'T USE THE STACK BUFFER, IS MAYBE RESULT STACK OVERFLOW.
         // no filesystem, or asked to reset it, so create a fresh one 
         uint8_t * working_buf = m_new(uint8_t, FF_MAX_SS);
-        res = f_mkfs(&vfs_fat->fatfs, FM_FAT, 0, working_buf, FF_MAX_SS);
+        res = f_mkfs(&vfs_fat->fatfs, FM_FAT | FM_SFD, 0, working_buf, FF_MAX_SS);
         if (res != FR_OK) {
             printf("MPY: can't create flash filesystem\n");
             return false;

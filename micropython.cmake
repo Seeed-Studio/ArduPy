@@ -14,8 +14,9 @@ include_directories(${MP}
 FILE(GLOB_RECURSE MICROPYTHON_SRC
     "${MP}/py/*.c"
     "${CMAKE_CURRENT_LIST_DIR}/shared-bindings/*.c"
-    "${CMAKE_CURRENT_LIST_DIR}/common-hal/*.c"
-    "${CMAKE_CURRENT_LIST_DIR}/common-hal/*.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/shared-bindings/*.cpp"
+#     "${CMAKE_CURRENT_LIST_DIR}/common-hal/*.c"
+#     "${CMAKE_CURRENT_LIST_DIR}/common-hal/*.cpp"
 )
  
 set(MICROPYTHON_SRC ${MICROPYTHON_SRC}             
@@ -65,6 +66,7 @@ set(MICROPYTHON_SRC ${MICROPYTHON_SRC}
         # ${CMAKE_CURRENT_LIST_DIR}/shared-bindings/mod_utime.c
         # ${CMAKE_CURRENT_LIST_DIR}/shared-bindings/mod_ardupy.c
         ${CMAKE_CURRENT_LIST_DIR}/ardupy_storage.c
+        ${CMAKE_CURRENT_LIST_DIR}/frozen/_frozen_mpy.c
         )
 
 set(micropython_CFLAGS
@@ -89,6 +91,12 @@ set(micropython_CFLAGS
         -Os
         ) 
 
+if ("${BOARD}" STREQUAL "wio_terminal")
+   set(micropython_CFLAGS
+        ${micropython_CFLAGS}
+        -I${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD
+   )
+endif()
 
 
 #TODO: verify that this works
@@ -101,9 +109,7 @@ set_source_files_properties(${MICROPYTHON_SRC} PROPERTIES COMPILE_FLAGS "'-DFFCO
 #target_compile_options(micropython PRIVATE ${micropython_CFLAGS})
 #target_compile_definitions(micropython PRIVATE FFCONF_H=\"${MP}/lib/oofatfs/ffconf.h\")
 set(MPY_LIST
-    "${CMAKE_CURRENT_LIST_DIR}/frozen/adafruit_bus_device/i2c_device.mpy"
-    "${CMAKE_CURRENT_LIST_DIR}/frozen/adafruit_bus_device/__init__.mpy"
-    "${CMAKE_CURRENT_LIST_DIR}/frozen/adafruit_bus_device/spi_device.mpy"
+    "${CMAKE_CURRENT_LIST_DIR}/frozen/seeed_device/__init__.mpy"
 )
 add_custom_command(OUTPUT ${GENHDR}/qstrdefs.generated.h
         COMMAND echo "=======================start========================="
@@ -117,12 +123,10 @@ add_custom_command(OUTPUT ${GENHDR}/qstrdefs.generated.h
         COMMAND python3 ${MP}/py/makeqstrdata.py ${GENHDR}/qstrdefs.preprocessed.h > ${GENHDR}/qstrdefs.generated.h
         COMMAND make -C ${MP}/mpy-cross
         # COMMAND cd ${CMAKE_CURRENT_LIST_DIR}/frozen
-        # COMMAND ${MP}/mpy-cross/mpy-cross -march=armv7m adafruit_bus_device/i2c_device.py
-        # COMMAND ${MP}/mpy-cross/mpy-cross -march=armv7m adafruit_bus_device/__init__.py
-        # COMMAND ${MP}/mpy-cross/mpy-cross -march=armv7m adafruit_bus_device/spi_device.py
+        # COMMAND ${MP}/mpy-cross/mpy-cross -march=armv7m seeed_device/__init__.py
         # COMMAND cd -
         COMMAND python3  ${MP}/tools/mpy-tool.py -f -q  ${GENHDR}/qstrdefs.preprocessed.h  ${MPY_LIST}  > ${CMAKE_CURRENT_LIST_DIR}/frozen/_frozen_mpy.c
         COMMAND echo "=======================end========================="
         DEPENDS ${MICROPYTHON_SRC}  ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h
         )
-set(MICROPYTHON_SRC ${MICROPYTHON_SRC}   ${CMAKE_CURRENT_LIST_DIR}/frozen/_frozen_mpy.c)
+        
