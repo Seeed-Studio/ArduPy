@@ -763,7 +763,7 @@ const mp_rom_map_elem_t lcd_locals_dict_table[] = {
     {MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&lcd_deinit_obj)},
     {MP_ROM_QSTR(MP_QSTR___enter__), MP_ROM_PTR(&default___enter___obj)},
     {MP_ROM_QSTR(MP_QSTR___exit__), MP_ROM_PTR(&lcd_obj___exit___obj)},
-    {MP_ROM_QSTR(MP_QSTR_fillSreen), MP_ROM_PTR(&lcd_fillScreen_obj)},
+    {MP_ROM_QSTR(MP_QSTR_fillScreen), MP_ROM_PTR(&lcd_fillScreen_obj)},
     {MP_ROM_QSTR(MP_QSTR_setRotation), MP_ROM_PTR(&lcd_setRotation_obj)},
     {MP_ROM_QSTR(MP_QSTR_getRotation), MP_ROM_PTR(&lcd_getRotation_obj)},
     {MP_ROM_QSTR(MP_QSTR_inverDisplay), MP_ROM_PTR(&lcd_invertDisplay_obj)},

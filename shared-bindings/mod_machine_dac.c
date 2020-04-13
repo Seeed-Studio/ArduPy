@@ -78,7 +78,7 @@ STATIC mp_obj_t mdac_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
 STATIC void mdac_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind)
 {
     mdac_obj_t *self = self_in;
-    mp_printf(print, "DAC(Arduino Pin(%u))", self->id);
+    mp_printf(print, "DAC(Pin(%u))", self->id);
 }
 
 STATIC mp_obj_t mdac_resolution(mp_obj_t self_in, mp_obj_t value_in)

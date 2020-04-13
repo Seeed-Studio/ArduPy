@@ -128,28 +128,16 @@ extern void mp_hal_delay_us(mp_uint_t ms) ;
 
 
 #define    ADC_A0 (13ul) 
-#define    ADC_A1 (25ul) 
+#define    ADC_A1 (15ul) 
 #define    ADC_A2 (16ul)  
 #define    ADC_A3 (18ul)  
 #define    ADC_A4 (22ul)  
 #define    ADC_A5 (32ul)  
 #define    ADC_A6 (33ul)  
-#define    ADC_A7 (16ul)  
+#define    ADC_A7 (36ul)  
 #define    ADC_A8 (37ul)   
 
 #define    DAC0 (11ul) 
 #define    DAC1 (26ul) 
-
-#define PWM0 (23ul) 
-#define PWM1 (25ul) 
-#define PWM2 (3ul) 
-#define PWM3 (5ul) 
-#define PWM4 (37ul) 
-#define PWM5 (41ul) 
-#define PWM6 (42ul) 
-#define PWM7 (43ul) 
-#define PWM8 (44ul) 
-#define PWM9 (48ul) 
-#define PWM10 (51ul) 
 
 #endif //
