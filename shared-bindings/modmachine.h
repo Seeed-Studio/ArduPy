@@ -14,7 +14,7 @@ extern const mp_obj_type_t machine_pin_type;
 extern const mp_obj_type_t machine_adc_type;
 extern const mp_obj_type_t machine_dac_type;
 extern const mp_obj_type_t machine_pwm_type;
-#ifndef LCD_SUPPORT
+#ifdef LCD_SUPPORT
 extern const mp_obj_type_t machine_lcd_type;
 #endif
 
