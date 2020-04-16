@@ -30,7 +30,6 @@ extern const mp_obj_module_t ardupy_module;
 extern const mp_obj_module_t mp_module_uos;
 extern const mp_obj_module_t mp_module_utime;
 
-
 // additional helper functions exported by the modules
 
 

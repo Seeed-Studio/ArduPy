@@ -37,7 +37,6 @@ Q(/sd)
 Q(/sd/lib)
 Q(/)
 
-
 // The following qstrings not referenced from anywhere in the sources
 Q(CDC)
 Q(flash)
