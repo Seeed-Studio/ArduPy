@@ -108,6 +108,74 @@ extern "C"
     bool common_hal_lcd_getSwapBytes(abstract_module_t *self);
     void common_hal_lcd_pushRect(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, uint16_t *data);
     void common_hal_lcd_readRect(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, uint16_t *data);
+
+    // function fo eSprite
+    void common_hal_eSprite_construct(abstract_module_t *self, abstract_module_t *eTft);
+    void common_hal_eSprite_deinit(abstract_module_t *self);
+    void common_hal_eSprite_fillScreen(abstract_module_t *self, uint32_t color);
+    int16_t common_hal_eSprite_width(abstract_module_t *self);
+    int16_t common_hal_eSprite_height(abstract_module_t *self);
+    void common_hal_eSprite_setRotation(abstract_module_t *self, uint8_t r);
+    void common_hal_eSprite_invertDisplay(abstract_module_t *self, bool i);
+    void common_hal_eSprite_drawPixel(abstract_module_t *self, int32_t x, int32_t y, uint32_t color);
+    void common_hal_eSprite_setTextFont(abstract_module_t *self, uint8_t font);
+    uint8_t common_hal_eSprite_getTextFont(abstract_module_t *self);
+    void common_hal_eSprite_drawChar(abstract_module_t *self, uint16_t uniCode, int32_t x, int32_t y, uint8_t font);
+    void common_hal_eSprite_drawString(abstract_module_t *self, const char *string, int32_t poX, int32_t poY, uint8_t font);
+    void common_hal_eSprite_drawCentreString(abstract_module_t *self, const char *string, int32_t dX, int32_t poY, uint8_t font);
+    void common_hal_eSprite_drawRightString(abstract_module_t *self, const char *string, int32_t dX, int32_t poY, uint8_t font);
+    void common_hal_eSprite_drawNumber(abstract_module_t *self, long long_num, int32_t poX, int32_t poY, uint8_t font);
+    void common_hal_eSprite_drawFloat(abstract_module_t *self, float floatNumber, uint8_t decimal, int32_t poX, int32_t poY, uint8_t font);
+    int16_t common_hal_eSprite_fontHeight(abstract_module_t *self, uint8_t font);
+    int16_t common_hal_eSprite_textWidth(abstract_module_t *self, const char *string, uint8_t font);
+    int16_t common_hal_eSprite_fontHeight(abstract_module_t *self, uint8_t font);
+    void common_hal_eSprite_setTextColor(abstract_module_t *self, uint16_t fgcolor, uint16_t bgcolor);
+    void common_hal_eSprite_setTextSize(abstract_module_t *self, uint8_t size);
+    void common_hal_eSprite_setTextWrap(abstract_module_t *self, boolean wrapX, boolean wrapY);
+    void common_hal_eSprite_setTextDatum(abstract_module_t *self, uint8_t datum);
+    void common_hal_eSprite_setTextPadding(abstract_module_t *self, uint16_t x_width);
+    uint8_t common_hal_eSprite_getRotation(abstract_module_t *self);
+    uint8_t common_hal_eSprite_getTextDatum(abstract_module_t *self);
+    void common_hal_eSprite_drawLine(abstract_module_t *self, int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint32_t color);
+    void common_hal_eSprite_drawFastVLine(abstract_module_t *self, int32_t x, int32_t y, int32_t h, uint32_t color);
+    void common_hal_eSprite_drawFastHLine(abstract_module_t *self, int32_t x, int32_t y, int32_t w, uint32_t color);
+    void common_hal_eSprite_fillRect(abstract_module_t *self, int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color);
+    void common_hal_eSprite_drawRect(abstract_module_t *self, int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color);
+    void common_hal_eSprite_drawRoundRect(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, int32_t radius, uint32_t color);
+    void common_hal_eSprite_fillRoundRect(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, int32_t radius, uint32_t color);
+    void common_hal_eSprite_drawCircle(abstract_module_t *self, int32_t x0, int32_t y0, int32_t r, uint32_t color);
+    void common_hal_eSprite_drawCircleHelper(abstract_module_t *self, int32_t x0, int32_t y0, int32_t r, uint8_t cornername, uint32_t color);
+    void common_hal_eSprite_fillCircle(abstract_module_t *self, int32_t x0, int32_t y0, int32_t r, uint32_t color);
+    void common_hal_eSprite_fillCircleHelper(abstract_module_t *self, int32_t x0, int32_t y0, int32_t r, uint8_t cornername, int32_t delta, uint32_t color);
+    void common_hal_eSprite_drawEllipse(abstract_module_t *self, int16_t x0, int16_t y0, int32_t rx, int32_t ry, uint16_t color);
+    void common_hal_eSprite_fillEllipse(abstract_module_t *self, int16_t x0, int16_t y0, int32_t rx, int32_t ry, uint16_t color);
+    void common_hal_eSprite_drawTriangle(abstract_module_t *self, int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color);
+    void common_hal_eSprite_fillTriangle(abstract_module_t *self, int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color);
+    uint16_t common_hal_eSprite_color565(abstract_module_t *self, uint8_t red, uint8_t green, uint8_t blue);
+    uint16_t common_hal_eSprite_color8to16(abstract_module_t *self, uint8_t color332);
+    uint16_t common_hal_eSprite_color16to8(abstract_module_t *self, uint8_t color565);
+    uint16_t common_hal_eSprite_getPivotX(abstract_module_t *self);
+    uint16_t common_hal_eSprite_getPivotY(abstract_module_t *self);
+    uint16_t common_hal_eSprite_getCursorX(abstract_module_t *self);
+    uint16_t common_hal_eSprite_getCursorY(abstract_module_t *self);
+    void common_hal_eSprite_setPivot(abstract_module_t *self, int16_t x, int16_t y);
+    void common_hal_eSprite_setCursor(abstract_module_t *self, int16_t x, int16_t y, uint8_t font);
+    void common_hal_eSprite_pushImage(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, uint16_t *data);
+    void common_hal_eSprite_setSwapBytes(abstract_module_t *self, bool swap);
+    bool common_hal_eSprite_getSwapBytes(abstract_module_t *self);
+    void common_hal_eSprite_pushRect(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, uint16_t *data);
+    void common_hal_eSprite_readRect(abstract_module_t *self, int32_t x0, int32_t y0, int32_t w, int32_t h, uint16_t *data);
+    void common_hal_eSprite_createSprite(abstract_module_t *self, int16_t width, int16_t height, uint8_t frames);
+    void common_hal_eSprite_deletSprite(abstract_module_t *self);
+    void *common_hal_eSprite_frameBuffer(abstract_module_t *self, int8_t f);
+    void *common_hal_eSprite_setColorDepth(abstract_module_t *self, int8_t b);
+    int8_t common_hal_eSprite_getColorDepth(abstract_module_t *self);
+    void common_hal_eSprite_setBitmapColor(abstract_module_t *self, int16_t c, uint16_t b);
+    void common_hal_eSprite_fillSprite(abstract_module_t *self, uint32_t color);
+    uint16_t common_hal_eSprite_readPixel(abstract_module_t *self, int32_t x0, int32_t y0);
+    void common_hal_eSprite_pushSprite1(abstract_module_t *self,int32_t x, int32_t y);
+    void common_hal_eSprite_pushSprite2(abstract_module_t *self, int32_t x, int32_t y, uint16_t transparent);
+
 #ifdef __cplusplus
 }
 #endif

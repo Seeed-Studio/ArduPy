@@ -16,6 +16,7 @@ extern const mp_obj_type_t machine_dac_type;
 extern const mp_obj_type_t machine_pwm_type;
 #ifdef LCD_SUPPORT
 extern const mp_obj_type_t machine_lcd_type;
+extern const mp_obj_type_t machine_eSprite_type;
 #endif
 
 
