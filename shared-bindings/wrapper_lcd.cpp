@@ -254,7 +254,7 @@ extern "C"
     {
         return tft.color8to16(color332);
     }
-    uint16_t common_hal_lcd_color16to8(abstract_module_t *self, uint8_t color565)
+    uint16_t common_hal_lcd_color16to8(abstract_module_t *self, uint16_t color565)
     {
         return tft.color16to8(color565);
     }
@@ -560,7 +560,7 @@ extern "C"
     {
         return tft_eSprite.color8to16(color332);
     }
-    uint16_t common_hal_eSprite_color16to8(abstract_module_t *self, uint8_t color565)
+    uint16_t common_hal_eSprite_color16to8(abstract_module_t *self, uint16_t color565)
     {
         return tft_eSprite.color16to8(color565);
     }

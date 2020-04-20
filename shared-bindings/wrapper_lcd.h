@@ -96,7 +96,7 @@ extern "C"
     void common_hal_lcd_fillTriangle(abstract_module_t *self, int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color);
     uint16_t common_hal_lcd_color565(abstract_module_t *self, uint8_t red, uint8_t green, uint8_t blue);
     uint16_t common_hal_lcd_color8to16(abstract_module_t *self, uint8_t color332);
-    uint16_t common_hal_lcd_color16to8(abstract_module_t *self, uint8_t color565);
+    uint16_t common_hal_lcd_color16to8(abstract_module_t *self, uint16_t color565);
     uint16_t common_hal_lcd_getPivotX(abstract_module_t *self);
     uint16_t common_hal_lcd_getPivotY(abstract_module_t *self);
     uint16_t common_hal_lcd_getCursorX(abstract_module_t *self);
@@ -153,7 +153,7 @@ extern "C"
     void common_hal_eSprite_fillTriangle(abstract_module_t *self, int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color);
     uint16_t common_hal_eSprite_color565(abstract_module_t *self, uint8_t red, uint8_t green, uint8_t blue);
     uint16_t common_hal_eSprite_color8to16(abstract_module_t *self, uint8_t color332);
-    uint16_t common_hal_eSprite_color16to8(abstract_module_t *self, uint8_t color565);
+    uint16_t common_hal_eSprite_color16to8(abstract_module_t *self, uint16_t color565);
     uint16_t common_hal_eSprite_getPivotX(abstract_module_t *self);
     uint16_t common_hal_eSprite_getPivotY(abstract_module_t *self);
     uint16_t common_hal_eSprite_getCursorX(abstract_module_t *self);
