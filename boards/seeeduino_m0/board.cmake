@@ -43,15 +43,16 @@ set(BOARD_SRC ${BOARD_SRC}
 )
 set(BOARD_DEF   -DF_CPU=48000000L 
                 -DARDUINO=10809 
-                -DARDUINO_SAMD_ZERO 
+                -DARDUINO_SEEED_XIAO_M0
                 -DARDUINO_ARCH_SAMD 
                 -D__SAMD21G18A__ 
                 -DUSB_VID=0x2341 
                 -DUSB_PID=0x804d 
                 -DUSBCON 
                 -DSEEEDUINO_MO
-                -DUSB_MANUFACTURER="Arduino LLC" 
-                -DUSB_PRODUCT="Arduino Zero")
+                -DUSB_CONFIG_POWER=100 
+                -DUSB_MANUFACTURER="Seeed"
+                -DUSB_PRODUCT="Seeed XIAO M0")
 # definitions in macros
 add_definitions(${BOARD_DEF})
 
