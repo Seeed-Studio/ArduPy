@@ -46,8 +46,8 @@ set(BOARD_DEF   -DF_CPU=48000000L
                 -DARDUINO_SEEED_XIAO_M0
                 -DARDUINO_ARCH_SAMD 
                 -D__SAMD21G18A__ 
-                -DUSB_VID=0x2341 
-                -DUSB_PID=0x804d 
+                -DUSB_VID=0x2886
+		-DUSB_PID=0x802F 
                 -DUSBCON 
                 -DSEEEDUINO_MO
                 -DUSB_CONFIG_POWER=100 

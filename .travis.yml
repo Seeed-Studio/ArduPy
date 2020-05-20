@@ -31,9 +31,9 @@ script:
   - mkdir -p build && cd  build
   - |
     if [ "$BOARD" == "Seeeduino:samd:zero" ]; then
-      cmake ../ -DARDUINO_CORE_PATH=$HOME/.arduino15/packages/Seeeduino/hardware/samd/$COREVER -DTOOLCHAIN=$HOME/.arduino15/packages/Seeeduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/bin -DBOARD=seeeduino_m0 -DARDUINO_VERIANT=arduino_zero 
+      cmake ../ -DARDUINO_CORE_PATH=$HOME/.arduino15/packages/Seeeduino/hardware/samd/$COREVER -DTOOLCHAIN=$HOME/.arduino15/packages/Seeeduino/tools/arm-none-eabi-gcc/7-2017q4/bin -DBOARD=seeeduino_m0 -DARDUINO_VERIANT=XIAO_m0
     elif [ "$BOARD" == "Seeeduino:samd:seeed_wio_terminal" ]; then
-      cmake ../ -DARDUINO_CORE_PATH=$HOME/.arduino15/packages/Seeeduino/hardware/samd/$COREVER -DTOOLCHAIN=$HOME/.arduino15/packages/Seeeduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/bin -DBOARD=wio_terminal -DARDUINO_VERIANT=wio_terminal
+      cmake ../ -DARDUINO_CORE_PATH=$HOME/.arduino15/packages/Seeeduino/hardware/samd/$COREVER -DTOOLCHAIN=$HOME/.arduino15/packages/Seeeduino/tools/arm-none-eabi-gcc/7-2017q4/bin -DBOARD=wio_terminal -DARDUINO_VERIANT=wio_terminal
     fi
   - make
   
