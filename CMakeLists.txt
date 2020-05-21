@@ -143,10 +143,6 @@ INSTALL (
     DESTINATION ArduPy/MicroPython
     FILES_MATCHING PATTERN "*.h*")
 
-INSTALL (
-    DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/boards
-    DESTINATION ArduPy/
-    FILES_MATCHING PATTERN "*.h*")
 
 INSTALL (
         DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/shared-bindings
@@ -169,11 +165,16 @@ install(FILES   ${CMAKE_CURRENT_LIST_DIR}/MicroPython/mpy-cross/mpy-cross
 #             DESTINATION  Seeeduino/tools
 #             )
 
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/boards
+              DESTINATION ArduPy
+              FILES_MATCHING PATTERN "*.h*"
+                             PATTERN "*.ld" EXCLUDE
+              )
+
 install(FILES ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h
-                ${CMAKE_CURRENT_LIST_DIR}/mpconfigboard_common.h
-                ${CMAKE_CURRENT_LIST_DIR}/portmodules.h
-                ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}/flash_with_bootloader.ld
-              DESTINATION ArduPy/boards/${BOARD})
+              ${CMAKE_CURRENT_LIST_DIR}/mpconfigboard_common.h
+              ${CMAKE_CURRENT_LIST_DIR}/portmodules.h
+            DESTINATION ArduPy)
 
 install(FILES   ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/qstr.c
                 ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/parse.c
