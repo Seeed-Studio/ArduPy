@@ -15,8 +15,9 @@ include_directories(${ARDUINO_CORE_PATH}/libraries/USBHost/src)
 include_directories(${ARDUINO_CORE_PATH}/libraries/SAMD_AnalogCorrection/src)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA)
 include_directories(${ARDUINO_CMSIS_PATH}/CMSIS/Include)
-include_directories(${ARDUINO_CORE_PATH}/cores/arduino/Adafruit_TinyUSB_Core)
-include_directories(${ARDUINO_CORE_PATH}/cores/arduino/Adafruit_TinyUSB_Core/tinyusb/src)
+include_directories(${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB)
+include_directories(${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore/)
+include_directories(${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore/tinyusb/src)
 include_directories(${ARDUINO_CMSIS_ATMEL_PATH})
 include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/Extensions)
@@ -44,6 +45,7 @@ add_source_files(
         ${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/TFT_eSPI.cpp
         ${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/TFT_Interface.cpp
 )
+
 
 set(BOARD_SRC ${BOARD_SRC}  
         ${ARDUPY_BOARD_PATH}/mphalport.c
