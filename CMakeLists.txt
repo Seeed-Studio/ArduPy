@@ -35,11 +35,11 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros.internal.cmake)
 
 
 include_directories(${ARDUINO_CORE_PATH}/cores/arduino)
-include_directories(${ARDUINO_CORE_PATH}/cores/arduino/Adafruit_TinyUSB_Core/tinyusb/src/)
-include_directories(${ARDUINO_CORE_PATH}/cores/arduino/Adafruit_TinyUSB_Core/)
+# include_directories(${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB/Adafruit_TinyUSB_Core/tinyusb/src/)
+# include_directories(${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB/Adafruit_TinyUSB_Core/)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Wire)
 include_directories(${ARDUINO_CORE_PATH}/libraries/SPI)
-include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD)
+# include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA)
 include_directories(${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT})
 
@@ -168,8 +168,13 @@ install(FILES   ${CMAKE_CURRENT_LIST_DIR}/MicroPython/mpy-cross/mpy-cross
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/boards
               DESTINATION ArduPy
               FILES_MATCHING PATTERN "*.h*"
-                             PATTERN "*.ld" EXCLUDE
               )
+
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/boards
+                DESTINATION ArduPy
+                FILES_MATCHING PATTERN "*.ld*"
+        )
+
 
 install(FILES ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h
               ${CMAKE_CURRENT_LIST_DIR}/mpconfigboard_common.h
