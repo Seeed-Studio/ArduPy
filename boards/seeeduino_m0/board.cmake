@@ -19,7 +19,9 @@ include_directories(${ARDUPY_BOARD_PATH}/asf4/hpl/pm)
 include_directories(${ARDUPY_BOARD_PATH}/asf4/samd21a/include)
 include_directories(${ARDUPY_BOARD_PATH}/asf4/hri)
 include_directories(${ARDUPY_BOARD_PATH}/asf4/config)
-
+include_directories(${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB)
+include_directories(${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore/)
+include_directories(${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore/tinyusb/src)
 
 
 add_source_files(

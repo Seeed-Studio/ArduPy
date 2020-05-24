@@ -152,6 +152,7 @@ INSTALL (
 
 install(FILES ${CMAKE_BINARY_DIR}/libmicropython.a  
                 ${ARDUINO_CMSIS_PATH}/CMSIS/Lib/GCC/libarm_cortexM4lf_math.a
+                ${ARDUINO_CMSIS_PATH}/CMSIS/Lib/GCC/libarm_cortexM0l_math.a
                         DESTINATION ArduPy/lib)
 
 

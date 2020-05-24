@@ -27,8 +27,9 @@
 #ifndef MICROPY_ARDUPY_HAL_PORT_H
 #define MICROPY_ARDUPY_HAL_PORT_H
 
-
+#ifdef ARDUINO
 #include "Arduino.h"
+#endif
 #include "mpconfigport.h"
 
 //#define TOTAL_INTERNAL_FLASH_SIZE 0x010000  //64k
