@@ -32,6 +32,6 @@ mkdir -p ${work_pwd}/deploy/Seeeduino/tools/genhdr/wio_terminal
 cp -rf $tmp_dir/usr/local/Seeeduino/tools/genhdr/* ${work_pwd}/deploy/Seeeduino/tools/genhdr/wio_terminal
 
 cd ${work_pwd}/deploy/
-tar -jcvf  ardupy-core-${version}.tar.bz2 ArduPy  Seeeduino
+tar -jcf  ardupy-core-${version}.tar.bz2 ArduPy  Seeeduino
 
 rm -rf ArduPy  Seeeduino

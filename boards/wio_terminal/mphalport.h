@@ -123,7 +123,7 @@ extern void mp_hal_delay_us(mp_uint_t ms) ;
 #define   GPIO_NUM_58   WIO_5S_UP
 #define   GPIO_NUM_59   WIO_5S_LEFT
 #define   GPIO_NUM_60   WIO_5S_RIGHT
-#define   GPIO_NUM_61   WIO_5S_DOWM
+#define   GPIO_NUM_61   WIO_5S_DOWN
 #define   GPIO_NUM_62   WIO_5S_PRESS
 
 
