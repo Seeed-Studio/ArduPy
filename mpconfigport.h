@@ -12,11 +12,11 @@
 #define MICROPY_HW_ENABLE_STORAGE (1)
 #define MICROPY_HW_HAS_FLASH    (1)
 #define FILESYSTEM_BLOCK_SIZE       (512)
-#define MICROPY_FATFS_MULTI_PARTITION  (1)
+//#define MICROPY_FATFS_MULTI_PARTITION  (1)
 #define MICROPY_FATFS_USE_LABEL        (1)
 #define MICROPY_FATFS_ENABLE_LFN            (1)
 #define MICROPY_FATFS_RPATH                 (2)
-#define MICROPY_FATFS_MAX_SS                (4096)
+//#define MICROPY_FATFS_MAX_SS                (4096)
 #define MICROPY_FATFS_LFN_CODE_PAGE         437 /* 1=SFN/ANSI 437=LFN/U.S.(OEM) */
 #define MICROPY_VFS                         (1)
 #define MICROPY_VFS_FAT                     (1)

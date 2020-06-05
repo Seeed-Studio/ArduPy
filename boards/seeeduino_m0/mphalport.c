@@ -117,11 +117,8 @@ int32_t board_flash_write(const volatile void *flash_ptr, const void *data, uint
     }
 
     error_code = flash_append(&FLASH_0, flash_ptr, data, FILESYSTEM_BLOCK_SIZE);
-    if (error_code != 0) {
-        return error_code;
-    }
-
-    return true;
+  
+    return error_code;
 }
 
 int32_t board_flash_read(const volatile void *flash_ptr, void *data, uint32_t size) {
