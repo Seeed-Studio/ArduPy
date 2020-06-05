@@ -204,31 +204,6 @@ void ardupy_flash_init_vfs(fs_user_mount_t *vfs)
     vfs->u.ioctl[1] = MP_OBJ_FROM_PTR(&ardupy_flash_obj);
 }
 
-//STATIC fs_user_mount_t fs_user_mount_flash;
-// static const char fresh_boot_py[] = "# boot.py -- run on boot-up\r\n"
-//                                     "# can run arbitrary Python, but best to keep it minimal\r\n"
-//                                     "\r\n"
-//                                     "import machine\r\n"
-//                                     "import ardupy\r\n"
-//                                     "#ardupy.main('main.py') # main script to run after this one\r\n";
-
-// static const char fresh_main_py[] = "# main.py -- put your code here!\r\n";
-
-// static const char fresh_pybcdc_inf[] = "#include \"genhdr/pybcdc_inf.h\"";
-
-// static const char fresh_readme_txt[] = "This is a Ardupy board\r\n"
-//                                        "\r\n"
-//                                        "You can get started right away by writing your Python code in 'main.py'.\r\n"
-//                                        "\r\n"
-//                                        "For a serial prompt:\r\n"
-//                                        " - Windows: you need to go to 'Device manager', right click on the unknown device,\r\n"
-//                                        "   then update the driver software, using the 'pybcdc.inf' file found on this drive.\r\n"
-//                                        "   Then use a terminal program like Hyperterminal or putty.\r\n"
-//                                        " - Mac OS X: use the command: screen /dev/tty.usbmodem*\r\n"
-//                                        " - Linux: use the command: screen /dev/ttyACM0\r\n"
-//                                        "\r\n"
-//                                        "Please visit http://micropython.org/help/ for further help.\r\n";
-
 static void make_empty_file(FATFS *fatfs, const char *path)
 {
     FIL fp;
@@ -248,12 +223,6 @@ MP_NOINLINE bool init_flash_fs()
     vfs_fat->flags = 0;
     storage_init();
     ardupy_flash_init_vfs(vfs_fat);
-
-    // char * test = "1234567890";
-    // char dd[32];
-    // storage_write_blocks(test, 63, 1);
-    // storage_read_blocks(dd,63,1);
-    // printf("%s\n",dd);
 
     // try to mount the flash
     FRESULT res = f_mount(&vfs_fat->fatfs);
@@ -278,10 +247,7 @@ MP_NOINLINE bool init_flash_fs()
             return false;
         }
 
-        //f_mkdir(&vfs_fat->fatfs, "/.fseventsd");
         make_empty_file(&vfs_fat->fatfs, "/main.py");
-        // make_empty_file(&vfs_fat->fatfs, "/.Trashes");
-        // make_empty_file(&vfs_fat->fatfs, "/.fseventsd/no_log");
     }
     else if (res == FR_OK)
     {
@@ -310,20 +276,6 @@ MP_NOINLINE bool init_flash_fs()
     // The current directory is used as the boot up directory.
     // It is set to the internal flash filesystem by default.
     MP_STATE_PORT(vfs_cur) = vfs;
-
-    // // Make sure we have a /flash/boot.py.  Create it if needed.
-    // FILINFO fno;
-    // res = f_stat(&vfs_fat->fatfs, "/boot.py", &fno);
-    // if (res != FR_OK) {
-    //     // // doesn't exist, create fresh file
-    //     // FIL fp;
-    //     // f_open(&vfs_fat->fatfs, &fp, "/boot.py", FA_WRITE | FA_CREATE_ALWAYS);
-    //     // UINT n;
-    //     // f_write(&fp, fresh_boot_py, sizeof(fresh_boot_py) - 1 /* don't count null terminator */, &n);
-    //     // // TODO check we could write n bytes
-    //     // f_close(&fp);
-    //      make_empty_file(&vfs_fat->fatfs,"/flash/boot.py");
-    // }
 
     return true;
 }

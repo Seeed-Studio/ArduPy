@@ -1,22 +1,15 @@
 #include <stdint.h>
-#ifdef SEEEDUINO_MO
-#include "seeeduino_m0_config.h"
-#endif
-#ifdef WIO_TERMINAL
-#include "wio_terminal.h"
-#endif
 #include "mpconfigboard_common.h"
+#include "mpconfigboard.h"
 
 // fatfs configuration
 #define MICROPY_PY_BUILTINS_COMPLEX (1)
 #define MICROPY_HW_ENABLE_STORAGE (1)
 #define MICROPY_HW_HAS_FLASH    (1)
 #define FILESYSTEM_BLOCK_SIZE       (512)
-//#define MICROPY_FATFS_MULTI_PARTITION  (1)
 #define MICROPY_FATFS_USE_LABEL        (1)
 #define MICROPY_FATFS_ENABLE_LFN            (1)
 #define MICROPY_FATFS_RPATH                 (2)
-//#define MICROPY_FATFS_MAX_SS                (4096)
 #define MICROPY_FATFS_LFN_CODE_PAGE         437 /* 1=SFN/ANSI 437=LFN/U.S.(OEM) */
 #define MICROPY_VFS                         (1)
 #define MICROPY_VFS_FAT                     (1)
@@ -76,15 +69,6 @@ typedef uint32_t sys_prot_t; // for modlwip
 extern const struct _mp_obj_module_t ardupy_module;
 extern const struct _mp_obj_module_t mp_module_uos;
 extern const struct _mp_obj_module_t mp_module_utime;
-
-// extern const struct _mp_obj_module_t microcontroller_module;
-// extern const struct _mp_obj_module_t bitbangio_module;
-// extern const struct _mp_obj_module_t analogio_module;
-// extern const struct _mp_obj_module_t digitalio_module;
-// extern const struct _mp_obj_module_t grove_module;
-// extern const struct _mp_obj_module_t pulseio_module;
-// extern const struct _mp_obj_module_t busio_module;
-// extern const struct _mp_obj_module_t board_module;
 extern const struct _mp_obj_module_t math_module;
 extern const struct _mp_obj_module_t random_module;
 extern const struct _mp_obj_module_t uheap_module;
@@ -96,10 +80,8 @@ extern const struct _mp_obj_module_t mp_module_arduino;
 // extern const struct _mp_obj_module_t supervisor_module;
 
 
-
 // dummy print
 #define MP_PLAT_PRINT_STRN(str, len) mp_hal_stdout_tx_strn_cooked(str, len)
-
 
 
 #if MICROPY_PY_URE
