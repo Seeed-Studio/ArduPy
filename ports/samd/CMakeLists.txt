@@ -4,11 +4,10 @@ set(ARM "1")
 
 
 if (NOT BOARD)
-    set(BOARD "seeeduino_m0")
+    message(STATUS "BOARD not set!")
 endif ()
-
 if (NOT ARDUINO_VERIANT)
-    set(ARDUINO_VERIANT "arduino_zero")
+    message(STATUS "ARDUINO_VERIANT not set!")
 endif ()
 # basic config
 if (NOT ARDUINO_CORE_PATH)
@@ -24,7 +23,8 @@ message("BOARD = ${BOARD}")
 message("ARDUINO_VERIANT = ${ARDUINO_VERIANT}")
 message("ARM = ${ARM}")
 
-
+set(ARDUPY_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR}/../..)
+set(ARDUPY_LIB_PATH ${CMAKE_CURRENT_LIST_DIR}/lib)
 set(ARDUPY_BOARD_PATH  ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD})
 cmake_minimum_required(VERSION 3.0)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/common.cmake)
@@ -34,12 +34,10 @@ project(Ardupy C CXX ASM)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros.internal.cmake)
 
 
+include_directories(${ARDUPY_ROOT_PATH}/)
 include_directories(${ARDUINO_CORE_PATH}/cores/arduino)
-# include_directories(${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB/Adafruit_TinyUSB_Core/tinyusb/src/)
-# include_directories(${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB/Adafruit_TinyUSB_Core/)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Wire)
 include_directories(${ARDUINO_CORE_PATH}/libraries/SPI)
-# include_directories(${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA)
 include_directories(${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT})
 
@@ -57,7 +55,6 @@ add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c
                     )
 
 include(${ARDUPY_BOARD_PATH}/board.cmake)
-#include(${CMAKE_CURRENT_LIST_DIR}/ArduinoLibrarys/arduinolib.cmake)
 
 FILE(GLOB_RECURSE ASSEMBLY_FILES
     "${ARDUINO_CORE_PATH}/cores/arduino/*.s"
@@ -70,13 +67,8 @@ SET_SOURCE_FILES_PROPERTIES(${ASSEMBLY_FILES} PROPERTIES COMPILE_FLAGS "-x assem
 include(${CMAKE_CURRENT_LIST_DIR}/micropython.cmake)
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 
-if ("${BOARD}" STREQUAL "seeeduino_m0")      
-    include(./cmake/samd21-executable.cmake)
-endif()
+include(./cmake/samd21-executable.cmake)
 
-if ("${BOARD}" STREQUAL "wio_terminal")      
-    include(./cmake/samd51-executable.cmake)
-endif()
 
 target_sources(${PROJECT_NAME} PUBLIC ${BOARD_SRC}  ${GENHDR}/qstrdefs.generated.h) 
 target_sources(${PROJECT_NAME} PUBLIC ${MICROPYTHON_SRC}  ${GENHDR}/qstrdefs.generated.h) 
@@ -98,9 +90,6 @@ foreach(X ${MICROPYTHON_SRC})
         if ( "${X}" STREQUAL "${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/objmodule.c" )
             continue()
         endif ()      
-        # if ( "${X}" STREQUAL "${CMAKE_CURRENT_LIST_DIR}/frozen/_frozen_mpy.c" )
-        #     continue()
-        # endif ()   
         set(lib_MICROPYTHON_SRC ${lib_MICROPYTHON_SRC} ${X}) 
 endforeach()
 
@@ -108,10 +97,8 @@ message(STATUS  ${lib_MICROPYTHON_SRC})
 message(STATUS  ${MICROPYTHON_SRC})
 
 
-add_library(micropython STATIC ${SOURCE_FILES} ${BOARD_SRC}  ${lib_MICROPYTHON_SRC}  ${GENHDR}/qstrdefs.generated.h)
-# target_link_libraries(micropython  PRIVATE  arm_cortexM4lf_math)
+#add_library(micropython STATIC ${SOURCE_FILES} ${BOARD_SRC}  ${lib_MICROPYTHON_SRC}  ${GENHDR}/qstrdefs.generated.h)
 
-# set(C_LIB ${CMAKE_BINARY_DIR}/libmicropython_m4.a)
 
 # add_custom_command(TARGET micropython POST_BUILD
 #         COMMAND  ${CMAKE_AR}  -x $<TARGET_FILE:micropython>
