@@ -29,7 +29,7 @@ if(${ARM})
     include(${CMAKE_CURRENT_LIST_DIR}/arm-none-toolchain.cmake)
 endif()
 
-if ("${BOARD}" STREQUAL "seeeduino_m0")     
+if ("${BOARD}" STREQUAL "xiao")     
     include(${CMAKE_CURRENT_LIST_DIR}/samd21-compile-flags.cmake)
 endif()
 
