@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "mpconficommon.h"
+#include "mpconfigcommon.h"
 #include "mpconfigboard.h"
 
 // fatfs configuration

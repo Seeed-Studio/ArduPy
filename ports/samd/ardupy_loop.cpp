@@ -129,4 +129,15 @@ extern "C"
     {
         return SerialShow.read();
     }
+    void mp_hal_stdout_tx_strn(const char *str, mp_uint_t len)
+    {
+        if(len)
+	{
+	    SerialShow.write(str, len);
+	}
+    }
+    uintptr_t mp_hal_stdio_poll(uintptr_t poll_flags)
+    {
+        return 0;
+    }
 } // extern "C"
