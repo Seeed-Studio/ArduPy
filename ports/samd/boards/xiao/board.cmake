@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
+set(ARCH "samd21")
+
 set(micropython_CFLAGS 
         ${micropython_CFLAGS}
         -I${ARDUINO_CMSIS_PATH}/CMSIS/Include

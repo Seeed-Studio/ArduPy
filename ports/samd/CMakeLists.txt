@@ -17,12 +17,6 @@ else()
         set(ARDUINO_CMSIS_ATMEL_PATH  ${ARDUINO_CORE_PATH}/../../../tools/CMSIS-Atmel/1.2.1/CMSIS-Atmel/CMSIS/Device/ATMEL)
 endif ()
 
-
-message("MICROPYTHON = ${MICROPYTHON}")
-message("BOARD = ${BOARD}")
-message("ARDUINO_VERIANT = ${ARDUINO_VERIANT}")
-message("ARM = ${ARM}")
-
 set(ARDUPY_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR}/../..)
 set(ARDUPY_LIB_PATH ${CMAKE_CURRENT_LIST_DIR}/lib)
 set(ARDUPY_BOARD_PATH  ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD})
@@ -32,6 +26,12 @@ project(Ardupy C CXX ASM)
 
 # config self use headers
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros.internal.cmake)
+
+message("MICROPYTHON = ${MICROPYTHON}")
+message("BOARD = ${BOARD}")
+message("ARCH = ${ARCH}")
+message("ARDUINO_VERIANT = ${ARDUINO_VERIANT}")
+message("ARM = ${ARM}")
 
 
 include_directories(${ARDUPY_ROOT_PATH}/)
@@ -67,8 +67,20 @@ SET_SOURCE_FILES_PROPERTIES(${ASSEMBLY_FILES} PROPERTIES COMPILE_FLAGS "-x assem
 include(${CMAKE_CURRENT_LIST_DIR}/micropython.cmake)
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 
-include(./cmake/samd21-executable.cmake)
+if(${ARCH} STREQUAL "samd21")
+    include(./cmake/samd21-executable.cmake)
+elseif(${ARCH} STREQUAL "samd51")
+    include(./cmake/samd51-executable.cmake)
+else()
+    message(FATAL_ERROR, "ARCH not set!")
+endif()
 
+
+message("MICROPYTHON = ${MICROPYTHON}")
+message("BOARD = ${BOARD}")
+message("ARCH = ${ARCH}")
+message("ARDUINO_VERIANT = ${ARDUINO_VERIANT}")
+message("ARM = ${ARM}")
 
 target_sources(${PROJECT_NAME} PUBLIC ${BOARD_SRC}  ${GENHDR}/qstrdefs.generated.h) 
 target_sources(${PROJECT_NAME} PUBLIC ${MICROPYTHON_SRC}  ${GENHDR}/qstrdefs.generated.h) 
