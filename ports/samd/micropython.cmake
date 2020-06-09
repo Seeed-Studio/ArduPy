@@ -73,12 +73,11 @@ set(micropython_CFLAGS
         -Wpointer-arith
         -Wuninitialized
         -Wno-unused-label
-        -std=gnu99
         -U_FORTIFY_SOURCE
         -Os
         ) 
 
-if ("${BOARD}" STREQUAL "wio_terminal")
+if ("${MACHINE_LCD}" EQUAL 1)
    set(micropython_CFLAGS
         ${micropython_CFLAGS}
         -I${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD
