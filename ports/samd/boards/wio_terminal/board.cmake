@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 set(ARCH "samd51")
+set(MACHINE_LCD 1)
 
 set(micropython_CFLAGS 
         ${micropython_CFLAGS}
@@ -9,8 +10,8 @@ set(micropython_CFLAGS
         -I${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA
 )
 
-include_directories(${ARDUPY_BOARD_PATH}/flash)
-include_directories(${ARDUPY_BOARD_PATH}/flash/qspi)
+include_directories(${ARDUPY_LIB_PATH}/flash)
+include_directories(${ARDUPY_LIB_PATH}/flash/qspi)
 include_directories(${ARDUINO_CORE_PATH}/core/arduino/USB)
 include_directories(${ARDUINO_CORE_PATH}/libraries/HID)
 include_directories(${ARDUINO_CORE_PATH}/libraries/USBHost/src)
@@ -58,8 +59,8 @@ set(BOARD_DEF
         -DUSB_VID=0x2886 -DUSB_PID=0x802D 
         -DUSBCON 
         -DUSB_CONFIG_POWER=100 
-        -DUSB_MANUFACTURER=\"Seeed Studio\"
-        -DUSB_PRODUCT=\"Seeed Wio Terminal\"
+        -DUSB_MANUFACTURER="Seeed Studio"
+        -DUSB_PRODUCT="Seeed Wio Terminal"
         -D__FPU_PRESENT 
         -DARM_MATH_CM4 
         -DENABLE_CACHE 
