@@ -50,7 +50,7 @@ set(MICROPYTHON_SRC ${MICROPYTHON_SRC}
         ${MP}/lib/mp-readline/readline.c 
         ${MP}/lib/oofatfs/ff.c 
         ${MP}/lib/oofatfs/ffunicode.c 
-        ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}/irq_it.c
+        ${CMAKE_CURRENT_LIST_DIR}/ardupy_init.c
         ${CMAKE_CURRENT_LIST_DIR}/ardupy_storage.c
         ${CMAKE_CURRENT_LIST_DIR}/frozen/_frozen_mpy.c
         )

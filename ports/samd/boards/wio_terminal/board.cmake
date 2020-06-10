@@ -42,6 +42,7 @@ add_source_files(
         ${ARDUPY_LIB_PATH}/flash/qspi/*.cpp
         ${ARDUPY_LIB_PATH}/tinyUSB/src/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/spi_flash.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/irq_it.c
         # ${ARDUINO_CORE_PATH}/libraries/HID/*.c
         # ${ARDUINO_CORE_PATH}/libraries/HID/*.cpp
         # ${ARDUINO_CORE_PATH}/libraries/USBHost/src/*.c

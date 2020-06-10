@@ -45,43 +45,6 @@ mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
 #include "py/obj.h"
 #include "py/mpstate.h"
 
-volatile int mp_interrupt_char = -1;
-void * pendsv_object;
-
-void print_hex(uint32_t);
-extern int mp_hal_stdin_rx_available(void);
-extern int mp_hal_stdin_rx_peek(void);
-extern int mp_hal_stdin_rx_read(void);
-int mp_hal_get_interrupt_char(){
-    return mp_interrupt_char;
-}
-
-void mp_hal_set_interrupt_char(char c) {
-    if ((signed char)c == -1) {
-        mp_obj_exception_clear_traceback(MP_OBJ_FROM_PTR(&MP_STATE_VM(mp_kbd_exception)));
-    }
-    mp_interrupt_char = (signed char)c;
-}
-
-void mp_keyboard_interrupt(void) {
-    MP_STATE_VM(mp_pending_exception) = MP_OBJ_FROM_PTR(&MP_STATE_VM(mp_kbd_exception));
-    #if MICROPY_ENABLE_SCHEDULER
-    if (MP_STATE_VM(sched_state) == MP_SCHED_IDLE) {
-        MP_STATE_VM(sched_state) = MP_SCHED_PENDING;
-    }
-    #endif
-}
-
-void pendsv_kbd_intr(){
-    if (MP_STATE_VM(mp_pending_exception) == MP_OBJ_NULL) {
-        mp_keyboard_interrupt();
-    } else {
-        MP_STATE_VM(mp_pending_exception) = MP_OBJ_NULL;
-        pendsv_object = &MP_STATE_VM(mp_kbd_exception);
-        SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
-    }
-}
-
 uint32_t get_fattime(void) {
     // TODO: Implement this function. For now, fake it.
     return ((2016 - 1980) << 25) | ((12) << 21) | ((4) << 16) | ((00) << 11) | ((18) << 5) | (23 / 2);
@@ -99,3 +62,5 @@ void mp_hal_delay_ms(mp_uint_t ms) {
 void mp_hal_delay_us(mp_uint_t us) {
     delayMicroseconds(us);
 }
+
+

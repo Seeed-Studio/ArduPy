@@ -53,6 +53,7 @@ add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c
                     ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}/*.c
                     ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}/*.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/ardupy_loop.cpp
+                    ${CMAKE_CURRENT_LIST_DIR}/ardupy_usb.cpp
                     )
 
 include(${ARDUPY_BOARD_PATH}/board.cmake)
