@@ -50,6 +50,7 @@ void mp_hal_init();
 int32_t board_flash_write(const volatile void *flash_ptr, const void *data, uint32_t size);
 int32_t board_flash_read(const volatile void *flash_ptr, void *data, uint32_t size);
 void board_flash_init();
+void board_flash_flush();
 //void NORETURN __fatal_error(const char *msg) ;
 
 

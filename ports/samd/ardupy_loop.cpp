@@ -1,4 +1,8 @@
 #include "Arduino.h"
+#include "Adafruit_TinyUSB.h"
+
+// USB Mass Storage object
+Adafruit_USBD_MSC usb_msc;
 
 void *operator new(size_t bytes, void *memory)
 {
@@ -16,6 +20,20 @@ extern "C"
 #include "py/runtime.h"
 #include "mphalport.h"
 #include "ardupy_storage.h"
+
+    int32_t msc_read_cb(uint32_t lba, void *buffer, uint32_t bufsize)
+    {
+        return storage_read_blocks((uint8_t *)buffer, lba, bufsize / 512)==0? bufsize : -1;
+    }
+    int32_t msc_write_cb(uint32_t lba, uint8_t *buffer, uint32_t bufsize)
+    {
+        return storage_write_blocks((uint8_t *)buffer, lba, bufsize / 512)==0? bufsize : -1;
+    }
+    void msc_flush_cb(void)
+    {
+        storage_flush();
+        SerialShow.println("change");
+    }
 
     int mp_hal_stdin_rx_chr(void);
     int mp_hal_stdin_rx_available(void);
@@ -36,6 +54,18 @@ extern "C"
     }
     void setup()
     {
+        usb_msc.setID("ArduPy", "Storge Flash", "1.0");
+
+        // Set callback
+        usb_msc.setReadWriteCallback(msc_read_cb, msc_write_cb, msc_flush_cb);
+
+        // Set disk size, block size should be 512 regardless of spi flash page size
+        usb_msc.setCapacity(storage_get_block_count(), storage_get_block_size());
+
+        // MSC is ready for read/write
+        usb_msc.setUnitReady(true);
+
+        usb_msc.begin();
         SerialShow.begin(115200);
     }
     void loop()
@@ -131,10 +161,10 @@ extern "C"
     }
     void mp_hal_stdout_tx_strn(const char *str, mp_uint_t len)
     {
-        if(len)
-	{
-	    SerialShow.write(str, len);
-	}
+        if (len)
+        {
+            SerialShow.write(str, len);
+        }
     }
     uintptr_t mp_hal_stdio_poll(uintptr_t poll_flags)
     {

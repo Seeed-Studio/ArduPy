@@ -12,6 +12,7 @@ set(micropython_CFLAGS
 
 include_directories(${ARDUPY_LIB_PATH}/flash)
 include_directories(${ARDUPY_LIB_PATH}/flash/qspi)
+include_directories(${ARDUPY_LIB_PATH}/tinyUSB/src)
 include_directories(${ARDUINO_CORE_PATH}/core/arduino/USB)
 include_directories(${ARDUINO_CORE_PATH}/libraries/HID)
 include_directories(${ARDUINO_CORE_PATH}/libraries/USBHost/src)
@@ -39,7 +40,12 @@ add_source_files(
         ${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD/TFT_Interface.cpp
         ${ARDUPY_LIB_PATH}/flash/*.cpp
         ${ARDUPY_LIB_PATH}/flash/qspi/*.cpp
+        ${ARDUPY_LIB_PATH}/tinyUSB/src/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/spi_flash.cpp
+        # ${ARDUINO_CORE_PATH}/libraries/HID/*.c
+        # ${ARDUINO_CORE_PATH}/libraries/HID/*.cpp
+        # ${ARDUINO_CORE_PATH}/libraries/USBHost/src/*.c
+        # ${ARDUINO_CORE_PATH}/libraries/USBHost/src/*.cpp
 )
 
 
@@ -61,6 +67,7 @@ set(BOARD_DEF
         -DUSB_CONFIG_POWER=100 
         -DUSB_MANUFACTURER="Seeed Studio"
         -DUSB_PRODUCT="Seeed Wio Terminal"
+        -DUSE_TINYUSB
         -D__FPU_PRESENT 
         -DARM_MATH_CM4 
         -DENABLE_CACHE 

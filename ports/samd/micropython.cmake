@@ -65,6 +65,9 @@ set(micropython_CFLAGS
         -I${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA
         -I${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}
         -I${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}
+        -I${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB
+        -I${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore
+        -I${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore/tinyusb/src
         -I${MP}/
         -I${CMAKE_CURRENT_LIST_DIR}
         -I${CMAKE_CURRENT_LIST_DIR}/ArduinoLibrarys

@@ -41,6 +41,7 @@ include_directories(${ARDUINO_CORE_PATH}/libraries/SPI)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA)
 include_directories(${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT})
 
+
 # compile project
 add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c 
                     ${ARDUINO_CORE_PATH}/cores/arduino/*.cpp
@@ -126,15 +127,15 @@ message(STATUS  ${MICROPYTHON_SRC})
 
 INSTALL (
     DIRECTORY ${ARDUINO_CORE_PATH}/../../../hardware
-    DESTINATION Seeeduino
+    DESTINATION Arduino
     FILES_MATCHING PATTERN "*.h*")
     
 INSTALL (
     DIRECTORY ${ARDUINO_CORE_PATH}/../../../tools/CMSIS-Atmel
     DIRECTORY ${ARDUINO_CORE_PATH}/../../../tools/CMSIS
     DIRECTORY ${CMAKE_BINARY_DIR}/genhdr
-    DESTINATION Seeeduino/tools
-    FILES_MATCHING PATTERN "*.h*")
+    DESTINATION Arduino/tools
+    FILES_MATCHING PATTERN "*.[h|a]*")
 
 INSTALL (
     DIRECTORY ${MP}/py
@@ -152,9 +153,7 @@ INSTALL (
     
 
 install(FILES ${CMAKE_BINARY_DIR}/libmicropython.a  
-                ${ARDUINO_CMSIS_PATH}/CMSIS/Lib/GCC/libarm_cortexM4lf_math.a
-                ${ARDUINO_CMSIS_PATH}/CMSIS/Lib/GCC/libarm_cortexM0l_math.a
-                        DESTINATION ArduPy/lib)
+                        DESTINATION ArduPy/boards/${board})
 
 
 install(FILES   ${CMAKE_CURRENT_LIST_DIR}/MicroPython/mpy-cross/mpy-cross
@@ -162,10 +161,11 @@ install(FILES   ${CMAKE_CURRENT_LIST_DIR}/MicroPython/mpy-cross/mpy-cross
                 DESTINATION Seeeduino/tools PERMISSIONS OWNER_EXECUTE OWNER_READ
         )
 
-# install(DIRECTORY  ${ARDUINO_CORE_PATH}/../../../tools/arm-none-eabi-gcc
-#             USE_SOURCE_PERMISSIONS
-#             DESTINATION  Seeeduino/tools
-#             )
+        
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/lib
+              DESTINATION ArduPy
+              FILES_MATCHING PATTERN "*.h*"
+)
 
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/boards
               DESTINATION ArduPy

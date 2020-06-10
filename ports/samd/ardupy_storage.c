@@ -113,7 +113,10 @@ void storage_init(void)
 {
     board_flash_init();
 }
-void storage_flush(void) {}
+void storage_flush(void) 
+{
+    board_flash_flush();
+}
 
 /******************************************************************************/
 // MicroPython bindings

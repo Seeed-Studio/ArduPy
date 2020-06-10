@@ -27,7 +27,6 @@ extern "C"{
         if (len == 0){
             return error;
         }
-        flash.syncBlocks();
         return !error;
     }
     int32_t board_flash_read(const volatile void *flash_ptr, void *data, uint32_t size) {
@@ -38,10 +37,13 @@ extern "C"{
         if (len == 0){
             return error;
         }
-        flash.syncBlocks();
         return !error;
     }
     void board_flash_init() {
         flash.begin();
+    }
+    void board_flash_flush()
+    {
+        flash.syncBlocks();
     }
 }

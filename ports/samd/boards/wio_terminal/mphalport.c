@@ -55,22 +55,6 @@ extern int mp_hal_stdin_rx_read(void);
 int mp_hal_get_interrupt_char(){
     return mp_interrupt_char;
 }
-void usb_invoke(){
-    UDD_Handler();
-
-    int token = mp_hal_get_interrupt_char();
-
-    if (token == -1 || !mp_hal_stdin_rx_available()){
-        return;
-    }
-    if (mp_hal_stdin_rx_read() == token){
-        pendsv_kbd_intr();
-    }
-}
-
-void mp_hal_usb_init(){
-    USB_SetHandler(&usb_invoke);
-}
 
 void mp_hal_set_interrupt_char(char c) {
     if ((signed char)c == -1) {
