@@ -38,3 +38,6 @@
 	path = ArduinoLibrarys/Seeed_Arduino_FS
 	url = https://github.com/Seeed-Studio/Seeed_Arduino_FS
 	branch = dev
+[submodule "ports/samd/lib/tinyUSB"]
+	path = ports/samd/lib/tinyUSB
+	url = https://github.com/adafruit/Adafruit_TinyUSB_Arduino.git
