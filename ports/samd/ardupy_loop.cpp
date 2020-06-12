@@ -68,7 +68,6 @@ extern "C"
             else
             {
                 exit_code = pyexec_friendly_repl();
-                reset();
             }
             if (exit_code == PYEXEC_FORCED_EXIT)
             {
@@ -78,6 +77,7 @@ extern "C"
             {
                 SerialShow.println("exit_code : " + String(exit_code, HEX));
             }
+            reset();
         }
 #endif
         SerialShow.print("soft reboot\r\n");

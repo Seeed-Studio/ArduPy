@@ -7,6 +7,7 @@ extern "C"
 #include "py/mpstate.h"
 #include "ardupy_storage.h"
 #include "lib/mp-readline/readline.h"
+#include "lib/utils/pyexec.h"
 
     void *pendsv_object;
     // USB Mass Storage object
@@ -83,15 +84,18 @@ extern "C"
     void msc_flush_cb(void)
     {
         storage_flush();
+        
     }
 
     void usb_init()
     {
         // Set key interrupt char CHAR_CTRL_C(0x03)
         tud_cdc_set_wanted_char(CHAR_CTRL_C);
+        msc_flush_change = 0;
+        msc_flush_tick = 0;
 
         // Set disk vendor id, product id and revision with string up to 8, 16, 4 characters respectively
-        usb_msc.setID("Seeeduino", "ArduPy", "1.0");
+        usb_msc.setID("Seeed", "Ardupy", "1.0");
 
         // Set callback
         usb_msc.setReadWriteCallback(msc_read_cb, msc_write_cb, msc_flush_cb);
@@ -101,7 +105,7 @@ extern "C"
 
         // MSC is ready for read/write
         usb_msc.setUnitReady(true);
-    
+
         usb_msc.begin();
     }
 }
