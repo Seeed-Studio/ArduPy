@@ -39,9 +39,6 @@
 #define INTERNAL_FLASH_MEM_SEG1_START_ADDR (FLASH_SIZE - TOTAL_INTERNAL_FLASH_SIZE - INTERNAL_NVM_SIZE)
 #define INTERNAL_FLASH_PART1_NUM_BLOCKS (TOTAL_INTERNAL_FLASH_SIZE / FILESYSTEM_BLOCK_SIZE)
 
-// #define INTERNAL_FLASH_SYSTICK_MASK    (0x1ff) // 512ms
-// #define INTERNAL_FLASH_IDLE_TICK(tick) (((tick) & INTERNAL_FLASH_SYSTICK_MASK) == 2)
-
 int  mp_hal_get_interrupt_char();
 void mp_hal_set_interrupt_char(char c);
 void mp_hal_init();

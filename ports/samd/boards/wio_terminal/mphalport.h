@@ -32,16 +32,11 @@
 #endif
 #include "mpconfigport.h"
 
-//#define TOTAL_INTERNAL_FLASH_SIZE 0x010000  //64k
 #define TOTAL_INTERNAL_FLASH_SIZE (4096 * 1024)  //4M
-
-//#define INTERNAL_NVM_SIZE 256
 
 #define INTERNAL_FLASH_MEM_SEG1_START_ADDR (0)
 #define INTERNAL_FLASH_PART1_NUM_BLOCKS (TOTAL_INTERNAL_FLASH_SIZE / FILESYSTEM_BLOCK_SIZE)
 
-// #define INTERNAL_FLASH_SYSTICK_MASK    (0x1ff) // 512ms
-// #define INTERNAL_FLASH_IDLE_TICK(tick) (((tick) & INTERNAL_FLASH_SYSTICK_MASK) == 2)
 
 int32_t board_flash_write(const volatile void *flash_ptr, const void *data, uint32_t size);
 int32_t board_flash_read(const volatile void *flash_ptr, void *data, uint32_t size);
