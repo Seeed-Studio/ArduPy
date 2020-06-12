@@ -91,8 +91,6 @@ extern "C"
     {
         // Set key interrupt char CHAR_CTRL_C(0x03)
         tud_cdc_set_wanted_char(CHAR_CTRL_C);
-        msc_flush_change = 0;
-        msc_flush_tick = 0;
 
         // Set disk vendor id, product id and revision with string up to 8, 16, 4 characters respectively
         usb_msc.setID("Seeed", "Ardupy", "1.0");

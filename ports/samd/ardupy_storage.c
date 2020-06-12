@@ -229,7 +229,7 @@ MP_NOINLINE bool init_flash_fs()
 
     // try to mount the flash
     FRESULT res = f_mount(&vfs_fat->fatfs);
-
+    
     if (res == FR_NO_FILESYSTEM)
     {
         // HINT: DON'T USE THE STACK BUFFER, IS MAYBE RESULT STACK OVERFLOW.

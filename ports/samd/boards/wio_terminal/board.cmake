@@ -12,11 +12,8 @@ set(micropython_CFLAGS
 
 include_directories(${ARDUPY_LIB_PATH}/flash)
 include_directories(${ARDUPY_LIB_PATH}/flash/qspi)
-include_directories(${ARDUPY_LIB_PATH}/tinyusb/src)
+include_directories(${ARDUPY_LIB_PATH}/tinyUSB/src)
 include_directories(${ARDUINO_CORE_PATH}/core/arduino/USB)
-include_directories(${ARDUINO_CORE_PATH}/libraries/HID)
-include_directories(${ARDUINO_CORE_PATH}/libraries/USBHost/src)
-include_directories(${ARDUINO_CORE_PATH}/libraries/SAMD_AnalogCorrection/src)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA)
 include_directories(${ARDUINO_CMSIS_PATH}/CMSIS/Include)
 include_directories(${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB)
@@ -41,13 +38,13 @@ add_source_files(
         ${ARDUPY_LIB_PATH}/flash/*.cpp
         ${ARDUPY_LIB_PATH}/flash/qspi/*.cpp
         ${ARDUPY_LIB_PATH}/tinyUSB/src/*.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/spi_flash.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/irq_it.c
 )
 
 
 set(BOARD_SRC ${BOARD_SRC}  
         ${ARDUPY_BOARD_PATH}/mphalport.c
+        ${CMAKE_CURRENT_LIST_DIR}/irq_it.c
+        ${CMAKE_CURRENT_LIST_DIR}/spi_flash.cpp
 )
 set(BOARD_DEF   
         -DF_CPU=120000000L 

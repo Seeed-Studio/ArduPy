@@ -38,8 +38,8 @@ extern "C"
     }
     void setup()
     {
-        usb_init();
         SerialShow.begin(115200);
+        usb_init();
     }
     void loop()
     {
