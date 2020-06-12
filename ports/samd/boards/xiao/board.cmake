@@ -9,6 +9,7 @@ set(micropython_CFLAGS
 )
 
 include_directories(${ARDUINO_CMSIS_PATH}/CMSIS/Include)
+include_directories(${ARDUPY_LIB_PATH}/tinyusb/src)
 include_directories(${ARDUPY_LIB_PATH}/asf4/hal/include)
 include_directories(${ARDUPY_LIB_PATH}/asf4/hal/utils/include)
 include_directories(${ARDUPY_LIB_PATH}/asf4/hpl/nvmctrl)
@@ -28,9 +29,11 @@ add_source_files(
 
 set(BOARD_SRC ${BOARD_SRC}  
         ${ARDUPY_BOARD_PATH}/mphalport.c
+        ${ARDUPY_LIB_PATH}/tinyUSB/src/*.cpp
         ${ARDUPY_LIB_PATH}/asf4/hal/src/hal_flash.c
         ${ARDUPY_LIB_PATH}/asf4/hpl/nvmctrl/hpl_nvmctrl.c
         ${ARDUPY_LIB_PATH}/asf4/hal/utils/src/utils_assert.c
+        ${CMAKE_CURRENT_LIST_DIR}/irq_it.c
 )
 set(BOARD_DEF   -DF_CPU=48000000L 
                 -DARDUINO=10809 
@@ -43,7 +46,10 @@ set(BOARD_DEF   -DF_CPU=48000000L
                 -DSEEEDUINO_MO
                 -DUSB_CONFIG_POWER=100 
                 -DUSB_MANUFACTURER="Seeed"
-                -DUSB_PRODUCT="Seeed XIAO M0")
+                -DUSB_PRODUCT="Seeed XIAO M0"
+                -DUSE_TINYUSB
+                -Os 
+                )
 # definitions in macros
 add_definitions(${BOARD_DEF})
 
