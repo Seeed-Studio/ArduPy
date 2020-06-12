@@ -112,14 +112,6 @@ STATIC const mp_rom_map_elem_t mdac_locals_dict_table[] = {
     {MP_ROM_QSTR(MP_QSTR_write), MP_ROM_PTR(&mdac_write_obj)},
     {MP_ROM_QSTR(MP_QSTR_resolution), MP_ROM_PTR(&mdac_resolution_obj)},
     {MP_ROM_QSTR(MP_QSTR_reference), MP_ROM_PTR(&mdac_reference_obj)},
-
-// class constants
-#ifdef DAC0
-    {MP_ROM_QSTR(MP_QSTR_DAC0), MP_ROM_INT(DAC0)},
-#endif
-#ifdef DAC1
-    {MP_ROM_QSTR(MP_QSTR_DAC1), MP_ROM_INT(DAC1)}
-#endif
 };
 
 STATIC MP_DEFINE_CONST_DICT(mdac_locals_dict, mdac_locals_dict_table);

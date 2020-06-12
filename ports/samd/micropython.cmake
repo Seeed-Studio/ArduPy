@@ -53,6 +53,7 @@ set(MICROPYTHON_SRC ${MICROPYTHON_SRC}
         ${CMAKE_CURRENT_LIST_DIR}/ardupy_init.c
         ${CMAKE_CURRENT_LIST_DIR}/ardupy_storage.c
         ${CMAKE_CURRENT_LIST_DIR}/frozen/_frozen_mpy.c
+        ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}/mod_machine_map.c
         )
 
 set(micropython_CFLAGS
