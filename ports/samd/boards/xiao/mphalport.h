@@ -32,14 +32,14 @@
 #endif
 #include "mpconfigport.h"
 
-#define TOTAL_INTERNAL_FLASH_SIZE 0xC000  //48K
+#define TOTAL_INTERNAL_FLASH_SIZE 0xC000 //48K
 
 #define INTERNAL_NVM_SIZE 256
 
 #define INTERNAL_FLASH_MEM_SEG1_START_ADDR (FLASH_SIZE - TOTAL_INTERNAL_FLASH_SIZE - INTERNAL_NVM_SIZE)
 #define INTERNAL_FLASH_PART1_NUM_BLOCKS (TOTAL_INTERNAL_FLASH_SIZE / FILESYSTEM_BLOCK_SIZE)
 
-int  mp_hal_get_interrupt_char();
+int mp_hal_get_interrupt_char();
 void mp_hal_set_interrupt_char(char c);
 void mp_hal_init();
 
@@ -50,14 +50,31 @@ void board_flash_flush();
 
 //void NORETURN __fatal_error(const char *msg) ;
 
+extern uint32_t mp_hal_ticks_ms(void);
+extern uint32_t mp_hal_ticks_us(void);
+extern uint32_t mp_hal_ticks_cpu(void);
 
-extern uint32_t mp_hal_ticks_ms(void) ;
-extern uint32_t mp_hal_ticks_us(void) ;
-extern uint32_t mp_hal_ticks_cpu(void) ;
+extern void mp_hal_delay_ms(mp_uint_t ms);
 
+extern void mp_hal_delay_us(mp_uint_t ms);
 
-extern void mp_hal_delay_ms(mp_uint_t ms) ;
-
-extern void mp_hal_delay_us(mp_uint_t ms) ;
+/*
+*Pin mapping from Arduino to ArduPy
+* 
+*/
+#define GPIO_NUM_0 (0ul)
+#define GPIO_NUM_1 (1ul)
+#define GPIO_NUM_2 (2ul)
+#define GPIO_NUM_3 (3ul)
+#define GPIO_NUM_4 (4ul)
+#define GPIO_NUM_5 (5ul)
+#define GPIO_NUM_6 (6ul)
+#define GPIO_NUM_7 (7ul)
+#define GPIO_NUM_8 (8ul)
+#define GPIO_NUM_9 (9ul)
+#define GPIO_NUM_10 (10ul)
+#define GPIO_NUM_11 (11ul)
+#define GPIO_NUM_12 (12ul)
+#define GPIO_NUM_13 (13ul)
 
 #endif //

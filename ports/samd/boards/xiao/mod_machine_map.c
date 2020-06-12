@@ -1,0 +1,78 @@
+/*
+ * This file is part of the MicroPython project, http://micropython.org/
+ *
+ * Development of the code in this file was sponsored by Seeed Studio
+ *
+ * Author: Hontai Liu (hontai.liu@seeed.cc)
+ *
+ * Copyright (C) 2020  Seeed Technology Co.,Ltd.
+ * The MIT License (MIT)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+#include <stdio.h>
+
+#include "py/runtime.h"
+#include "py/mphal.h"
+#ifdef ARDUINO
+#include "Arduino.h"
+#endif
+#include "mphalport.h"
+
+#define ARDUPY_LED_BUILTIN (13ul)
+#define ARDUPY_LED_RXL (12ul)
+#define ARDUPY_LED_TXL (11ul)
+#define ARDUPY_A0 (0ul)
+#define ARDUPY_A1 (1ul)
+#define ARDUPY_A2 (2ul)
+#define ARDUPY_A3 (3ul)
+#define ARDUPY_A4 (4ul)
+#define ARDUPY_A5 (52ul)
+#define ARDUPY_A6 (6ul)
+#define ARDUPY_A7 (7ul)
+#define ARDUPY_A8 (8ul)
+#define ARDUPY_A9 (9ul)
+#define ARDUPY_A10 (10ul)
+#define ARDUPY_DAC0 (0ul)
+
+const mp_rom_map_elem_t machine_map_dict_table[] = {
+    {MP_ROM_QSTR(MP_QSTR_A0), MP_ROM_INT(ARDUPY_A0)},
+    {MP_ROM_QSTR(MP_QSTR_A1), MP_ROM_INT(ARDUPY_A1)},
+    {MP_ROM_QSTR(MP_QSTR_A2), MP_ROM_INT(ARDUPY_A2)},
+    {MP_ROM_QSTR(MP_QSTR_A3), MP_ROM_INT(ARDUPY_A3)},
+    {MP_ROM_QSTR(MP_QSTR_A4), MP_ROM_INT(ARDUPY_A4)},
+    {MP_ROM_QSTR(MP_QSTR_A5), MP_ROM_INT(ARDUPY_A5)},
+    {MP_ROM_QSTR(MP_QSTR_A6), MP_ROM_INT(ARDUPY_A6)},
+    {MP_ROM_QSTR(MP_QSTR_A7), MP_ROM_INT(ARDUPY_A7)},
+    {MP_ROM_QSTR(MP_QSTR_A8), MP_ROM_INT(ARDUPY_A8)},
+    {MP_ROM_QSTR(MP_QSTR_A9), MP_ROM_INT(ARDUPY_A9)},
+    {MP_ROM_QSTR(MP_QSTR_A10), MP_ROM_INT(ARDUPY_A10)},
+    {MP_ROM_QSTR(MP_QSTR_DAC0), MP_ROM_INT(ARDUPY_DAC0)},
+    {MP_ROM_QSTR(MP_QSTR_LED_BUILTIN), MP_ROM_INT(ARDUPY_LED_BUILTIN)},
+    {MP_ROM_QSTR(MP_QSTR_LED_RXL), MP_ROM_INT(ARDUPY_LED_RXL)},
+    {MP_ROM_QSTR(MP_QSTR_LED_TXL), MP_ROM_INT(ARDUPY_LED_TXL)}
+};
+
+MP_DEFINE_CONST_DICT(machine_map_locals_dict, machine_map_dict_table);
+
+const mp_obj_type_t machine_map_type = {
+    {&mp_type_type},
+    .name = MP_QSTR_Map,
+    .locals_dict = (mp_obj_t)&machine_map_locals_dict,
+};
