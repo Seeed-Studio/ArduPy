@@ -43,7 +43,6 @@ add_source_files(
 
 set(BOARD_SRC ${BOARD_SRC}  
         ${ARDUPY_BOARD_PATH}/mphalport.c
-        ${CMAKE_CURRENT_LIST_DIR}/irq_it.c
         ${CMAKE_CURRENT_LIST_DIR}/spi_flash.cpp
 )
 set(BOARD_DEF   

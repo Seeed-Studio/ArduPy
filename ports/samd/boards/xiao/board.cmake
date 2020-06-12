@@ -34,7 +34,6 @@ add_source_files(
 
 set(BOARD_SRC ${BOARD_SRC}  
         ${ARDUPY_BOARD_PATH}/mphalport.c
-        ${CMAKE_CURRENT_LIST_DIR}/irq_it.c
 )
 set(BOARD_DEF   -DF_CPU=48000000L 
                 -DARDUINO=10809 
