@@ -1,5 +1,5 @@
 
-set(MP ${CMAKE_CURRENT_LIST_DIR}/MicroPython)
+set(MP ${ARDUPY_ROOT_PATH}/MicroPython)
 
 set(GENHDR ${CMAKE_BINARY_DIR}/genhdr)
 include_directories(${MP} 
@@ -13,10 +13,8 @@ include_directories(${MP}
 
 FILE(GLOB_RECURSE MICROPYTHON_SRC
     "${MP}/py/*.c"
-    "${CMAKE_CURRENT_LIST_DIR}/shared-bindings/*.c"
-    "${CMAKE_CURRENT_LIST_DIR}/shared-bindings/*.cpp"
-#     "${CMAKE_CURRENT_LIST_DIR}/common-hal/*.c"
-#     "${CMAKE_CURRENT_LIST_DIR}/common-hal/*.cpp"
+    "${ARDUPY_ROOT_PATH}/shared-bindings/*.c"
+    "${ARDUPY_ROOT_PATH}/shared-bindings/*.cpp"
 )
  
 set(MICROPYTHON_SRC ${MICROPYTHON_SRC}             
@@ -31,17 +29,8 @@ set(MICROPYTHON_SRC ${MICROPYTHON_SRC}
         ${MP}/extmod/modubinascii.c
         ${MP}/extmod/virtpin.c
         ${MP}/extmod/machine_mem.c
-        ${MP}/extmod/machine_pinbase.c
-        ${MP}/extmod/machine_signal.c
-        ${MP}/extmod/machine_pulse.c
-        ${MP}/extmod/machine_i2c.c
-        ${MP}/extmod/machine_spi.c
-        ${MP}/extmod/modussl_axtls.c
-        ${MP}/extmod/modussl_mbedtls.c
         ${MP}/extmod/modurandom.c
         ${MP}/extmod/moduselect.c
-        ${MP}/extmod/moduwebsocket.c
-        ${MP}/extmod/modwebrepl.c
         ${MP}/extmod/modframebuf.c
         ${MP}/extmod/vfs.c
         ${MP}/extmod/vfs_reader.c
@@ -61,23 +50,25 @@ set(MICROPYTHON_SRC ${MICROPYTHON_SRC}
         ${MP}/lib/mp-readline/readline.c 
         ${MP}/lib/oofatfs/ff.c 
         ${MP}/lib/oofatfs/ffunicode.c 
-        ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}/irq_it.c
-        # ${CMAKE_CURRENT_LIST_DIR}/shared-bindings/mod_uos.c
-        # ${CMAKE_CURRENT_LIST_DIR}/shared-bindings/mod_utime.c
-        # ${CMAKE_CURRENT_LIST_DIR}/shared-bindings/mod_ardupy.c
+        ${CMAKE_CURRENT_LIST_DIR}/ardupy_init.c
         ${CMAKE_CURRENT_LIST_DIR}/ardupy_storage.c
         ${CMAKE_CURRENT_LIST_DIR}/frozen/_frozen_mpy.c
+        ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}/mod_machine_map.c
         )
 
 set(micropython_CFLAGS
         ${micropython_CFLAGS}
         -I.
+	-I${ARDUPY_ROOT_PATH}/
         -I${ARDUINO_CORE_PATH}/cores/arduino
         -I${ARDUINO_CORE_PATH}/libraries/Wire
         -I${ARDUINO_CORE_PATH}/libraries/SPI
         -I${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA
         -I${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}
         -I${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}
+        -I${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB
+        -I${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore
+        -I${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore/tinyusb/src
         -I${MP}/
         -I${CMAKE_CURRENT_LIST_DIR}
         -I${CMAKE_CURRENT_LIST_DIR}/ArduinoLibrarys
@@ -86,12 +77,11 @@ set(micropython_CFLAGS
         -Wpointer-arith
         -Wuninitialized
         -Wno-unused-label
-        -std=gnu99
         -U_FORTIFY_SOURCE
         -Os
         ) 
 
-if ("${BOARD}" STREQUAL "wio_terminal")
+if ("${MACHINE_LCD}" EQUAL 1)
    set(micropython_CFLAGS
         ${micropython_CFLAGS}
         -I${ARDUINO_CORE_PATH}/libraries/Seeed_Arduino_LCD
@@ -115,7 +105,7 @@ add_custom_command(OUTPUT ${GENHDR}/qstrdefs.generated.h
         COMMAND echo "=======================start========================="
         COMMAND mkdir -p ${GENHDR}
         COMMAND python3 ${MP}/py/makeversionhdr.py ${GENHDR}/mpversion.h
-        COMMAND python3 ${MP}/py/makemoduledefs.py --vpath="., .., ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}," ${MICROPYTHON_SRC} ${GENHDR}/moduledefs.h > ${GENHDR}/moduledefs.h
+	COMMAND python3 ${MP}/py/makemoduledefs.py --vpath="., .., ${ARDUPY_ROOT_DIR}/, ${CMAKE_CURRENT_LIST_DIR}/boards/${BOARD}," ${MICROPYTHON_SRC} ${GENHDR}/moduledefs.h > ${GENHDR}/moduledefs.h
         COMMAND ${CMAKE_C_COMPILER} -E -DNO_QSTR ${BOARD_DEF} ${micropython_CFLAGS} -DFFCONF_H='\"${MP}/lib/oofatfs/ffconf.h\"' ${MICROPYTHON_SRC} ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h > ${GENHDR}/qstr.i.last
         COMMAND python3 ${MP}/py/makeqstrdefs.py split ${GENHDR}/qstr.i.last ${GENHDR}/qstr ${GENHDR}/qstrdefs.collected.h
         COMMAND python3 ${MP}/py/makeqstrdefs.py cat ${GENHDR}/qstr.i.last ${GENHDR}/qstr ${GENHDR}/qstrdefs.collected.h

@@ -16,7 +16,7 @@
 #define MICROPY_KBD_EXCEPTION               (1)
 #define MICROPY_ENABLE_COMPILER     (1)
 #define MICROPY_MODULE_FROZEN_STR           (0)
-#define MICROPY_QSTR_EXTRA_POOL             mp_qstr_frozen_const_pool
+//#define MICROPY_QSTR_EXTRA_POOL             mp_qstr_frozen_const_pool
 #define MICROPY_CAN_OVERRIDE_BUILTINS       (1)
 
 

@@ -4,9 +4,9 @@ removeDuplicateSubstring(${CMAKE_CXX_FLAGS} CMAKE_CXX_FLAGS)
 
 message("SOURCE_FILES=${SOURCE_FILES}")
 add_executable(${PROJECT_NAME} ${SOURCE_FILES}  
-                                ${CMAKE_CURRENT_LIST_DIR}/../MicroPython/py/qstr.c
-                                ${CMAKE_CURRENT_LIST_DIR}/../MicroPython/py/parse.c
-                                ${CMAKE_CURRENT_LIST_DIR}/../MicroPython/py/objmodule.c
+                                ${ARDUPY_ROOT_PATH}/MicroPython/py/qstr.c
+                                ${ARDUPY_ROOT_PATH}/MicroPython/py/parse.c
+                                ${ARDUPY_ROOT_PATH}/MicroPython/py/objmodule.c
                                 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE C)

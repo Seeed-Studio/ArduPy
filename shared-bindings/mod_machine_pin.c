@@ -407,47 +407,12 @@ STATIC mp_obj_t machine_pin_on(mp_obj_t self_in)
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(machine_pin_on_obj, machine_pin_on);
 
-#if 0
-// pin.irq(handler=None, trigger=IRQ_FALLING|IRQ_RISING)
-STATIC mp_obj_t machine_pin_irq(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
-
-
-    enum { ARG_handler, ARG_trigger };
-    static const mp_arg_t allowed_args[] = {
-        { MP_QSTR_handler, MP_ARG_OBJ, {.u_obj = mp_const_none} },
-        { MP_QSTR_trigger, MP_ARG_INT, {.u_int = RISING | FALLING | CHANGE} },
-    };
-    machine_pin_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
-    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
-
-    if (n_args > 1 || kw_args->used != 0) {
-        // configure irq
-        mp_obj_t handler = args[ARG_handler].u_obj;
-        uint32_t trigger = args[ARG_trigger].u_int;
-
-        if ((trigger == RISING || trigger == FALLING || trigger == CHANGE) && handler != mp_const_none) {
-
-        } else {
-            mp_raise_ValueError("Incorrect parameter");
-        }
-    }
-
-    // return the irq object
-    return MP_OBJ_FROM_PTR(&machine_pin_irq_object[self->id]);
-}
-STATIC MP_DEFINE_CONST_FUN_OBJ_KW(machine_pin_irq_obj, 1, machine_pin_irq);
-#endif
-
 STATIC const mp_rom_map_elem_t machine_pin_locals_dict_table[] = {
     // instance methods
     {MP_ROM_QSTR(MP_QSTR_init), MP_ROM_PTR(&machine_pin_init_obj)},
     {MP_ROM_QSTR(MP_QSTR_value), MP_ROM_PTR(&machine_pin_value_obj)},
     {MP_ROM_QSTR(MP_QSTR_off), MP_ROM_PTR(&machine_pin_off_obj)},
     {MP_ROM_QSTR(MP_QSTR_on), MP_ROM_PTR(&machine_pin_on_obj)},
-    //{ MP_ROM_QSTR(MP_QSTR_irq), MP_ROM_PTR(&machine_pin_irq_obj) },
-
-    // class constants
     {MP_ROM_QSTR(MP_QSTR_IN), MP_ROM_INT(INPUT)},
     {MP_ROM_QSTR(MP_QSTR_OUT), MP_ROM_INT(OUTPUT)},
     {MP_ROM_QSTR(MP_QSTR_PULL_UP), MP_ROM_INT(INPUT_PULLUP)},

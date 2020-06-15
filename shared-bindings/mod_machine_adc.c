@@ -93,35 +93,6 @@ MP_DEFINE_CONST_FUN_OBJ_1(madc_read_obj, madc_read);
 
 STATIC const mp_rom_map_elem_t madc_locals_dict_table[] = {
     {MP_ROM_QSTR(MP_QSTR_read), MP_ROM_PTR(&madc_read_obj)},
-
-//const
-#ifdef ADC_A0
-    {MP_ROM_QSTR(MP_QSTR_A0), MP_ROM_INT(ADC_A0)},
-#endif
-#ifdef ADC_A1
-    {MP_ROM_QSTR(MP_QSTR_A1), MP_ROM_INT(ADC_A1)},
-#endif
-#ifdef ADC_A2
-    {MP_ROM_QSTR(MP_QSTR_A2), MP_ROM_INT(ADC_A2)},
-#endif
-#ifdef ADC_A3
-    {MP_ROM_QSTR(MP_QSTR_A3), MP_ROM_INT(ADC_A3)},
-#endif
-#ifdef ADC_A4
-    {MP_ROM_QSTR(MP_QSTR_A4), MP_ROM_INT(ADC_A4)},
-#endif
-#ifdef ADC_A5
-    {MP_ROM_QSTR(MP_QSTR_A5), MP_ROM_INT(ADC_A5)},
-#endif
-#ifdef ADC_A6
-    {MP_ROM_QSTR(MP_QSTR_A6), MP_ROM_INT(ADC_A6)},
-#endif
-#ifdef ADC_A7
-    {MP_ROM_QSTR(MP_QSTR_A7), MP_ROM_INT(ADC_A7)},
-#endif
-#ifdef ADC_A8
-    {MP_ROM_QSTR(MP_QSTR_A8), MP_ROM_INT(ADC_A8)},
-#endif
 };
 
 

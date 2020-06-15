@@ -53,11 +53,17 @@ typedef struct {
     void        * module;
 } abstract_module_t;
 
+
+inline  abstract_module_t * new_abstruct_module(mp_obj_type_t * type) __attribute__((always_inline));
+
+
 inline abstract_module_t * new_abstruct_module(mp_obj_type_t * type){
     abstract_module_t * self = m_new_obj(abstract_module_t);
     self->base.type = type;
     return self;
 }
+
+
 
 #define m_generic_make(name)                                        \
 STATIC mp_obj_t name ## _obj_deinit(mp_obj_t self_in) {             \
