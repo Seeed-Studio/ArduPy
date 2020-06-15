@@ -114,7 +114,7 @@ message(STATUS  ${lib_MICROPYTHON_SRC})
 message(STATUS  ${MICROPYTHON_SRC})
 
 
-#add_library(micropython STATIC ${SOURCE_FILES} ${BOARD_SRC}  ${lib_MICROPYTHON_SRC}  ${GENHDR}/qstrdefs.generated.h)
+add_library(micropython STATIC ${SOURCE_FILES} ${BOARD_SRC}  ${lib_MICROPYTHON_SRC}  ${GENHDR}/qstrdefs.generated.h)
 
 
 # add_custom_command(TARGET micropython POST_BUILD
@@ -128,69 +128,74 @@ message(STATUS  ${MICROPYTHON_SRC})
 #         )
 
 INSTALL (
-    DIRECTORY ${ARDUINO_CORE_PATH}/../../../hardware
-    DESTINATION Arduino
+    DIRECTORY ${ARDUINO_CORE_PATH}/../../../hardware/samd/1.7.6/
+    DESTINATION core/Arduino
     FILES_MATCHING PATTERN "*.h*")
     
 INSTALL (
     DIRECTORY ${ARDUINO_CORE_PATH}/../../../tools/CMSIS-Atmel
     DIRECTORY ${ARDUINO_CORE_PATH}/../../../tools/CMSIS
-    DIRECTORY ${CMAKE_BINARY_DIR}/genhdr
-    DESTINATION Arduino/tools
+    DESTINATION tools
     FILES_MATCHING PATTERN "*.[h|a]*")
+
+INSTALL (
+    DIRECTORY ${CMAKE_BINARY_DIR}/genhdr
+    DESTINATION tools/genhdr/${BOARD}
+)
+
 
 INSTALL (
     DIRECTORY ${MP}/py
     DIRECTORY ${MP}/drivers
     DIRECTORY ${MP}/extmod
     DIRECTORY ${MP}/lib
-    DESTINATION ArduPy/MicroPython
+    DESTINATION core/ArduPy/MicroPython
     FILES_MATCHING PATTERN "*.h*")
 
 
 INSTALL (
-        DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/shared-bindings
-        DESTINATION ArduPy/
+        DIRECTORY ${ARDUPY_ROOT_PATH}/shared-bindings
+        DESTINATION core/ArduPy/
         FILES_MATCHING PATTERN "*.h*")
     
 
 install(FILES ${CMAKE_BINARY_DIR}/libmicropython.a  
-                        DESTINATION ArduPy/boards/${board})
+                        DESTINATION core/ArduPy/boards/${BOARD})
 
 
-install(FILES   ${CMAKE_CURRENT_LIST_DIR}/MicroPython/mpy-cross/mpy-cross
-                ${CMAKE_CURRENT_LIST_DIR}/MicroPython/tools/mpy-tool.py
-                DESTINATION Seeeduino/tools PERMISSIONS OWNER_EXECUTE OWNER_READ
+install(FILES   ${ARDUPY_ROOT_PATH}/MicroPython/mpy-cross/mpy-cross
+                ${ARDUPY_ROOT_PATH}/MicroPython/tools/mpy-tool.py
+                DESTINATION tools PERMISSIONS OWNER_EXECUTE OWNER_READ
         )
 
         
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/lib
-              DESTINATION ArduPy
+              DESTINATION core/ArduPy
               FILES_MATCHING PATTERN "*.h*"
 )
 
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/boards
-              DESTINATION ArduPy
+              DESTINATION core/ArduPy
               FILES_MATCHING PATTERN "*.h*"
               )
 
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/boards
-                DESTINATION ArduPy
+                DESTINATION core/ArduPy
                 FILES_MATCHING PATTERN "*.ld*"
         )
 
 
 install(FILES ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h
-              ${CMAKE_CURRENT_LIST_DIR}/mpconfigboard_common.h
+              ${CMAKE_CURRENT_LIST_DIR}/mpconfigcommon.h
               ${CMAKE_CURRENT_LIST_DIR}/portmodules.h
-            DESTINATION ArduPy)
+            DESTINATION core/ArduPy)
 
-install(FILES   ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/qstr.c
-                ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/parse.c
-                ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/objmodule.c
-                ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/makeqstrdata.py
-                ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/makeqstrdefs.py
-                ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/makemoduledefs.py
-                ${CMAKE_CURRENT_LIST_DIR}/MicroPython/py/makeversionhdr.py
-                DESTINATION ArduPy/MicroPython/py
+install(FILES   ${ARDUPY_ROOT_PATH}/MicroPython/py/qstr.c
+                ${ARDUPY_ROOT_PATH}/MicroPython/py/parse.c
+                ${ARDUPY_ROOT_PATH}/MicroPython/py/objmodule.c
+                ${ARDUPY_ROOT_PATH}/MicroPython/py/makeqstrdata.py
+                ${ARDUPY_ROOT_PATH}/MicroPython/py/makeqstrdefs.py
+                ${ARDUPY_ROOT_PATH}/MicroPython/py/makemoduledefs.py
+                ${ARDUPY_ROOT_PATH}/MicroPython/py/makeversionhdr.py
+                DESTINATION core/ArduPy/MicroPython/py
                 PERMISSIONS OWNER_READ)
