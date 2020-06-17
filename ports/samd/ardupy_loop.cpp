@@ -135,6 +135,7 @@ extern "C"
     {
         while (true)
         {
+            msc_save_autoload();
             if (mp_hal_stdin_rx_available())
             {
                 int c = mp_hal_stdin_rx_read();
