@@ -42,9 +42,9 @@ extern "C"
     // USB Mass Storage object
     volatile int mp_interrupt_char = -1;
 
-    volatile int msc_save_trigger = 0;      // msc save trigger flag
+    volatile int msc_save_trigger = 0; // msc save trigger flag
     volatile uint32_t msc_save_timeout = 0; // msc save auto load timeout
-    volatile uint32_t msc_save_ticks = 0;   // msc save ticks
+    volatile uint32_t msc_save_ticks = 0; // msc save ticks
     extern void reset();
 
     void mp_keyboard_interrupt(void)
@@ -121,17 +121,18 @@ extern "C"
         // trigger msc save event
         if (msc_save_trigger == 0)
         {
-            //tud_cdc_read_flush(); // flush read fifo
+            tud_cdc_read_flush(); // flush read fifo
             pendsv_kbd_intr();
             msc_save_trigger = 1;
             msc_save_ticks = mp_hal_ticks_ms();
+
         }
         msc_save_timeout = SAVE_AUTOLOAD_TICKS;
     }
 
     void msc_save_autoload(void)
     {
-        if (msc_save_trigger == 1)
+        if (msc_save_trigger == 1) 
         {
             uint32_t tick = mp_hal_ticks_ms() - msc_save_ticks;
             msc_save_ticks = mp_hal_ticks_ms();
@@ -139,6 +140,7 @@ extern "C"
             {
                 if ((msc_save_timeout -= tick) == 0) // if time out
                 {
+                    msc_save_trigger = 0;
                     reset();
                     pyexec_file_if_exists("main.py"); // auto load main.py
                 }
