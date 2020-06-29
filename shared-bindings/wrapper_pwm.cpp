@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Author: Baozhu Zuo (zuobaozhu@gmail.com)
+ * Author: Hongtai Liu (lht856@foxmail.com)
  *
  * Copyright (C) 2020  Seeed Technology Co.,Ltd.
  *

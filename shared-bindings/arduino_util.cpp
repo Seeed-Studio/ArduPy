@@ -28,6 +28,7 @@
  */
 #include "Arduino.h"
 #include "Wire.h"
+#include "SPI.h"
 #ifdef __cplusplus
 extern "C"
 {
@@ -76,7 +77,7 @@ extern "C"
         return _wire;
     }
     // get spi object by number define by map
-    SPIClass *ardupy_get_spiint32_t spi)
+    SPIClass *ardupy_get_spi(int32_t spi)
     {
         SPIClass *_spi;
         switch (spi)

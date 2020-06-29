@@ -42,6 +42,7 @@ STATIC const mp_rom_map_elem_t machine_module_globals_table[] = {
     {MP_ROM_QSTR(MP_QSTR_DAC), MP_ROM_PTR(&machine_dac_type)},
     {MP_ROM_QSTR(MP_QSTR_PWM), MP_ROM_PTR(&machine_pwm_type)},
     {MP_ROM_QSTR(MP_QSTR_Map), MP_ROM_PTR(&machine_map_type)},
+    {MP_ROM_QSTR(MP_QSTR_UART), MP_ROM_PTR(&machine_uart_type)},
 #ifdef LCD_SUPPORT
     {MP_ROM_QSTR(MP_QSTR_LCD), MP_ROM_PTR(&machine_lcd_type)},
     {MP_ROM_QSTR(MP_QSTR_Sprite), MP_ROM_PTR(&machine_eSprite_type)}
