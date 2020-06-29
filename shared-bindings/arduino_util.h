@@ -28,55 +28,19 @@
  */
 #ifndef __ARDUINO_UTIL_H
 #define __ARDUINO_UTIL_H
+
 #include "Arduino.h"
 #include "Wire.h"
+#include "SPI.h"
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-    TwoWire *getWire(int32_t wire)
-    {
-        TwoWire * _wire;
-        switch (wire)
-        {
-#if WIRE_INTERFACES_COUNT > 0
-        case 0:
-            _wire = &Wire;
-            break;
-#endif
-#if WIRE_INTERFACES_COUNT > 1
-        case 1:
-            _wire = &Wire1;
-            break;
-#endif
-#if WIRE_INTERFACES_COUNT > 2
-        case 2:
-            _wire = &Wire2;
-            break;
-#endif
-#if WIRE_INTERFACES_COUNT > 3
-        case 3:
-            _wire = &Wire3;
-            break;
-            3;
-#endif
-#if WIRE_INTERFACES_COUNT > 4
-        case 4:
-            _wire = &Wire;
-            break;
-#endif
-#if WIRE_INTERFACES_COUNT > 5
-        case 5:
-            _wire = &Wire5;
-            break;
-#endif
-        default:
-            _wire = &Wire;
-            break;
-        }
-        return _wire;
-    }
+    TwoWire* ardupy_get_wire(int32_t wire);
+    SPIClass* ardupy_get_spi(int32_t spi); 
 #ifdef __cplusplus
 }
 #endif
+
+
 #endif
