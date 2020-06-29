@@ -28,6 +28,7 @@ script:
   - COREVER=$(arduino-cli core list | grep Seeeduino | awk '{print $2}')
   - echo $COREVER
   - ls . -lh
+  - cd ports/samd/
   - mkdir -p build && cd  build
   - |
     if [ "$BOARD" == "Seeeduino:samd:zero" ]; then

@@ -1,11 +1,13 @@
-
-/**
- * The MIT License (MIT)
+/*
+ * This file is part of the MicroPython project, http://micropython.org/
  *
- * Author: Hongtai Liu (lht856@foxmail.com)
+ * Development of the code in this file was sponsored by Seeed Studio
+ *
+ * Author: Hontai Liu (hontai.liu@seeed.cc)
  *
  * Copyright (C) 2020  Seeed Technology Co.,Ltd.
- *
+ * The MIT License (MIT)
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -24,18 +26,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef MICROPY_ARDUPY_USB_H
-#define MICROPY_ARDUPY_USB_H
+#ifndef __ARDUINO_UTIL_H
+#define __ARDUINO_UTIL_H
 
-#ifdef ARDUINO
 #include "Arduino.h"
+#include "Wire.h"
+#include "SPI.h"
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+    TwoWire* ardupy_get_wire(int32_t wire);
+    SPIClass* ardupy_get_spi(int32_t spi); 
+    Uart *ardupy_get_uart(int32_t uart);
+#ifdef __cplusplus
+}
 #endif
 
-extern "C"{
-int  mp_hal_get_interrupt_char();
-void mp_hal_set_interrupt_char(char c);
-void msc_save_autoload();
-void usb_init();
-}
 
 #endif

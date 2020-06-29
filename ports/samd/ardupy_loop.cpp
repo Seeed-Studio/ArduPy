@@ -60,11 +60,11 @@ extern "C"
 #if MICROPY_HW_ENABLE_STORAGE
         init_flash_fs();
 #endif
+        usb_init();
     }
     void setup()
     {
         SerialShow.begin(115200);
-        usb_init();
     }
     void loop()
     {
@@ -97,12 +97,13 @@ extern "C"
             if (exit_code == PYEXEC_FORCED_EXIT)
             {
                 SerialShow.println("soft reboot");
+                reset();
             }
             else
             {
                 SerialShow.println("exit_code : " + String(exit_code, HEX));
             }
-            reset();
+           
         }
 #endif
         SerialShow.print("soft reboot\r\n");
@@ -135,6 +136,7 @@ extern "C"
     {
         while (true)
         {
+            msc_save_autoload();
             if (mp_hal_stdin_rx_available())
             {
                 int c = mp_hal_stdin_rx_read();
