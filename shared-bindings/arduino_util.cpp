@@ -82,33 +82,33 @@ extern "C"
         SPIClass *_spi;
         switch (spi)
         {
-#if WIRE_INTERFACES_COUNT > 0
+#if SPI_INTERFACES_COUNT  > 0
         case 0:
             _spi = &SPI;
             break;
 #endif
-#if WIRE_INTERFACES_COUNT > 1
+#if SPI_INTERFACES_COUNT  > 1
         case 1:
             _spi = &SPI1;
             break;
 #endif
-#if WIRE_INTERFACES_COUNT > 2
+#if SPI_INTERFACES_COUNT  > 2
         case 2:
             _spi = &SPI2;
             break;
 #endif
-#if WIRE_INTERFACES_COUNT > 3
+#if SPI_INTERFACES_COUNT  > 3
         case 3:
             _spi = &SPI3;
             break;
             3;
 #endif
-#if WIRE_INTERFACES_COUNT > 4
+#if SPI_INTERFACES_COUNT  > 4
         case 4:
             _spi = &SPI4;
             break;
 #endif
-#if WIRE_INTERFACES_COUNT > 5
+#if SPI_INTERFACES_COUNT  > 5
         case 5:
             _spi = &SPI5;
             break;
@@ -118,6 +118,44 @@ extern "C"
             break;
         }
         return _spi;
+    }
+
+    Uart *ardupy_get_uart(int32_t uart)
+    {
+        Uart *_uart;
+        switch ((uart-1))
+        {
+#if UART_INTERFACES_COUNT > 0
+        case 0:
+            _uart = &Serial1;
+            break;
+#endif
+#if UART_INTERFACES_COUNT > 1
+        case 1:
+            _uart = &Serial2;
+            break;
+#endif
+#if UART_INTERFACES_COUNT > 2
+        case 2:
+            _uart = &Serial3;
+            break;
+#endif
+#if UART_INTERFACES_COUNT > 3
+        case 3:
+            _uart = &Serial4;
+            break;
+            3;
+#endif
+#if UART_INTERFACES_COUNT > 4
+        case 4:
+            _uart = &Serial5;
+            break;
+#endif
+        default:
+            _uart = &Serial1;
+            break;
+        }
+        return _uart;
     }
 #ifdef __cplusplus
 }

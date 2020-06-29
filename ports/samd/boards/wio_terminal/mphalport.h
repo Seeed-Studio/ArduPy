@@ -121,4 +121,8 @@ extern void mp_hal_delay_us(mp_uint_t ms);
 #define GPIO_NUM_61 WIO_5S_DOWN
 #define GPIO_NUM_62 WIO_5S_PRESS
 
+#ifndef UART_INTERFACES_COUNT
+#define UART_INTERFACES_COUNT 2
+#endif
+
 #endif //

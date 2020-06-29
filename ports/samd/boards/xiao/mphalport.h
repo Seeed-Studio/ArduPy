@@ -77,4 +77,8 @@ extern void mp_hal_delay_us(mp_uint_t ms);
 #define GPIO_NUM_12 (12ul)
 #define GPIO_NUM_13 (13ul)
 
+#ifndef UART_INTERFACES_COUNT
+#define UART_INTERFACES_COUNT 2
+#endif
+
 #endif //

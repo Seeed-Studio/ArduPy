@@ -25,23 +25,41 @@
  */
 #include <Arduino.h>
 /*wrapper for Serial opration*/
-extern "C"
-{
-#include "py/objtype.h"
-#include "shared-bindings/util.h"
-}
+#include "shared-bindings/arduino_util.h"
+#include "ardupy_utils.h"
 
 #define uart (*(Uart *)self->module)
 void *operator new(size_t, void *);
 
 extern "C"
 {
-    void common_hal_uart_construct(abstract_module_t *self)
+#include "py/objtype.h"
+#include "shared-bindings/util.h"
+#include "py/obj.h"
+    void common_hal_uart_construct(abstract_module_t *self, size_t n_args, const mp_obj_t *args)
     {
         //TODO: Get serial  according to parameters.
-        self->module = &Serial1;
+        self->module = ardupy_get_uart(1);
         //TODO: Set serial port according to parameters.
         uart.begin(115200);
+        int32_t _uart_num = mp_obj_get_int(args[0]);
+        unsigned long _baudrate = 115200; 
+        uint16_t _config = SERIAL_8N1;
+        unsigned long _timeout = 1000;
+        if (n_args >= 2)
+        {
+            _baudrate = mp_obj_get_int(args[1]);
+        }
+        if (n_args >= 2)
+        {
+            _config = mp_obj_get_int(args[2]);
+        }
+        if (n_args >= 4)
+        {
+            _timeout = mp_obj_get_int(args[3]);
+        }
+        uart.begin(_baudrate, _config);
+        uart.setTimeout(_timeout);
     }
     void common_hal_uart_deinit(abstract_module_t *self)
     {
@@ -58,7 +76,7 @@ extern "C"
         //write Serial Bytes
         return uart.write((uint8_t *)buf_in, size);
     }
-    size_t common_hal_uart_get_buffered_data_len(abstract_module_t *self, size_t * size)
+    size_t common_hal_uart_get_buffered_data_len(abstract_module_t *self, size_t *size)
     {
         //retrun available
         *size = uart.available();

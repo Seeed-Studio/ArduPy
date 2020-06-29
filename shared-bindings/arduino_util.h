@@ -38,6 +38,7 @@ extern "C"
 #endif
     TwoWire* ardupy_get_wire(int32_t wire);
     SPIClass* ardupy_get_spi(int32_t spi); 
+    Uart *ardupy_get_uart(int32_t uart);
 #ifdef __cplusplus
 }
 #endif
