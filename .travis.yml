@@ -4,7 +4,7 @@ global:
 matrix:
   include:
     - env:
-        - BOARD="Seeeduino:samd:zero"
+        - BOARD="Seeeduino:samd:seeed_XIAO_m0"
     - env:
         - BOARD="Seeeduino:samd:seeed_wio_terminal"
 
@@ -31,8 +31,8 @@ script:
   - cd ports/samd/
   - mkdir -p build && cd  build
   - |
-    if [ "$BOARD" == "Seeeduino:samd:zero" ]; then
-      cmake ../ -DARDUINO_CORE_PATH=$HOME/.arduino15/packages/Seeeduino/hardware/samd/$COREVER -DTOOLCHAIN=$HOME/.arduino15/packages/Seeeduino/tools/arm-none-eabi-gcc/7-2017q4/bin -DBOARD=seeeduino_m0 -DARDUINO_VERIANT=XIAO_m0
+    if [ "$BOARD" == "Seeeduino:samd:seeed_XIAO_m0" ]; then
+      cmake ../ -DARDUINO_CORE_PATH=$HOME/.arduino15/packages/Seeeduino/hardware/samd/$COREVER -DTOOLCHAIN=$HOME/.arduino15/packages/Seeeduino/tools/arm-none-eabi-gcc/7-2017q4/bin -DBOARD=xiao -DARDUINO_VERIANT=XIAO_m0
     elif [ "$BOARD" == "Seeeduino:samd:seeed_wio_terminal" ]; then
       cmake ../ -DARDUINO_CORE_PATH=$HOME/.arduino15/packages/Seeeduino/hardware/samd/$COREVER -DTOOLCHAIN=$HOME/.arduino15/packages/Seeeduino/tools/arm-none-eabi-gcc/7-2017q4/bin -DBOARD=wio_terminal -DARDUINO_VERIANT=wio_terminal
     fi
