@@ -122,7 +122,7 @@ extern "C"
         gc_collect_start();
         gc_collect_root(&dummy, ((mp_uint_t)&__StackTop - (mp_uint_t)&dummy) / sizeof(mp_uint_t));
         gc_collect_end();
-        gc_dump_info();
+        //gc_dump_info();
     }
 
     void nlr_jump_fail(void *val)
