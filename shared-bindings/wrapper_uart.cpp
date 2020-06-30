@@ -26,7 +26,6 @@
 #include <Arduino.h>
 /*wrapper for Serial opration*/
 #include "shared-bindings/arduino_util.h"
-#include "ardupy_utils.h"
 
 #define uart (*(Uart *)self->module)
 void *operator new(size_t, void *);
@@ -50,7 +49,7 @@ extern "C"
         {
             _baudrate = mp_obj_get_int(args[1]);
         }
-        if (n_args >= 2)
+        if (n_args >= 3)
         {
             _config = mp_obj_get_int(args[2]);
         }

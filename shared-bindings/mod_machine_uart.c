@@ -31,7 +31,7 @@
 #include "py/obj.h"
 #include "py/stream.h"
 #include "shared-bindings/util.h"
-#include "ardupy_utils.h"
+#include "ardupy_util.h"
 
 extern void  common_hal_uart_construct(abstract_module_t *self, size_t n_args, const mp_obj_t * args);
 extern void common_hal_uart_deinit(abstract_module_t * self);

@@ -23,10 +23,10 @@ make install DESTDIR=$tmp_dir
 
 
 cp -rf $tmp_dir/usr/local/core/ArduPy/boards/wio_terminal/libmicropython.a ${work_pwd}/deploy/core/ArduPy/boards/wio_terminal/
-cp -rf $tmp_dir/usr/local/tools/genhdr/wio_terminal ${work_pwd}/deploy/tools/genhdr/wio_terminal/
+cp -rf $tmp_dir/usr/local/core/ArduPy/genhdr/wio_terminal ${work_pwd}/deploy/core/ArduPy/genhdr/
 cp -rf $tmp_dir/usr/local/core/ArduPy/boards/wio_terminal ${work_pwd}/deploy/core/ArduPy/boards/
 
 
 cd ${work_pwd}/deploy/
-tar -jcf  ardupy-core-${version}.tar.bz2 core  tools
+#tar -jcf  ardupy-core-${version}.tar.bz2 core  tools
 #rm -rf core  tools

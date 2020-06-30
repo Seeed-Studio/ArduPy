@@ -32,10 +32,15 @@
 #include "Arduino.h"
 #include "Wire.h"
 #include "SPI.h"
+#include "ardupy_util.h"
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+    #define ARDUPY_GET_WIRE 1
+    #define ARDUPY_GET_SPI  1
+    #define ARDUPY_GET_UART 1
     TwoWire* ardupy_get_wire(int32_t wire);
     SPIClass* ardupy_get_spi(int32_t spi); 
     Uart *ardupy_get_uart(int32_t uart);

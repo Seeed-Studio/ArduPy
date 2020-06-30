@@ -132,15 +132,15 @@ INSTALL (
     DESTINATION core/Arduino
     FILES_MATCHING PATTERN "*.h*")
     
-INSTALL (
-    DIRECTORY ${ARDUINO_CORE_PATH}/../../../tools/CMSIS-Atmel
-    DIRECTORY ${ARDUINO_CORE_PATH}/../../../tools/CMSIS
-    DESTINATION tools
-    FILES_MATCHING PATTERN "*.[h|a]*")
+#INSTALL (
+#    DIRECTORY ${ARDUINO_CORE_PATH}/../../../tools/CMSIS-Atmel
+#    DIRECTORY ${ARDUINO_CORE_PATH}/../../../tools/CMSIS
+#    DESTINATION tools
+#    FILES_MATCHING PATTERN "*.[h|a]*")
 
 INSTALL (
-    DIRECTORY ${CMAKE_BINARY_DIR}/genhdr
-    DESTINATION tools/genhdr/${BOARD}
+    DIRECTORY ${CMAKE_BINARY_DIR}/genhdr/
+    DESTINATION core/ArduPy/genhdr/${BOARD}
 )
 
 
@@ -156,17 +156,18 @@ INSTALL (
 INSTALL (
         DIRECTORY ${ARDUPY_ROOT_PATH}/shared-bindings
         DESTINATION core/ArduPy/
-        FILES_MATCHING PATTERN "*.h*")
+        FILES_MATCHING PATTERN "*.h*"
+        PERMISSIONS OWNER_READ)
     
 
 install(FILES ${CMAKE_BINARY_DIR}/libmicropython.a  
                         DESTINATION core/ArduPy/boards/${BOARD})
 
 
-install(FILES   ${ARDUPY_ROOT_PATH}/MicroPython/mpy-cross/mpy-cross
-                ${ARDUPY_ROOT_PATH}/MicroPython/tools/mpy-tool.py
-                DESTINATION tools PERMISSIONS OWNER_EXECUTE OWNER_READ
-        )
+#install(FILES   ${ARDUPY_ROOT_PATH}/MicroPython/mpy-cross/mpy-cross
+#                ${ARDUPY_ROOT_PATH}/MicroPython/tools/mpy-tool.py
+#                DESTINATION tools PERMISSIONS OWNER_EXECUTE OWNER_READ
+#        )
 
         
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/lib
@@ -188,7 +189,10 @@ install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/boards
 install(FILES ${CMAKE_CURRENT_LIST_DIR}/mpconfigport.h
               ${CMAKE_CURRENT_LIST_DIR}/mpconfigcommon.h
               ${CMAKE_CURRENT_LIST_DIR}/portmodules.h
-            DESTINATION core/ArduPy)
+              ${CMAKE_CURRENT_LIST_DIR}/ardupy_usb.h
+              ${CMAKE_CURRENT_LIST_DIR}/ardupy_util.h
+              ${CMAKE_CURRENT_LIST_DIR}/ardupy_storage.h
+              DESTINATION core/ArduPy)
 
 install(FILES   ${ARDUPY_ROOT_PATH}/MicroPython/py/qstr.c
                 ${ARDUPY_ROOT_PATH}/MicroPython/py/parse.c
