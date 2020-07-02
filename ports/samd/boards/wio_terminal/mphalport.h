@@ -32,6 +32,8 @@
 #endif
 #include "mpconfigport.h"
 
+#define SerialShow Serial
+
 #define TOTAL_INTERNAL_FLASH_SIZE (4096 * 1024) //4M
 
 #define INTERNAL_FLASH_MEM_SEG1_START_ADDR (0)

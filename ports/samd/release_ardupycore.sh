@@ -28,5 +28,5 @@ cp -rf $tmp_dir/usr/local/core/ArduPy/boards/wio_terminal ${work_pwd}/deploy/cor
 
 
 cd ${work_pwd}/deploy/
-#tar -jcf  ardupy-core-${version}.tar.bz2 core  tools
-#rm -rf core  tools
+tar -jcf  ardupy-core-${version}.tar.bz2 core
+rm -rf core

@@ -216,14 +216,22 @@ static void make_empty_file(FATFS *fatfs, const char *path)
 
 #include "py/gc.h"
 
+static fs_user_mount_t static_vfs_fat;
+void protect_main_py()
+{
+    FIL fp;
+    fs_user_mount_t *vfs_fat = &static_vfs_fat;
+    f_open(&vfs_fat->fatfs, &fp, "main.py", FA_READ);
+    f_close(&fp);
+}
 // avoid inlining to avoid stack usage within main()
 MP_NOINLINE bool init_flash_fs()
 {
     // init the vfs object
-    static fs_user_mount_t static_vfs_fat;
     fs_user_mount_t *vfs_fat = &static_vfs_fat;
     memset(vfs_fat, 0, sizeof(fs_user_mount_t));
-    vfs_fat->flags = 0;
+
+    vfs_fat->flags = FSUSER_FREE_OBJ;
     storage_init();
     ardupy_flash_init_vfs(vfs_fat);
 
@@ -250,7 +258,7 @@ MP_NOINLINE bool init_flash_fs()
             return false;
         }
 
-        make_empty_file(&vfs_fat->fatfs, "/main.py");
+        make_empty_file(&vfs_fat->fatfs, "main.py");
     }
     else if (res == FR_OK)
     {
@@ -262,6 +270,14 @@ MP_NOINLINE bool init_flash_fs()
         printf("MPY: can't mount flash\n");
         return false;
     }
+    FRESULT fr;
+    FILINFO fno;
+    if(f_stat(&vfs_fat->fatfs, "main.py", &fno) != FR_OK)
+    {
+        make_empty_file(&vfs_fat->fatfs, "main.py");
+    }
+
+    protect_main_py();
 
     // mount the flash device (there should be no other devices mounted at this point)
     // we allocate this structure on the heap because vfs->next is a root pointer
@@ -279,7 +295,6 @@ MP_NOINLINE bool init_flash_fs()
     // The current directory is used as the boot up directory.
     // It is set to the internal flash filesystem by default.
     MP_STATE_PORT(vfs_cur) = vfs;
-
     return true;
 }
 

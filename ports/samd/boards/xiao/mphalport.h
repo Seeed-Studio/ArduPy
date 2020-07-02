@@ -32,6 +32,8 @@
 #endif
 #include "mpconfigport.h"
 
+#define SerialShow Serial
+
 #define TOTAL_INTERNAL_FLASH_SIZE 0xC000 //48K
 
 #define INTERNAL_NVM_SIZE 256

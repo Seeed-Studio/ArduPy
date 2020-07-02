@@ -29,7 +29,6 @@ void *operator new(size_t bytes, void *memory)
 {
     return memory;
 }
-#define SerialShow Serial
 extern "C"
 {
 #include "lib/utils/pyexec.h"
@@ -57,10 +56,10 @@ extern "C"
         gc_init(&__ardupy_heap_start__, &__ardupy_heap_end__);
 #endif
         mp_hal_init();
-#if MICROPY_HW_ENABLE_STORAGE
+        #if MICROPY_HW_ENABLE_STORAGE
         init_flash_fs();
-#endif
-        usb_init();
+        #endif
+        SerialShow.println("\n\rPress any Key to enter the REPL. Use CTRL-D to soft reboot.\n\r");
     }
     void setup()
     {
@@ -70,6 +69,7 @@ extern "C"
     {
         int exit_code = PYEXEC_FORCED_EXIT;
         reset();
+        usb_init();
         pyexec_file_if_exists("boot.py");
 
 #if MICROPY_ENABLE_COMPILER && MICROPY_REPL_EVENT_DRIVEN
