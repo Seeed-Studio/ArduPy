@@ -46,6 +46,8 @@ extern "C"
     volatile int msc_save_trigger = 0;      // msc save trigger flag
     volatile uint32_t msc_save_timeout = 0; // msc save auto load timeout
     volatile uint32_t msc_save_ticks = 0;   // msc save ticks
+    volatile uint32_t msc_save_autoload = 0;
+
     extern void reset();
 
     void mp_keyboard_interrupt(void)
@@ -120,12 +122,6 @@ extern "C"
     {
         storage_flush();
         // trigger msc save event
-        if (mp_import_stat("main.py") != MP_IMPORT_STAT_FILE)
-        {
-            msc_save_timeout = SAVE_AUTOLOAD_TICKS;
-            msc_save_trigger == 0;
-            return;
-        }
         if (msc_save_trigger == 0)
         {
             tud_cdc_read_flush(); // flush read fifo
@@ -134,11 +130,10 @@ extern "C"
             msc_save_ticks = mp_hal_ticks_ms();
         }
         msc_save_timeout = SAVE_AUTOLOAD_TICKS;
-    }
+    } 
 
-    void msc_save_autoload(void)
+    bool msc_save_autoload_tick(void)
     {
-        yield();
         if (msc_save_trigger == 1)
         {
             uint32_t tick = mp_hal_ticks_ms() - msc_save_ticks;
@@ -148,16 +143,11 @@ extern "C"
                 if ((msc_save_timeout -= tick) == 0) // if time out
                 {
                     msc_save_trigger = 0;
-                    reset();
-                    storage_flush();
-                    SerialShow.println("Auto load main.py by saving files over USB to execute them or enter REPL to disable.\n\r");
-                    SerialShow.println("main.py output:\n\r");
-                    pyexec_file_if_exists("main.py"); // auto load main.py
-                    storage_flush();
-                    SerialShow.println("\n\rPress any Key to enter the REPL. Use CTRL-D to soft reboot.\n\r");
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     void usb_init()
@@ -178,5 +168,6 @@ extern "C"
         usb_msc.setUnitReady(true);
 
         usb_msc.begin();
+        
     }
 }

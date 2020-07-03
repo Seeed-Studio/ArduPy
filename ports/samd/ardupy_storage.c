@@ -270,14 +270,6 @@ MP_NOINLINE bool init_flash_fs()
         printf("MPY: can't mount flash\n");
         return false;
     }
-    FRESULT fr;
-    FILINFO fno;
-    if(f_stat(&vfs_fat->fatfs, "main.py", &fno) != FR_OK)
-    {
-        make_empty_file(&vfs_fat->fatfs, "main.py");
-    }
-
-    protect_main_py();
 
     // mount the flash device (there should be no other devices mounted at this point)
     // we allocate this structure on the heap because vfs->next is a root pointer

@@ -55,35 +55,39 @@ extern "C"
         extern int __ardupy_heap_start__, __ardupy_heap_end__;
         gc_init(&__ardupy_heap_start__, &__ardupy_heap_end__);
 #endif
+
         mp_hal_init();
-        #if MICROPY_HW_ENABLE_STORAGE
+#if MICROPY_HW_ENABLE_STORAGE
         init_flash_fs();
-        #endif
+#endif
+
+        usb_init();
         SerialShow.println("\n\rPress any Key to enter the REPL. Use CTRL-D to soft reboot.\n\r");
     }
+
+    void autoload()
+    {
+        reset();
+        if (mp_import_stat("main.py") != MP_IMPORT_STAT_FILE)
+        {
+            return;
+        }
+        SerialShow.println("Auto load main.py by saving files over USB to execute them or enter REPL to disable.\n\r");
+        SerialShow.println("main.py output:\n\r");
+        pyexec_file("main.py"); // auto load main.py
+    }
+
     void setup()
     {
         SerialShow.begin(115200);
+        reset();
+        pyexec_file_if_exists("boot.py");
     }
     void loop()
     {
+
         int exit_code = PYEXEC_FORCED_EXIT;
-        reset();
-        usb_init();
-        pyexec_file_if_exists("boot.py");
-
-#if MICROPY_ENABLE_COMPILER && MICROPY_REPL_EVENT_DRIVEN
-        pyexec_event_repl_init();
-
-        while (true)
-        {
-            int c = mp_hal_stdin_rx_chr();
-            if (pyexec_event_repl_process_char(c))
-            {
-                break;
-            }
-        }
-#else
+        bool first_run = true;
         while (true)
         {
             if (pyexec_mode_kind == PYEXEC_MODE_RAW_REPL)
@@ -94,20 +98,21 @@ extern "C"
             {
                 exit_code = pyexec_friendly_repl();
             }
+
             if (exit_code == PYEXEC_FORCED_EXIT)
             {
-                SerialShow.println("soft reboot");
-                reset();
+                if (!first_run)
+                {
+                    SerialShow.println("soft reboot");
+                }
+                first_run = false;
+                autoload();
             }
             else
             {
                 SerialShow.println("exit_code : " + String(exit_code, HEX));
             }
-           
         }
-#endif
-        SerialShow.print("soft reboot\r\n");
-
         mp_deinit();
     }
 
@@ -136,7 +141,10 @@ extern "C"
     {
         while (true)
         {
-            msc_save_autoload();
+            if (msc_save_autoload_tick())
+            {
+                return CHAR_CTRL_D;
+            }
             if (mp_hal_stdin_rx_available())
             {
                 int c = mp_hal_stdin_rx_read();
