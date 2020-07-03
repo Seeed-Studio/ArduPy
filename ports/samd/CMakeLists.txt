@@ -6,8 +6,8 @@ set(ARM "1")
 if (NOT BOARD)
     message(STATUS "BOARD not set!")
 endif ()
-if (NOT ARDUINO_VERIANT)
-    message(STATUS "ARDUINO_VERIANT not set!")
+if (NOT ARDUINO_VARIANT)
+    message(STATUS "ARDUINO_VARIANT not set!")
 endif ()
 # basic config
 if (NOT ARDUINO_CORE_PATH)
@@ -30,7 +30,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros.internal.cmake)
 message("MICROPYTHON = ${MICROPYTHON}")
 message("BOARD = ${BOARD}")
 message("ARCH = ${ARCH}")
-message("ARDUINO_VERIANT = ${ARDUINO_VERIANT}")
+message("ARDUINO_VARIANT = ${ARDUINO_VARIANT}")
 message("ARM = ${ARM}")
 
 
@@ -39,7 +39,7 @@ include_directories(${ARDUINO_CORE_PATH}/cores/arduino)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Wire)
 include_directories(${ARDUINO_CORE_PATH}/libraries/SPI)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA)
-include_directories(${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT})
+include_directories(${ARDUINO_CORE_PATH}/variants/${ARDUINO_VARIANT})
 
 
 # compile project
@@ -50,8 +50,8 @@ add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c
                     ${ARDUINO_CORE_PATH}/libraries/SPI/*.c
                     ${ARDUINO_CORE_PATH}/libraries/SPI/*.cpp
                     ${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA/*.cpp
-                    ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}/*.c
-                    ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VERIANT}/*.cpp
+                    ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VARIANT}/*.c
+                    ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VARIANT}/*.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/ardupy_loop.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/ardupy_usb.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/ardupy_irq.c
@@ -84,7 +84,7 @@ endif()
 message("MICROPYTHON = ${MICROPYTHON}")
 message("BOARD = ${BOARD}")
 message("ARCH = ${ARCH}")
-message("ARDUINO_VERIANT = ${ARDUINO_VERIANT}")
+message("ARDUINO_VARIANT = ${ARDUINO_VARIANT}")
 message("ARM = ${ARM}")
 
 target_sources(${PROJECT_NAME} PUBLIC ${BOARD_SRC}  ${GENHDR}/qstrdefs.generated.h) 
