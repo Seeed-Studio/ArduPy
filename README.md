@@ -9,6 +9,8 @@ ArduPy is a combination of Arduino and MicroPython. MicroPython uses the univers
 
 ArduPy consists of two parts, one is the ArduPy Core, and the other part is the Arduino Library Python wrapper.
 
+More information refer [ArduPy Get Started](https://wiki.seeedstudio.com/ArduPy/).
+
 ## Features
 - Ardupy can experience complete python3 on embedded devices with limited resources
 - Support for simple file systems
