@@ -121,6 +121,7 @@ extern const struct _mp_obj_module_t mp_module_arduino;
 
 #define EXTRA_BUILTIN_MODULES                                                        \
     { MP_OBJ_NEW_QSTR(MP_QSTR_math), (mp_obj_t)&math_module },                       \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_random), (mp_obj_t)&random_module },                   \
     { MP_OBJ_NEW_QSTR(MP_QSTR_binascii), (mp_obj_t)&mp_module_ubinascii },           \
     { MP_OBJ_NEW_QSTR(MP_QSTR_collections), (mp_obj_t)&mp_module_collections },      \
     { MP_OBJ_NEW_QSTR(MP_QSTR_hashlib), (mp_obj_t)&mp_module_uhashlib },             \

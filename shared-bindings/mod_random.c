@@ -32,10 +32,13 @@
 #include "py/runtime.h"
 #include "shared-bindings/mod_random.h"
 
+#ifdef ARDUINO
+#include "Arduino.h"
+#endif
 
 inline uint64_t common_hal_time_monotonic() {
     //return ticks_ms;
-    return 0;
+    return millis();
 
 }
 
@@ -45,9 +48,7 @@ STATIC uint8_t yasmarang_dat = 0;
 STATIC uint32_t yasmarang(void)
 {
     if (yasmarang_pad == 0xeda4baba) {
-        if (!common_hal_os_urandom((uint8_t *)&yasmarang_pad, sizeof(uint32_t))) {
-            yasmarang_pad = common_hal_time_monotonic() & 0xffffffff;
-        }
+        yasmarang_pad = common_hal_time_monotonic() & 0xffffffff;
     }
    yasmarang_pad += yasmarang_dat + yasmarang_d * yasmarang_n;
    yasmarang_pad = (yasmarang_pad<<3) + (yasmarang_pad>>29);
