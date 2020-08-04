@@ -4,11 +4,13 @@ set(ARCH "samd21")
 
 set(micropython_CFLAGS 
         ${micropython_CFLAGS}
-        -I${ARDUINO_CMSIS_PATH}/CMSIS/Include
+        -I${ARDUINO_CMSIS_PATH}/CMSIS/Core/Include
+        -I${ARDUINO_CMSIS_PATH}/CMSIS/DSP/InClude
         -I${ARDUINO_CMSIS_ATMEL_PATH}
 )
 
-include_directories(${ARDUINO_CMSIS_PATH}/CMSIS/Include)
+include_directories(${ARDUINO_CMSIS_PATH}/CMSIS/Core/Include)
+include_directories(${ARDUINO_CMSIS_PATH}/CMSIS/DSP/Include)
 include_directories(${ARDUPY_LIB_PATH}/tinyUSB/src)
 include_directories(${ARDUPY_LIB_PATH}/asf4/hal/include)
 include_directories(${ARDUPY_LIB_PATH}/asf4/hal/utils/include)

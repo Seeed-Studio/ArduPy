@@ -5,7 +5,8 @@ set(MACHINE_LCD 1)
 
 set(micropython_CFLAGS 
         ${micropython_CFLAGS}
-        -I${ARDUINO_CMSIS_PATH}/CMSIS/Include
+        -I${ARDUINO_CMSIS_PATH}/CMSIS/Core/Include
+        -I${ARDUINO_CMSIS_PATH}/CMSIS/DSP/InClude
         -I${ARDUINO_CMSIS_ATMEL_PATH}
         -I${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA
 )
@@ -15,7 +16,8 @@ include_directories(${ARDUPY_LIB_PATH}/flash/qspi)
 include_directories(${ARDUPY_LIB_PATH}/tinyUSB/src)
 include_directories(${ARDUINO_CORE_PATH}/core/arduino/USB)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA)
-include_directories(${ARDUINO_CMSIS_PATH}/CMSIS/Include)
+include_directories(${ARDUINO_CMSIS_PATH}/CMSIS/Core/Include)
+include_directories(${ARDUINO_CMSIS_PATH}/CMSIS/DSP/Include)
 include_directories(${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB)
 include_directories(${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore/)
 include_directories(${ARDUINO_CORE_PATH}/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore/tinyusb/src)
