@@ -2,13 +2,20 @@
 set(MICROPYTHON "1")
 set(ARM "1")
 
-
 if (NOT BOARD)
     message(STATUS "BOARD not set!")
 endif ()
-if (NOT ARDUINO_VARIANT)
-    message(STATUS "ARDUINO_VARIANT not set!")
+if (NOT ARDUINO_VARIANT AND NOT EXTERNAL_VARIANT)
+    message(STATUS "VARIANT not set!")
 endif ()
+
+if (ARDUINO_VARIANT)
+    set(VARIANT ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VARIANT})
+else ()
+    set(VARIANT ${EXTERNAL_VARIANT})
+endif ()
+
+
 # basic config
 if (NOT ARDUINO_CORE_PATH)
     message(STATUS "ARDUINO_CORE_PATH not set, you can set it manually. e.g. -DARDUINO_CORE_PATH=/tmp/work/ArduinoCore-samd")
@@ -30,7 +37,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros.internal.cmake)
 message("MICROPYTHON = ${MICROPYTHON}")
 message("BOARD = ${BOARD}")
 message("ARCH = ${ARCH}")
-message("ARDUINO_VARIANT = ${ARDUINO_VARIANT}")
+message("VARIANT = ${VARIANT}")
 message("ARM = ${ARM}")
 
 
@@ -39,7 +46,7 @@ include_directories(${ARDUINO_CORE_PATH}/cores/arduino)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Wire)
 include_directories(${ARDUINO_CORE_PATH}/libraries/SPI)
 include_directories(${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA)
-include_directories(${ARDUINO_CORE_PATH}/variants/${ARDUINO_VARIANT})
+include_directories(${VARIANT}/)
 
 
 # compile project
@@ -50,8 +57,8 @@ add_source_files(${ARDUINO_CORE_PATH}/cores/arduino/*.c
                     ${ARDUINO_CORE_PATH}/libraries/SPI/*.c
                     ${ARDUINO_CORE_PATH}/libraries/SPI/*.cpp
                     ${ARDUINO_CORE_PATH}/libraries/Adafruit_ZeroDMA/*.cpp
-                    ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VARIANT}/*.c
-                    ${ARDUINO_CORE_PATH}/variants/${ARDUINO_VARIANT}/*.cpp
+                    ${VARIANT}/*.c
+                    ${VARIANT}/*.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/ardupy_loop.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/ardupy_usb.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/ardupy_irq.c
@@ -84,7 +91,7 @@ endif()
 message("MICROPYTHON = ${MICROPYTHON}")
 message("BOARD = ${BOARD}")
 message("ARCH = ${ARCH}")
-message("ARDUINO_VARIANT = ${ARDUINO_VARIANT}")
+message("VARIANT = ${VARIANT}")
 message("ARM = ${ARM}")
 
 target_sources(${PROJECT_NAME} PUBLIC ${BOARD_SRC}  ${GENHDR}/qstrdefs.generated.h) 
