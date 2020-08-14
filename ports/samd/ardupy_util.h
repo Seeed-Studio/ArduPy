@@ -30,7 +30,7 @@
 #include "Arduino.h"
 
 //define version
-#define ARDUPY_VERSION "1.2.0"
+#define ARDUPY_VERSION "1.3.0"
 
 //define for Serial
 #define HARDSER_PARITY_EVEN (0x1ul)
