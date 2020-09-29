@@ -48,7 +48,7 @@ set(BOARD_SRC ${BOARD_SRC}
         ${CMAKE_CURRENT_LIST_DIR}/spi_flash.cpp
 )
 set(BOARD_DEF   
-        -DF_CPU=120000000L 
+        -DF_CPU=200000000L 
         -DARDUINO=10810 
         -DWIO_TERMINAL
         -DARDUINO_ARCH_SAMD
