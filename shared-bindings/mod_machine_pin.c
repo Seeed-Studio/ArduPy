@@ -266,7 +266,7 @@ STATIC void machine_pin_isr_handler(void *arg)
 
 int machine_pin_get_hardware_id(mp_hal_pin_obj_t pin)
 {
-    
+
     return machine_pin_obj[pin].hardware_id;
 }
 
@@ -297,7 +297,7 @@ STATIC mp_obj_t machine_pin_obj_init_helper(const machine_pin_obj_t *self, size_
     };
     static const mp_arg_t allowed_args[] = {
         {MP_QSTR_mode, MP_ARG_OBJ, {.u_obj = mp_const_none}},
-        {MP_QSTR_pull, MP_ARG_OBJ, {.u_obj = MP_OBJ_NEW_SMALL_INT(-1)}},
+        {MP_QSTR_pull, MP_ARG_OBJ, {.u_obj = mp_const_none}},
         {MP_QSTR_value, MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL}},
     };
 
@@ -305,17 +305,54 @@ STATIC mp_obj_t machine_pin_obj_init_helper(const machine_pin_obj_t *self, size_
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
-    // configure mode
-    if (args[ARG_mode].u_obj != mp_const_none)
-    {
-        mp_int_t pin_io_mode = mp_obj_get_int(args[ARG_mode].u_obj);
-        pinMode(self->hardware_id, pin_io_mode);
-    }
-
     // set initial value (do this before configuring mode/pull)
     if (args[ARG_value].u_obj != MP_OBJ_NULL)
     {
         digitalWrite(self->hardware_id, mp_obj_is_true(args[ARG_value].u_obj));
+    }
+
+    // configure mode
+    if (args[ARG_mode].u_obj != mp_const_none)
+    {
+        mp_int_t pin_io_mode = mp_obj_get_int(args[ARG_mode].u_obj);
+        switch (pin_io_mode)
+        {
+        case INPUT:
+        {
+            if (args[ARG_pull].u_obj != mp_const_none)
+            {
+                mp_int_t pin_input_mode = mp_obj_get_int(args[ARG_pull].u_obj);
+
+                switch (pin_input_mode)
+                {
+                case INPUT_PULLUP:
+                    pinMode(self->hardware_id, INPUT_PULLUP);
+                    break;
+                case INPUT_PULLDOWN:
+                    pinMode(self->hardware_id, INPUT_PULLDOWN);
+                    break;
+                default:
+                    pinMode(self->hardware_id, INPUT);
+                    break;
+                }
+            }
+            else
+            {
+                pinMode(self->hardware_id, INPUT);
+            }
+        }
+        break;
+        case OUTPUT:
+            pinMode(self->hardware_id, OUTPUT);
+            if (args[ARG_pull].u_obj != mp_const_none)
+            {
+                mp_int_t default_value = mp_obj_get_int(args[ARG_pull].u_obj);
+            }
+            break;
+        default:
+            pinMode(self->hardware_id, INPUT);
+            break;
+        }
     }
 
     return mp_const_none;
@@ -331,7 +368,7 @@ mp_obj_t mp_pin_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, 
     const machine_pin_obj_t *self = NULL;
     int hardware_id = machine_pin_get_hardware_id(wanted_pin);
 
-    if(hardware_id < 0)
+    if (hardware_id < 0)
     {
         mp_raise_ValueError("invalid pin");
     }
